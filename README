@@ -1,0 +1,46 @@
+The SPIRRID package is the part of the project SIMVISAGE 
+(http://mordred.imb.rwth-aachen.de/projects/simvisage/wiki).
+
+== Core ==
+
+This package is the main and contains tools for RV sampling, code generation and
+numerical multidimensional statistical integration.
+
+http://mordred.imb.rwth-aachen.de/projects/simvisage/wiki/SimVizSpirrid
+
+== Pdistrib (library of statistical distributions) ==
+
+The package provides a traited wrapper for the scipy distributions.
+
+http://mordred.imb.rwth-aachen.de/projects/simvisage/wiki/SimVizPDistrib
+ 
+
+== Examples ==
+
+The directories "fiber_*" provides the performance studies of the spirrid
+integration tool. There are three types of response functions
+tested:
+
+The implementation of the generic integration algorithm
+is given in mu_integ.py
+
+ * fiber_tt_2p.py: fiber tensile test with 2 parameters 
+   one strong discontinuity) 
+ * fiber_tt_5p.py: fiber tensile test with 5 parameters
+   one strong and one weak discontinuity
+ * fiber_po_8p.py: fiber pullout test with 7 parameters
+   one strong, one weak discontinuity 
+   and nonlinear range within the response
+
+Folder masked_arrays contains test dealing with using of numpy.ma.array to speeding up
+evaluation of numpy vectorized functions.
+
+Folder numexpr contains test dealing with using of numexpr to speeding up
+evaluation of numpy vectorized functions.
+
+
+== Util ==
+
+This folder contains customized (extended) source code (enthought, scipy).
+
+

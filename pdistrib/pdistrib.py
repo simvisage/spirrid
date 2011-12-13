@@ -13,7 +13,7 @@ from enthought.traits.ui.menu import OKButton, CancelButton, Action, Menu, \
 from math import sqrt
 from matplotlib.figure import Figure
 from numpy import arange, fabs, pi, sin, array, linspace
-from traits.editors.mpl_figure_editor import MPLFigureEditor
+from util.traits.editors.mpl_figure_editor import MPLFigureEditor
 from scipy.stats import distributions
 from scipy.stats import norm, uniform, weibull_min
 from sinus_distribution import sin_distr
