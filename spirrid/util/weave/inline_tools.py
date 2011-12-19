@@ -454,7 +454,7 @@ def inline_function_code(code, arg_names, local_dict = None,
     ext_func = inline_ext_function('compiled_func', code, arg_names,
                                    local_dict, global_dict, auto_downcast,
                                    type_converters = type_converters)
-    import build_tools
+    from scipy.weave import build_tools
     compiler = build_tools.choose_compiler(compiler)
     ext_func.set_compiler(compiler)
     return ext_func.function_code()

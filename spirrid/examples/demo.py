@@ -13,7 +13,9 @@
 # Created on Dec 16, 2011 by: rch
 
 import sys
-sys.path.append('../')
+import os
+cdir = os.path.abspath('../../')
+sys.path.append(cdir)
 
 from enthought.traits.api import HasTraits, Instance, Button
 from enthought.traits.ui.api import View, Item

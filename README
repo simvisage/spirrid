@@ -1,7 +1,7 @@
 The SPIRRID package is the part of the project SIMVISAGE 
 (http://mordred.imb.rwth-aachen.de/projects/simvisage).
 
-This project develops on Linux (Kubuntu, Suse) ETS version < 4.0.
+This project is developed on Linux (Kubuntu, Suse) ETS version < 4.0.
 
 == Installation instructions == 
 see http://mordred.imb.rwth-aachen.de/projects/simvisage/wiki
@@ -52,7 +52,7 @@ There are two tests:
 
 And:
  * script.py: simple python script, described in paper "Using Python for scientific
-   computing: effecient and flexible evaluation of the statistical
+   computing: efficient and flexible evaluation of the statistical
    characteristics of functions with multivariate random inputs"
 
 

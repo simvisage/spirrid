@@ -190,7 +190,7 @@ def create_demo_object():
                       n_int_range = n_int_range,
                       extra_compiler_args = True,
                       le_sampling_lst = ['LHS', 'PGrid'],
-                      le_n_int_lst = [25, 30])
+                      le_n_int_lst = [10, 10])
 
     return slab
 
