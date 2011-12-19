@@ -9,7 +9,7 @@ if platform.system() == 'Linux':
 elif platform.system() == 'Windows':
     sysclock = time.clock
 
-if __name__ == '__main__':
+def main():
     n_rv = 2
     # set the mean and standard deviation of the two random variables
     m_la, std_la = 10.0, 1.0
@@ -192,3 +192,5 @@ if __name__ == '__main__':
 
     p.show()
 
+if __name__ == '__main__':
+    main()

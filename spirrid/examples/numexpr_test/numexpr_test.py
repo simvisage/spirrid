@@ -23,7 +23,7 @@ def Heaviside_ne(x):
     return ne.evaluate("x >= 0")#( np.sign( x ) + 1.0 ) / 2.0
 
 
-if __name__ == '__main__':
+def main():
 
     #===========================================================================
     # Response function
@@ -115,3 +115,6 @@ if __name__ == '__main__':
     p.plot(e_arr, s_ne.mu_q_arr, label = 'ne')
     p.legend()
     p.show()
+
+if __name__ == '__main__':
+    main()

@@ -26,7 +26,7 @@ import os.path
 import string
 import tempfile
 
-if __name__ == '__main__':
+def main():
 
     class CBClampedFiber(RF):
         '''
@@ -219,3 +219,6 @@ if __name__ == '__main__':
         raise NotImplementedError, 'film production available only on linux'
 
     m.show()
+
+if __name__ == '__main__':
+    main()
