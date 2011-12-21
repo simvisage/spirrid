@@ -4,9 +4,20 @@ The SPIRRID package is the part of the project SIMVISAGE
 This project is developed on Linux (Kubuntu, Suse) ETS version < 4.0.
 
 == Installation instructions == 
-see http://mordred.imb.rwth-aachen.de/projects/simvisage/wiki
 
+install enthought tool suit (ETS) and cython
+> sudo aptitude install python-enthoughtbase cython
+ 
+see http://mordred.imb.rwth-aachen.de/projects/simvisage/wiki
 note for ets >= 4.0: http://blog.enthought.com/open-source/ets-4-0-released/
+
+
+== spirrid/examples/demo.py ==
+ 
+To test spirrid package on prepared examples run
+> python demo.py
+you get the user interface to run one of the examples described in the last
+section of readme (spirrid/examples/)
 
 
 == spirrid/ ==
