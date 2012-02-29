@@ -1,6 +1,9 @@
 The SPIRRID package is the part of the project SIMVISAGE 
 (http://mordred.imb.rwth-aachen.de/projects/simvisage).
 
+== Documentation of the package generated using sphinx ==
+http://mordred.imb.rwth-aachen.de/docs/spirrid/
+
 This project is developed on Linux (Kubuntu, Suse) ETS version < 4.0.
 
 == Installation instructions == 
