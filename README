@@ -1,26 +1,37 @@
 The SPIRRID package is the part of the project SIMVISAGE 
-(http://mordred.imb.rwth-aachen.de/projects/simvisage).
+(https://github.com/simvisage/spirrid).
 
 == Documentation of the package generated using sphinx ==
 http://mordred.imb.rwth-aachen.de/docs/spirrid/
 
 This project is developed on Linux (Kubuntu, Suse) ETS version < 4.0.
+note for ets >= 4.0: http://blog.enthought.com/open-source/ets-4-0-released/
 
 == Installation instructions == 
 
-install enthought tool suit (ETS) and cython
-> sudo aptitude install python-enthoughtbase cython
- 
-see http://mordred.imb.rwth-aachen.de/projects/simvisage/wiki
-note for ets >= 4.0: http://blog.enthought.com/open-source/ets-4-0-released/
+-- WINDOWS --
+
+install the Enthought Python Distribution (EPD) following
+the instructions at
+
+http://www.enthought.com/products/epd.php
+
+-- UBUNTU --
+
+install Enthought Tool Suite (ETS) and additional utilities
+
+$ sudo apt-get install ipython python-traitsgui python-scipy \
+  python-matplotlib mayavi2 cython python-numexpr
 
 
 == spirrid/examples/demo.py ==
  
 To test spirrid package on prepared examples run
-> python demo.py
+
+$ python demo.py
+
 you get the user interface to run one of the examples described in the last
-section of readme (spirrid/examples/)
+section this document.
 
 
 == spirrid/ ==
@@ -28,14 +39,10 @@ section of readme (spirrid/examples/)
 This folder contains tools for RV sampling, code generation and
 numerical multidimensional statistical integration.
 
-http://mordred.imb.rwth-aachen.de/projects/simvisage/wiki/SimVizSpirrid
-
 
 == spirrid/pdistrib (library of statistical distributions) ==
 
 The package provides a traited wrapper for the scipy distributions.
-
-http://mordred.imb.rwth-aachen.de/projects/simvisage/wiki/SimVizPDistrib
 
 
 == spirrid/util ==
