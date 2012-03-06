@@ -330,7 +330,12 @@ class CodeGenCompiled(CodeGen):
         return code_str
 
     compiler_verbose = Int(1)
-    compiler = Str('gcc')
+    compiler = Property(Str)
+    def _get_compiler(self):
+        if platform.system() == 'Linux':
+            return 'gcc'
+        elif platform.system() == 'Windows':
+            return 'mingw32'
 
     def get_code(self):
         if self.ld == 'c':
