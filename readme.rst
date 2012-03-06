@@ -46,7 +46,7 @@ section this document.
 spirrid/
 =====
 
-This folder contains tools for RV sampling, code generation and
+This folder contains tools for random variable domain sampling, code generation and
 numerical multidimensional statistical integration.
 
 
@@ -79,12 +79,14 @@ tested:
   and nonlinear range within the response
 
 There are two tests:
+
 * masked_arrays/: testing of speeding up of evaluation of general function
   using numpy.ma.array
 * numexpr/: testing of speeding up of evaluation of fiber_tt_5p fiber tensile 
   test with 5 parameters one strong and one weak discontinuity) using numexpr
 
 And:
+
 * script.py: simple python script, described in paper "Using Python for scientific
   computing: efficient and flexible evaluation of the statistical
   characteristics of functions with multivariate random inputs"
