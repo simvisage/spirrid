@@ -2,6 +2,7 @@ The SPIRRID package is the part of the project SIMVISAGE
 (https://github.com/simvisage/spirrid).
 
 == Documentation of the package generated using sphinx ==
+
 http://mordred.imb.rwth-aachen.de/docs/spirrid/
 
 This project is developed on Linux (Kubuntu, Suse) ETS version < 4.0.
@@ -23,6 +24,8 @@ install Enthought Tool Suite (ETS) and additional utilities
 $ sudo apt-get install ipython python-traitsgui python-scipy \
   python-matplotlib mayavi2 cython python-numexpr
 
+The installation has been tested on ubuntu and kubuntu 
+11.04 and 11.10
 
 == spirrid/examples/demo.py ==
  
