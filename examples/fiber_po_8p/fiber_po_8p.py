@@ -13,7 +13,7 @@
 # Created on Sep 8, 2011 by: rch
 
 from spirrid import SPIRRID, RV, Heaviside
-from spirrid.examples import SPIRRIDLAB
+from spirrid.util.spirrid_lab import SPIRRIDLAB
 import math
 import numpy as np
 from etsproxy.traits.api import Float, Str, implements, Range

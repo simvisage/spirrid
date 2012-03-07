@@ -15,7 +15,7 @@
 from etsproxy.traits.api import implements, Str
 from scipy.special import erf
 from spirrid import SPIRRID, Heaviside, RV, RF, IRF
-from spirrid.examples import SPIRRIDLAB
+from spirrid.util.spirrid_lab import SPIRRIDLAB
 import math
 import numpy as np
 

@@ -15,13 +15,13 @@
 import sys
 import os
 
-cdir = os.path.abspath('../../')
+cdir = os.path.abspath('..')
 sys.path.append(cdir)
 
 from etsproxy.traits.api import HasTraits, Instance, Button
 from etsproxy.traits.ui.api import View, Item
 
-from spirrid.examples import SPIRRIDLAB
+from spirrid.util.spirrid_lab import SPIRRIDLAB
 
 from fiber_tt_2p import fiber_tt_2p
 from fiber_tt_5p import fiber_tt_5p

@@ -14,7 +14,7 @@
 
 from etsproxy.traits.api import implements, Str
 from scipy.interpolate import interp1d
-from spirrid.examples import SPIRRIDLAB
+from spirrid.util.spirrid_lab import SPIRRIDLAB
 from spirrid import  SPIRRID, RV, RF, IRF, Heaviside
 import math
 import numpy as np
