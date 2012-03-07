@@ -34,8 +34,11 @@ install Enthought Tool Suite (ETS) and additional utilities::
   		python-matplotlib mayavi2 cython python-numexpr
 
 
+Examples
+========
+
 spirrid/examples/demo.py
-========================
+------------------------
  
 To test spirrid package on prepared examples run::
 
@@ -44,29 +47,31 @@ To test spirrid package on prepared examples run::
 you get the user interface to run one of examples described in the last
 section this document.
 
+Package structure
+=================
 
 spirrid/
-========
+--------
 
 This folder contains tools for random variable domain sampling, code generation and
 numerical multidimensional statistical integration.
 
 
 spirrid/pdistrib (library of statistical distributions)
-================
+--------
 
 The package provides a traited wrapper for the scipy distributions.
 
 
 spirrid/util
-============
+--------
 
 This folder contains customized (extended) source code (enthought, scipy, numpy)
 needed for running spirrid.
 
 
 spirrid/examples/
-=================
+--------
 
 The directories "fiber_*" provides the performance studies of the spirrid
 integration tool. There are three types of response functions
