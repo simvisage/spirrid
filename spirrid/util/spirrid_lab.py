@@ -24,7 +24,12 @@ import numpy as np
 import os.path
 import pylab as p # import matplotlib with matlab interface
 import types
+import shutil
+from scipy.weave.catalog import default_dir
+import os.path
 
+from os.path import expanduser
+HOME_DIR = expanduser("~")
 
 #===============================================================================
 # Helper functions
@@ -488,8 +493,8 @@ class SPIRRIDLAB(HasTraits):
     def codegen_language_efficiency(self):
         # define a tables with the run configurations to start in a batch
 
-        os.system('rm -fr ~/.python27_compiled')
-        os.system('rm -fr ~/.pyxbld')
+        shutil.rmtree(default_dir()) # os.system('rm -fr ~/.python27_compiled')
+        shutil.rmtree(os.path.join(HOME_DIR, '.pyxbld')) #os.system('rm -fr ~/.pyxbld')
 
         qname = self.get_qname()
 
@@ -512,7 +517,7 @@ class SPIRRIDLAB(HasTraits):
                 for idx, run in enumerate(self.run_lst_language_config):
                     code, run_options, plot_options, legend_string = run
 
-                    #os.system('rm -fr ~/.python27_compiled')
+                    #shutil.rmtree(default_dir())
 
                     s.codegen_type = code
                     s.codegen.set(**run_options)
