@@ -13,7 +13,7 @@
 # Created on Sep 8, 2011 by: rch
 
 from etsproxy.traits.api import HasTraits, Array, Property, DelegatesTo, \
-    Instance, Int, Str, List, on_trait_change, Button, Enum, Bool
+    Instance, Int, Str, List, on_trait_change, Button, Enum, Bool, Directory
 from etsproxy.traits.ui.api import View, Item
 from error_eval import ErrorEval
 from itertools import combinations, chain
@@ -24,7 +24,8 @@ import numpy as np
 import os.path
 import pylab as p # import matplotlib with matlab interface
 import types
-
+import shutil
+from os.path import expanduser
 
 #===============================================================================
 # Helper functions
@@ -46,8 +47,9 @@ def powerset(iterable):
 #===============================================================================
 
 class SPIRRIDLAB(HasTraits):
+    '''Class used for elementary parametric studies of spirrid.
     '''
-    '''
+
     s = Instance(SPIRRID)
 
     evars = DelegatesTo('s')
@@ -60,10 +62,10 @@ class SPIRRIDLAB(HasTraits):
 
     dpi = Int
 
-    plotmode = Enum(['subplots', 'figures'])
+    plot_mode = Enum(['subplots', 'figures'])
 
-    fig_output_dir = Str('fig')
-    @on_trait_change('self.fig_output_dir')
+    fig_output_dir = Directory('fig')
+    @on_trait_change('fig_output_dir')
     def _check_dir(self):
         if os.access(self.fig_output_dir, os.F_OK) == False:
             os.mkdir(self.fig_output_dir)
@@ -92,20 +94,23 @@ class SPIRRIDLAB(HasTraits):
 
     save_output = True
 
+    plot_sampling_idx = Array(value = [0, 1], dtype = int)
+
     def _plot_sampling(self,
                        i,
                        n_col,
                       sampling_type,
                       p = p,
                       ylim = None,
-                      xlim = None,
-                      plot_idx = [0, 1]):
+                      xlim = None):
         '''Construct a spirrid object, run the calculation
         plot the mu_q / e curve and save it in the subdirectory.
         '''
 
         s = self.s
         s.sampling_type = sampling_type
+
+        plot_idx = self.plot_sampling_idx
 
         qname = self.get_qname()
 
@@ -118,10 +123,10 @@ class SPIRRIDLAB(HasTraits):
         # for vectorized execution add a dimension for control variable
         theta_args = [ t[:, np.newaxis] for t in theta]
         q_arr = s.q(self.e_arr[None, :], *theta_args)
-        if self.plotmode == 'plots':
+        if self.plot_mode == 'figures':
             f = p.figure(figsize = (7., 6.))
             f.subplots_adjust(left = 0.15, right = 0.97, bottom = 0.15, top = 0.92)
-        if self.plotmode == 'subplots':
+        if self.plot_mode == 'subplots':
             if i == 0:
                 f = p.figure()
             p.subplot('2%i%i' % (n_col, (i + 1)))
@@ -135,13 +140,14 @@ class SPIRRIDLAB(HasTraits):
         p.title(s.sampling_type)
 
         if self.save_output:
-            fname = os.path.join(self.fig_output_dir, qname + '_sampling_' + s.sampling_type + '.png')
+            fname = os.path.join(self.fig_output_dir,
+                                 qname + '_sampling_' + s.sampling_type + '.png')
             p.savefig(fname, dpi = self.dpi)
 
-        if self.plotmode == 'plots':
+        if self.plot_mode == 'figures':
             f = p.figure(figsize = (7., 5))
             f.subplots_adjust(left = 0.15, right = 0.97, bottom = 0.18, top = 0.91)
-        elif self.plotmode == 'subplots':
+        elif self.plot_mode == 'subplots':
             p.subplot('2%i%i' % (n_col, (i + 5)))
 
         p.plot(self.e_arr, q_arr.T, color = 'grey')
@@ -172,7 +178,7 @@ class SPIRRIDLAB(HasTraits):
     def sampling_structure(self, **kw):
         '''Plot the response into the file in the fig subdirectory.
         '''
-        if self.plotmode == 'subplots':
+        if self.plot_mode == 'subplots':
             p.rcdefaults()
         else:
             fsize = 28
@@ -183,7 +189,9 @@ class SPIRRIDLAB(HasTraits):
             rc('xtick', labelsize = fsize - 8)
             rc('ytick', labelsize = fsize - 8)
             rc('xtick.major', pad = 8)
+
         s_lst = ['TGrid', 'PGrid', 'MCS', 'LHS']
+
         for i, s in enumerate(s_lst):
             self._plot_sampling(i, len(s_lst), sampling_type = s, **kw)
 
@@ -192,6 +200,35 @@ class SPIRRIDLAB(HasTraits):
 
     n_int_range = Array()
 
+    #===========================================================================
+    # Output file names for sampling efficiency
+    #===========================================================================
+    fname_sampling_efficiency_time_nint = Property
+    def _get_fname_sampling_efficiency_time_nint(self):
+        return self.get_qname() + '_' + '%s' % self.hostname + '_time_nint' + '.png'
+
+    fname_sampling_efficiency_error_nint = Property
+    def _get_fname_sampling_efficiency_error_nint(self):
+        return self.get_qname() + '_' + '%s' % self.hostname + '_error_nint' + '.png'
+
+    fname_sampling_efficiency_error_time = Property
+    def _get_fname_sampling_efficiency_error_time(self):
+        return self.get_qname() + '_' + '%s' % self.hostname + '_error_time' + '.png'
+
+    fnames_sampling_efficiency = Property
+    def _get_fnames_sampling_efficiency(self):
+        fnames = [self.fname_sampling_efficiency_time_nint]
+        if len(self.exact_arr) > 0:
+            fnames += [self.fname_sampling_efficiency_error_nint,
+                       self.fname_sampling_efficiency_error_time ]
+        return fnames
+
+    #===========================================================================
+    # Run sampling efficiency studies
+    #===========================================================================
+
+    sampling_types = Array(value = ['TGrid', 'PGrid', 'MCS', 'LHS'], dtype = str)
+
     sampling_efficiency_btn = Button(label = 'compare sampling efficiency')
     @on_trait_change('sampling_efficiency_btn')
     def sampling_efficiency(self):
@@ -199,8 +236,6 @@ class SPIRRIDLAB(HasTraits):
         Run the code for all available sampling types.
         Plot the results.
         '''
-        qname = self.get_qname()
-
         def run_estimation(n_int, sampling_type):
             # instantiate spirrid with samplingetization methods 
             print 'running', sampling_type, n_int
@@ -218,8 +253,7 @@ class SPIRRIDLAB(HasTraits):
 
         run_estimation_vct([5], ['PGrid'])
 
-        # studied samplingetization methods
-        sampling_types = np.array(['TGrid', 'PGrid', 'MCS', 'LHS'], dtype = str)
+        sampling_types = self.sampling_types
         sampling_colors = np.array(['grey', 'black', 'grey', 'black'], dtype = str) # 'blue', 'green', 'red', 'magenta'
         sampling_linestyle = np.array(['--', '--', '-', '-'], dtype = str)
 
@@ -236,8 +270,11 @@ class SPIRRIDLAB(HasTraits):
         #===========================================================================
         p.subplot(1, 2, 1)
         p.title('response for %d $n_\mathrm{sim}$' % n_sim_range[-1, -1])
-        for i, (sampling, color, linestyle) in enumerate(zip(sampling_types, sampling_colors, sampling_linestyle)):
-            p.plot(self.e_arr, mu_q[-1, i], color = color, label = sampling, linestyle = linestyle)
+        for i, (sampling, color, linestyle) in enumerate(zip(sampling_types,
+                                                             sampling_colors,
+                                                             sampling_linestyle)):
+            p.plot(self.e_arr, mu_q[-1, i], color = color,
+                   label = sampling, linestyle = linestyle)
 
         if len(self.exact_arr) > 0:
             p.plot(self.e_arr, self.exact_arr, color = 'black', label = 'Exact solution')
@@ -248,15 +285,19 @@ class SPIRRIDLAB(HasTraits):
 
         # @todo: get n_sim - x-axis
         p.subplot(1, 2, 2)
-        for i, (sampling, color, linestyle) in enumerate(zip(sampling_types, sampling_colors, sampling_linestyle)):
-            p.loglog(n_sim_range[:, i], exec_time[:, i], color = color, label = sampling, linestyle = linestyle)
+        for i, (sampling, color, linestyle) in enumerate(zip(sampling_types,
+                                                             sampling_colors,
+                                                             sampling_linestyle)):
+            p.loglog(n_sim_range[:, i], exec_time[:, i], color = color,
+                     label = sampling, linestyle = linestyle)
 
         p.legend(loc = 2)
         p.xlabel('$n_\mathrm{sim}$', fontsize = 18)
         p.ylabel('$t$ [s]', fontsize = 18)
 
         if self.save_output:
-            fname = os.path.join(self.fig_output_dir, qname + '_' + '%s' % self.hostname + '_time_nint' + '.png')
+            basename = self.fname_sampling_efficiency_time_nint
+            fname = os.path.join(self.fig_output_dir, basename)
             p.savefig(fname, dpi = self.dpi)
 
         #===========================================================================
@@ -298,7 +339,8 @@ class SPIRRIDLAB(HasTraits):
             p.ylabel('$\mathrm{e}_{\mathrm{rms}}$ [-]', fontsize = 18)
 
             if self.save_output:
-                fname = os.path.join(self.fig_output_dir, qname + '_' + '%s' % self.hostname + '_error_nint' + '.png')
+                basename = self.fname_sampling_efficiency_error_nint
+                fname = os.path.join(self.fig_output_dir, basename)
                 p.savefig(fname, dpi = self.dpi)
 
             f = p.figure(figsize = (14, 6))
@@ -321,7 +363,8 @@ class SPIRRIDLAB(HasTraits):
             p.ylabel('$\mathrm{e}_{\mathrm{rms}}$ [-]', fontsize = 18)
 
             if self.save_output:
-                fname = os.path.join(self.fig_output_dir, qname + '_' + '%s' % self.hostname + '_error_time' + '.png')
+                basename = self.fname_sampling_efficiency_error_time
+                fname = os.path.join(self.fig_output_dir, basename)
                 p.savefig(fname, dpi = self.dpi)
 
         if self.show_output:
@@ -403,6 +446,8 @@ class SPIRRIDLAB(HasTraits):
     def codegen_efficiency(self):
         # define a tables with the run configurations to start in a batch
 
+        basenames = []
+
         qname = self.get_qname()
 
         s = self.s
@@ -436,17 +481,23 @@ class SPIRRIDLAB(HasTraits):
 
         if self.save_output:
             print 'saving codegen_efficiency'
-            fname = os.path.join(self.fig_output_dir, qname + '_' + 'codegen_efficiency' + '.png')
+            basename = qname + '_' + 'codegen_efficiency' + '.png'
+            basenames.append(basename)
+            fname = os.path.join(self.fig_output_dir, basename)
             p.savefig(fname, dpi = self.dpi)
 
         self._bar_plot(legend_lst, time_lst)
         p.title('%s' % s.sampling_type)
         if self.save_output:
-            fname = os.path.join(self.fig_output_dir, qname + '_' + 'codegen_efficiency_%s' % s.sampling_type + '.png')
+            basename = qname + '_' + 'codegen_efficiency_%s' % s.sampling_type + '.png'
+            basenames.append(basename)
+            fname = os.path.join(self.fig_output_dir, basename)
             p.savefig(fname, dpi = self.dpi)
 
         if self.show_output:
             p.show()
+
+        return basenames
 
     #===========================================================================
     # Efficiency of numpy versus C code
@@ -483,17 +534,31 @@ class SPIRRIDLAB(HasTraits):
     le_sampling_lst = List(['LHS', 'PGrid'])
     le_n_int_lst = List([440, 5000])
 
+    #===========================================================================
+    # Output file names for language efficiency
+    #===========================================================================
+    fnames_language_efficiency = Property
+    def _get_fnames_language_efficiency(self):
+        return ['%s_codegen_efficiency_%s_extra_%s.png' %
+                (self.qname, self.hostname, extra)
+                for extra in [self.extra_compiler_args]]
+
     language_efficiency_btn = Button(label = 'compare language efficiency')
     @on_trait_change('language_efficiency_btn')
     def codegen_language_efficiency(self):
         # define a tables with the run configurations to start in a batch
 
-        os.system('rm -fr ~/.python27_compiled')
-        os.system('rm -fr ~/.pyxbld')
+        home_dir = expanduser("~")
 
-        qname = self.get_qname()
+#        pyxbld_dir = os.path.join(home_dir, '.pyxbld')
+#        if os.path.exists(pyxbld_dir):
+#            shutil.rmtree(pyxbld_dir)
 
-        for extra in [self.extra_compiler_args]:
+        python_compiled_dir = os.path.join(home_dir, '.python27_compiled')
+        if os.path.exists(python_compiled_dir):
+            shutil.rmtree(python_compiled_dir)
+
+        for extra, fname in zip([self.extra_compiler_args], self.fnames_language_efficiency):
             print 'extra compilation args:', extra
             legend_lst = []
             error_lst = []
@@ -532,7 +597,7 @@ class SPIRRIDLAB(HasTraits):
                         #@todo - does not work on windows
                         import tempfile
                         tdir = tempfile.gettempdir()
-                        f = open(tdir + '/w_time', 'r')
+                        f = open(os.path.join(tdir, 'w_time'), 'r')
                         value_t = float(f.read())
                         f.close()
                         exec_times_run[0][1] = value_t
@@ -541,6 +606,7 @@ class SPIRRIDLAB(HasTraits):
                     else:
                         exec_times_lang.append(exec_times_run)
 
+                print 'legend_lst', legend_lst
                 n_sim_lst.append(s.sampling.n_sim)
                 exec_times_sampling.append(exec_times_lang)
                 #===========================================================================
@@ -553,9 +619,8 @@ class SPIRRIDLAB(HasTraits):
             times_arr = np.array(exec_times_sampling, dtype = 'd')
             self._multi_bar_plot(meth_lst, legend_lst, times_arr, error_lst, n_sim_lst)
             if self.save_output:
-                fname = os.path.join(self.fig_output_dir,
-                                     '%s_codegen_efficiency_%s_extra_%s.png' % (qname, self.hostname, extra))
-                p.savefig(fname, dpi = self.dpi)
+                fname_path = os.path.join(self.fig_output_dir, fname)
+                p.savefig(fname_path, dpi = self.dpi)
 
         if self.show_output:
             p.show()
@@ -675,7 +740,8 @@ class SPIRRIDLAB(HasTraits):
         print 'arr', time_arr.shape
         times_sum = np.sum(time_arr, axis = n_times)
 
-        p.subplots_adjust(left = 0.1, right = 0.95, wspace = 0.1, bottom = 0.15, top = 0.8)
+        p.subplots_adjust(left = 0.1, right = 0.95, wspace = 0.1,
+                          bottom = 0.15, top = 0.8)
 
         for meth_i in range(n_sampling):
 
@@ -685,9 +751,13 @@ class SPIRRIDLAB(HasTraits):
 
     #        ax1.axis([0, x_max_plt, 0, n_lang])
             # todo: **2 n_vars
-            ax1.set_title('%s: $ n_\mathrm{sim} = %s, \mathrm{e}_\mathrm{rms}=%s, \mathrm{e}_\mathrm{max}=%s$' %
+            if len(self.exact_arr) > 0:
+                ax1.set_title('%s: $ n_\mathrm{sim} = %s, \mathrm{e}_\mathrm{rms}=%s, \mathrm{e}_\mathrm{max}=%s$' %
                            (title_lst[meth_i][0], self._formatSciNotation('%.2e' % n_sim_lst[meth_i]),
                             self._formatSciNotation('%.2e' % error_lst[meth_i][0]), self._formatSciNotation('%.2e' % error_lst[meth_i][1])))
+            else:
+                ax1.set_title('%s: $ n_\mathrm{sim} = %s$' %
+                              (title_lst[meth_i][0], self._formatSciNotation('%.2e' % n_sim_lst[meth_i])))
             ax1.set_yticks(ytick_pos)
             if meth_i == 0:
                 ax1.set_yticklabels(legend_lst, fontsize = fsize + 2)
@@ -849,7 +919,7 @@ class SPIRRIDLAB(HasTraits):
 
 if __name__ == '__main__':
 
-    from spirrid.rv import RV
+    from stats.spirrid.rv import RV
     from scipy.special import erf
     import math
 

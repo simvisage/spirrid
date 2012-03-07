@@ -160,11 +160,13 @@ class SPIRRID(FunctionRandomization):
     #===========================================================================
     # report the current configuration of the integrator
     def __str__(self):
-        print type(self.q)
-        if isinstance(self.q, types.InstanceType):
-            qname = self.q.__class__.__name__
-        else:
+        
+        # get the name either of the method or of the class
+        try:
             qname = self.q.__name__
+        except AttributeError:
+            qname = self.q.__class__.__name__
+
         s = 'q = %s(%s)\n' % (qname, string.join(self.var_names, ','))
 
         s += '** evars:\n'

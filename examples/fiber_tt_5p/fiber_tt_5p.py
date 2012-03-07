@@ -12,9 +12,9 @@
 #
 # Created on Sep 8, 2011 by: rch
 
-from etsproxy.traits.api import implements, Str
+from enthought.traits.api import implements, Str
 from scipy.interpolate import interp1d
-from spirrid.util.spirrid_lab import SPIRRIDLAB
+from spirrid.extras import SPIRRIDLAB
 from spirrid import  SPIRRID, RV, RF, IRF, Heaviside
 import math
 import numpy as np
@@ -26,7 +26,29 @@ file_dir = os.path.dirname(os.path.abspath(__file__))
 # Response function
 #===========================================================================
 class fiber_tt_5p(RF):
-    ''' Response function of a single fiber '''
+    ur'''
+Response function of a single fiber 
+===================================
+
+Response of a fiber loaded in tension can be described by a linear function
+with the domain bounded from left and right by the Heaviside terms.
+
+..    math::
+    q\left(\varepsilon; E,A,\theta,\lambda,\xi\right) = E A \frac{{\varepsilon
+    - \theta \left( {1 + \lambda } \right)}}{{\left( {1 + \theta } \right)
+    \left( {1 + \lambda } \right)}}
+    H\left[ {e - \theta \left( {1 + \lambda } \right)} \right]
+    H\left[ {\xi  - \frac{{e - \theta \left( {1 + \lambda } \right)}}
+    {{\left( {1 + \theta } \right)\left( {1 + \lambda } \right)}}} \right]
+
+where the variables :math:`A=` cross-sectional area, :math:`E=` Young's modulus,
+:math:`\theta=` filament activation strain, :math:`\lambda=` ratio of extra
+(stretched) filament length to the nominal length and :math:`\xi=` breaking strain
+are considered random and normally distributed. The function :math:`H(\eta)`
+represents the Heaviside function with values 0 for :math:`\eta < 0`
+and 1 for :math:`\eta > 0`.
+
+'''
     implements(IRF)
 
     title = Str('brittle filament')
@@ -186,11 +208,11 @@ def create_demo_object():
     #===========================================================================
     slab = SPIRRIDLAB(s = s, save_output = False, show_output = True, dpi = 300,
                       exact_arr = mu_q_ex(e_arr),
-                      plotmode = 'subplots',
+                      plot_mode = 'subplots',
                       n_int_range = n_int_range,
                       extra_compiler_args = True,
                       le_sampling_lst = ['LHS', 'PGrid'],
-                      le_n_int_lst = [10, 10])
+                      le_n_int_lst = [25, 30])
 
     return slab
 

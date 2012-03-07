@@ -12,7 +12,7 @@
 #
 # Created on Sep 8, 2011 by: rch
 
-from etsproxy.traits.api import HasTraits, Array, Property, Float, \
+from enthought.traits.api import HasTraits, Array, Property, Float, \
     cached_property
 import math
 import numpy as np # import numpy package

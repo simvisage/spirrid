@@ -12,16 +12,69 @@
 #
 # Created on Sep 8, 2011 by: rch
 
-from spirrid import SPIRRID, RV, Heaviside
-from spirrid.util.spirrid_lab import SPIRRIDLAB
+from spirrid import SPIRRID, RV, Heaviside, IRF, RF
+from spirrid.extras import SPIRRIDLAB
 import math
 import numpy as np
 from etsproxy.traits.api import Float, Str, implements, Range
 from math import pi, e
-from numpy import  cos, sqrt, exp
-from spirrid import IRF, RF
 
 class ConstantFrictionFiniteFiber(RF):
+    ur'''
+Fiber with constant friction
+============================
+
+Function describing the pullout of a fiber decomposed into the stage of 
+debonding and pullout as:
+
+..    math:: 
+    P(w; f_\mathrm{u}, q_\mathrm{f}, L, A, E, z, \varphi, f) = P_\mathrm{deb} + P_\mathrm{pull}\\
+
+During the debonding process, the force is obtained as 
+
+..    math::
+    P_\mathrm{deb, full} = \sqrt{2EAq_\mathrm{f}w} e^{f\varphi }
+
+Once the debonding reaches the end of the fiber, the pullout force is calculated as
+
+..    math::
+    P_\mathrm{pull, full} = \left[ \ell_\mathrm{e}q_\mathrm{f} - \frac{\ell _\mathrm{e}q_\mathrm{f}}{\ell _\mathrm{e} - w_\mathrm{deb}} \left( w - w_\mathrm{deb} \right) \right] e^{f\varphi }
+
+..    math::
+    w_\mathrm{deb} = \frac{\ell_\mathrm{e}^2 q_\mathrm{f}}{2 E A}
+
+The resulting equation defines the ranges for debbonding and pullout
+
+..    math::
+    P_\mathrm{full} = P_\mathrm{deb, full} \cdot
+    H\left( w_\mathrm{deb} - w \right) \cdot H\left( w \right)\\
+    + P_\mathrm{pull, full} \cdot H\left( w - w_\mathrm{deb} \right)
+
+and includes the breaking strain
+
+..    math::
+    P = P_\mathrm{full} \cdot H\left( f_\mathrm{u}A - P_\mathrm{full} \right)
+
+The effective fiber length is given as
+
+..    math::
+    \ell _\mathrm{e} = \frac{L}{2} - \frac{z}{\cos \left( \varphi  \right)}
+
+where 
+ * :math:`w=` crack width, 
+ * :math:`L=` fiber length,
+ * :math:`\ell_\mathrm{e}=` embedded length, 
+ * :math:`\varphi=` orientation angle of the fiber, 
+ * :math:`E=` Young's modulus, 
+ * :math:`A=` cross-sectional area of fiber, 
+ * :math:`z=` distance of fibercentroid from crack plane, 
+ * :math:`f=` snubbing coefficient,
+ * :math:`w_\mathrm{deb}=` crack width in debonding stage, 
+ * :math:`q_\mathrm{f}=` frictional stress, 
+ * :math:`f_\mathrm{u}=` strength, 
+ * :math:`P_\mathrm{deb}=` force in debonding stage, and 
+ * :math:`P_\mathrm{pull}=` force in pullout stage.
+ '''
 
     implements(IRF)
 
@@ -53,7 +106,7 @@ class ConstantFrictionFiniteFiber(RF):
 
     w = Float(ctrl_range = (0, 0.016, 20), auto_set = False, enter_set = True)
 
-    C_code = '''
+    c_code = '''
             double w = eps;
             double Le = L / 2. - z / cos( phi );
             double w_deb = exp( f * phi ) * qf * pow(Le,2.0) / E_mod / A;
@@ -85,9 +138,9 @@ class ConstantFrictionFiniteFiber(RF):
         '''Intial vectorized implementation - without regarding
         the lexical structure of the expression.
         '''
-        Le = L / 2. - z / cos(phi)
+        Le = L / 2. - z / np.cos(phi)
         w_deb = e ** (f * phi) * qf * Le ** 2.0 / E_mod / A
-        P_deb_full = sqrt(2. * w / 2. * E_mod * A * qf) * e ** (f * phi)
+        P_deb_full = np.sqrt(2. * w / 2. * E_mod * A * qf) * e ** (f * phi)
         P_deb = P_deb_full * Heaviside(fu * A - P_deb_full) * Heaviside(w_deb - w) * Heaviside(Le)
         P_pull_x = (Le * qf - Le * qf / (Le - w_deb) * (w - w_deb)) * e ** (f * phi)
         P_pull = P_pull_x * Heaviside(P_pull_x) * Heaviside(w - w_deb)
@@ -100,14 +153,14 @@ class ConstantFrictionFiniteFiber(RF):
         and doing inplace operation where possible.
         However, this does not seem to have a significant effect.
         '''
-        t4 = sqrt(w * E_mod * A * qf)
+        t4 = np.sqrt(w * E_mod * A * qf)
         t5 = f * phi
-        t6 = exp(t5)
+        t6 = np.exp(t5)
         t7 = t4 * t6
         t11 = Heaviside(fu * A - 0.1000000000e1 * t7)
-        t12 = exp(t5);
+        t12 = np.exp(t5);
         t14 = 0.5000000000e0 * L
-        t15 = cos(phi)
+        t15 = np.cos(phi)
         t17 = z / t15
         t18 = t14 - t17
         t19 = pow(t18, 0.20e1)
@@ -162,11 +215,12 @@ def create_demo_object():
     #===========================================================================
     slab = SPIRRIDLAB(s = s, save_output = False, show_output = True, dpi = 300,
                       qname = 'fiber_po_8p',
-                      plotmode = 'subplots',
+                      plot_mode = 'subplots',
                       n_int_range = n_int_range,
                       extra_compiler_args = True,
                       le_sampling_lst = ['LHS', 'PGrid'],
-                      le_n_int_lst = [10, 10]
+                      le_n_int_lst = [10, 10],
+                      plot_sampling_idx = [0, 3, ]
                       )
 
     return slab
@@ -193,6 +247,5 @@ if __name__ == '__main__':
     # Compare the code efficiency
     #===========================================================================
 
-#    s.sampling_type = 'TGrid'
-#    slab.codegen_efficiency()
+    slab.codegen_language_efficiency()
 

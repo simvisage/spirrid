@@ -20,13 +20,13 @@ from numpy import sqrt, minimum, maximum
 from spirrid import SPIRRID, RV, make_ogrid, Heaviside
 from spirrid.i_rf import IRF
 from spirrid.rf import RF
-import enthought.mayavi.mlab as m
+import etsproxy.mayavi.mlab as m
 import numpy as np
 import os.path
 import string
 import tempfile
 
-def main():
+if __name__ == '__main__':
 
     class CBClampedFiber(RF):
         '''
@@ -39,36 +39,36 @@ def main():
         title = Str('crack bridge - clamped fiber with constant friction')
         image = Image('pics/cb_short_fiber.jpg')
 
-        xi = Float(0.0179, auto_set = False, enter_set = True, input = True,
-                    distr = ['weibull_min', 'uniform'])
+        xi = Float(0.0179, auto_set=False, enter_set=True, input=True,
+                    distr=['weibull_min', 'uniform'])
 
-        tau = Float(2.5, auto_set = False, enter_set = True, input = True,
-                    distr = ['uniform', 'norm'])
+        tau = Float(2.5, auto_set=False, enter_set=True, input=True,
+                    distr=['uniform', 'norm'])
 
-        l = Float(0.0, auto_set = False, enter_set = True, input = True,
-                  distr = ['uniform'], desc = 'free length')
+        l = Float(0.0, auto_set=False, enter_set=True, input=True,
+                  distr=['uniform'], desc='free length')
 
-        D_f = Float(26e-3, auto_set = False, input = True,
-                  enter_set = True, distr = ['uniform', 'weibull_min'])
+        D_f = Float(26e-3, auto_set=False, input=True,
+                  enter_set=True, distr=['uniform', 'weibull_min'])
 
-        E_f = Float(72.0e3, auto_set = False, enter_set = True, input = True,
-                      distr = ['uniform'])
+        E_f = Float(72.0e3, auto_set=False, enter_set=True, input=True,
+                      distr=['uniform'])
 
-        theta = Float(0.01, auto_set = False, enter_set = True, input = True,
-                      distr = ['uniform', 'norm'], desc = 'slack')
+        theta = Float(0.01, auto_set=False, enter_set=True, input=True,
+                      distr=['uniform', 'norm'], desc='slack')
 
-        phi = Float(1., auto_set = False, enter_set = True, input = True,
-                      distr = ['uniform', 'norm'], desc = 'bond quality')
+        phi = Float(1., auto_set=False, enter_set=True, input=True,
+                      distr=['uniform', 'norm'], desc='bond quality')
 
-        Ll = Float(1., auto_set = False, enter_set = True, input = True,
-                  distr = ['uniform'], desc = 'embedded length - left')
+        Ll = Float(1., auto_set=False, enter_set=True, input=True,
+                  distr=['uniform'], desc='embedded length - left')
 
-        Lr = Float(.5, auto_set = False, enter_set = True, input = True,
-                  distr = ['uniform'], desc = 'embedded length - right')
+        Lr = Float(.5, auto_set=False, enter_set=True, input=True,
+                  distr=['uniform'], desc='embedded length - right')
 
-        w = Float(auto_set = False, enter_set = True, input = True,
-                   desc = 'crack width',
-                   ctrl_range = (0, 0.01, 100))
+        w = Float(auto_set=False, enter_set=True, input=True,
+                   desc='crack width',
+                   ctrl_range=(0, 0.01, 100))
 
         x_label = Str('crack opening [mm]')
         y_label = Str('force [N]')
@@ -108,7 +108,7 @@ def main():
             # force at w0
             Q0 = Lmin * T
             l1 = 2 * Lmin + l
-            q1 = (-(l1) * T + sqrt((l1 * T) ** 2 +
+            q1 = (-(l1) * T + sqrt((l1 * T) ** 2 + 
                 2 * (w - w0) * Heaviside(w - w0) * E_f * A * T)) + Q0
 
             # displacement at debonding finished at both sides
@@ -137,8 +137,8 @@ def main():
         frictional interface to the matrix; clamped fiber end
         '''
 
-        x = Float(0.0, auto_set = False, enter_set = True, input = True,
-                  distr = ['uniform'], desc = 'distance from crack')
+        x = Float(0.0, auto_set=False, enter_set=True, input=True,
+                  distr=['uniform'], desc='distance from crack')
 
         x_label = Str('position [mm]')
         y_label = Str('force [N]')
@@ -158,23 +158,23 @@ def main():
 
     q = CBClampedFiberSP()
 
-    s = SPIRRID(q = q,
-                sampling_type = 'LHS',
-                evars = dict(w = np.linspace(0.0, 0.4, 50),
-                             x = np.linspace(-20.1, 20.5, 100),
-                             Lr = np.linspace(0.1, 20.0, 50)
+    s = SPIRRID(q=q,
+                sampling_type='LHS',
+                evars=dict(w=np.linspace(0.0, 0.4, 50),
+                             x=np.linspace(-20.1, 20.5, 100),
+                             Lr=np.linspace(0.1, 20.0, 50)
                              ),
-                tvars = dict(tau = RV('uniform', 0.7, 1.0),
-                             l = RV('uniform', 5.0, 10.0),
-                             D_f = 26e-3,
-                             E_f = 72e3,
-                             theta = 0.0,
-                             xi = RV('weibull_min', scale = 0.017, shape = 8, n_int = 10),
-                             phi = 1.0,
-                             Ll = 50.0,
+                tvars=dict(tau=RV('uniform', 0.7, 1.0),
+                             l=RV('uniform', 5.0, 10.0),
+                             D_f=26e-3,
+                             E_f=72e3,
+                             theta=0.0,
+                             xi=RV('weibull_min', scale=0.017, shape=8, n_int=10),
+                             phi=1.0,
+                             Ll=50.0,
 #                              Lr = 1.0
                              ),
-                n_int = 5)
+                n_int=5)
 
     e_arr = make_ogrid(s.evar_lst)
     n_e_arr = [ e / np.max(np.fabs(e)) for e in e_arr ]
@@ -190,18 +190,18 @@ def main():
     n_img = n_mu_q_arr.shape[0]
     fnames = [os.path.join(tdir, 'x%02d.jpg' % i) for i in range(n_img) ]
 
-    f = m.figure(1, size = (1000, 500), fgcolor = (0, 0, 0),
-                 bgcolor = (1., 1., 1.))
+    f = m.figure(1, size=(1000, 500), fgcolor=(0, 0, 0),
+                 bgcolor=(1., 1., 1.))
 
     s = m.surf(n_e_arr[1], n_e_arr[2], n_mu_q_arr[0, :, :])
     ms = s.mlab_source
 
-    m.axes(s, color = (.7, .7, .7),
-           extent = (-1, 1, 0, 1, 0, 1),
-           ranges = (-0.21, 0.21, 0.1, 20, 0, max_mu_q),
-           xlabel = 'x[mm]', ylabel = 'Lr[mm]',
-           zlabel = 'f[N]',)
-    m.view(-60.0, 70.0, focalpoint = [0., 0.45, 0.45])
+    m.axes(s, color=(.7, .7, .7),
+           extent=(-1, 1, 0, 1, 0, 1),
+           ranges=(-0.21, 0.21, 0.1, 20, 0, max_mu_q),
+           xlabel='x[mm]', ylabel='Lr[mm]',
+           zlabel='f[N]',)
+    m.view(-60.0, 70.0, focalpoint=[0., 0.45, 0.45])
 
     m.savefig(fnames[0])
 
@@ -219,6 +219,3 @@ def main():
         raise NotImplementedError, 'film production available only on linux'
 
     m.show()
-
-if __name__ == '__main__':
-    main()

@@ -15,7 +15,7 @@
 from etsproxy.traits.api import implements, Str
 from scipy.special import erf
 from spirrid import SPIRRID, Heaviside, RV, RF, IRF
-from spirrid.util.spirrid_lab import SPIRRIDLAB
+from spirrid.extras import SPIRRIDLAB
 import math
 import numpy as np
 
@@ -23,7 +23,21 @@ import numpy as np
 # Response function
 #===========================================================================
 class fiber_tt_2p(RF):
-    '''Linear elastic, brittle filament.
+    ur'''
+Response Function with two-parameters.
+======================================
+    
+The function describes a linear dependency with a coefficient :math:`\lambda` 
+up to the threshold :math:`\xi` and zero value beyond the threshold: 
+    
+..    math::
+       q( \varepsilon; \theta, \lambda ) = \lambda \varepsilon H( \xi - \varepsilon )
+
+where the variables :math:`\lambda=` stiffness parameter and :math:`\xi=` 
+breaking strain are considered random and normally distributed. The function 
+:math:`H(\eta)` represents the Heaviside function with values 0 for 
+:math:`\eta < 0` and 1 for :math:`\eta > 0`.
+   
     '''
     implements(IRF)
 
@@ -59,7 +73,7 @@ def create_demo_object():
     e_arr = np.linspace(0, 2.0, 80)
 
     # n_int range for sampling efficiency test
-    powers = np.linspace(1, math.log(1000, 10), 100)
+    powers = np.linspace(1, math.log(500, 10), 50)
     n_int_range = np.array(np.power(10, powers), dtype = int)
 
     #===========================================================================
@@ -83,9 +97,10 @@ def create_demo_object():
     #===========================================================================
     # Lab
     #===========================================================================
-    slab = SPIRRIDLAB(s = s, save_output = False, show_output = True, dpi = 300,
+    slab = SPIRRIDLAB(s = s, save_output = False, show_output = True,
+                      dpi = 300,
                       exact_arr = mu_q_ex(e_arr, m_xi, std_xi, m_la),
-                      plotmode = 'subplots',
+                      plot_mode = 'subplots',
                       n_int_range = n_int_range,
                       extra_compiler_args = True,
                       le_sampling_lst = ['LHS', 'PGrid'],
@@ -93,11 +108,13 @@ def create_demo_object():
 
     return slab
 
+import types
+
 if __name__ == '__main__':
 
     slab = create_demo_object()
-    slab.configure_traits()
 
+    slab.configure_traits()
 
     #===============================================================================
     # RUN SPIRRID_LAB TESTS
