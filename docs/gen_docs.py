@@ -31,7 +31,7 @@ HOME_DIR = expanduser("~")
 # build directory
 BUILD_DIR = os.path.join(HOME_DIR, '.spirrid', 'docs')
 # output directory for the documentation
-DOCS_DIR = os.path.join('..', 'docs',)
+DOCS_DIR = os.path.join(HOME_DIR, '.spirrid')
 # output directory for the example documentation
 EX_OUTPUT_DIR = os.path.join(DOCS_DIR, 'examples')
 
