@@ -4,4 +4,9 @@ Created on Mar 7, 2012
 @author: rch
 '''
 
-from enthought.traits.api import *
+# ETS 3
+try:
+    from enthought.traits.api import *
+# ETS 4
+except ImportError:
+    from traits.api import *
