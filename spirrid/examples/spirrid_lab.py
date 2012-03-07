@@ -12,9 +12,9 @@
 #
 # Created on Sep 8, 2011 by: rch
 
-from enthought.traits.api import HasTraits, Array, Property, DelegatesTo, \
+from etsproxy.traits.api import HasTraits, Array, Property, DelegatesTo, \
     Instance, Int, Str, List, on_trait_change, Button, Enum, Bool
-from enthought.traits.ui.api import View, Item
+from etsproxy.traits.ui.api import View, Item
 from error_eval import ErrorEval
 from itertools import combinations, chain
 from matplotlib import rc

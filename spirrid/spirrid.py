@@ -14,7 +14,7 @@
 
 from code_gen_factory import CodeGenNumpyFactory, CodeGenCFactory, \
     CodeGenCythonFactory
-from enthought.traits.api import Property, cached_property, Callable, Trait, \
+from etsproxy.traits.api import Property, cached_property, Callable, Trait, \
     on_trait_change, Event
 from sampling import FunctionRandomization, TGrid, PGrid, MonteCarlo, \
     LatinHypercubeSampling, make_ogrid

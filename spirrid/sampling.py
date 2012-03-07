@@ -12,7 +12,7 @@
 #
 # Created on Sep 22, 2011 by: rch
 
-from enthought.traits.api import HasStrictTraits, Array, Property, Float, \
+from etsproxy.traits.api import HasStrictTraits, Array, Property, Float, \
     cached_property, Callable, Str, Int, WeakRef, Dict, Event
 from rv import RV
 import inspect

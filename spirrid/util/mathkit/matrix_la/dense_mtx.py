@@ -1,15 +1,15 @@
 
-from enthought.traits.api import HasTraits, Array, Property, cached_property, Instance, \
+from etsproxy.traits.api import HasTraits, Array, Property, cached_property, Instance, \
     Delegate, Any
 from numpy import allclose, arange, eye, linalg, ones, ix_, array, zeros, \
                 hstack, meshgrid, vstack, dot, newaxis, c_, r_, copy, where, \
                 ones
 #from sys_mtx_assembly import SysMtxAssembly
 
-from enthought.traits.ui.api \
+from etsproxy.traits.ui.api \
     import View, Item, TabularEditor
 
-from enthought.traits.ui.tabular_adapter \
+from etsproxy.traits.ui.tabular_adapter \
     import TabularAdapter
 
 class ArrayAdapter ( TabularAdapter ):

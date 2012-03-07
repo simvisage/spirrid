@@ -1,5 +1,5 @@
 import numpy as np
-from enthought.traits.api import Array, Float, Event, HasTraits, \
+from etsproxy.traits.api import Array, Float, Event, HasTraits, \
                                  ToolbarButton, on_trait_change, \
                                  Property, cached_property, Enum
 

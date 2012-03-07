@@ -13,30 +13,30 @@
 #-------------------------------------------------------------------------------
 
 # Enthought library imports
-from enthought.traits.api import \
+from etsproxy.traits.api import \
     Enum, false, Str, Range, Tuple, Bool, Trait, Int, Any, Property, Instance, HasPrivateTraits
-from enthought.traits.ui.api import  Item, UI
-from enthought.traits.ui.menu import Action, ToolBar, Menu
-from enthought.traits.ui.wx.editor import Editor
-from enthought.traits.ui.basic_editor_factory import BasicEditorFactory
+from etsproxy.traits.ui.api import  Item, UI
+from etsproxy.traits.ui.menu import Action, ToolBar, Menu
+from etsproxy.traits.ui.wx.editor import Editor
+from etsproxy.traits.ui.basic_editor_factory import BasicEditorFactory
 
-from enthought.enable.api import black_color_trait, LineStyle, ColorTrait, white_color_trait, Window, Component
-from enthought.kiva.traits.kiva_font_trait import KivaFont
-from enthought.kiva.backend_image import GraphicsContext
+from etsproxy.enable.api import black_color_trait, LineStyle, ColorTrait, white_color_trait, Window, Component
+from etsproxy.kiva.traits.kiva_font_trait import KivaFont
+from etsproxy.kiva.backend_image import GraphicsContext
 
-from enthought.chaco.example_support import COLOR_PALETTE
-from enthought.chaco.api import \
+from etsproxy.chaco.example_support import COLOR_PALETTE
+from etsproxy.chaco.api import \
     Plot, ArrayPlotData, create_line_plot, add_default_axes, PlotLabel, VPlotContainer,\
     add_default_grids, OverlayPlotContainer, PlotAxis, Legend, ArrayPlotData, ArrayDataSource, \
     create_scatter_plot, Legend, PlotComponent, PlotGraphicsContext, DataRange1D, LinePlot, LinearMapper, \
     Plot, ArrayPlotData
-from enthought.chaco.tools.api import \
+from etsproxy.chaco.tools.api import \
                                 PanTool, RectZoomTool, SimpleZoom, \
                                 LegendTool, TraitsTool, DragZoom, \
                                 BroadcasterTool, ZoomTool, LegendTool
 
-from enthought.pyface.api import FileDialog, OK, ImageResource
-from enthought.pyface.image_resource import ImageResource
+from etsproxy.pyface.api import FileDialog, OK, ImageResource
+from etsproxy.pyface.image_resource import ImageResource
 
 from mfn_plot_adapter import MFnPlotAdapter
 

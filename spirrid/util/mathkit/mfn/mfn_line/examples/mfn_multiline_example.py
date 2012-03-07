@@ -1,14 +1,14 @@
 
-from enthought.traits.api import \
+from etsproxy.traits.api import \
     Array, Bool, Callable, Enum, Float, HasTraits, \
     Instance, Int, Trait, Str, Enum, Callable, List, TraitDict, Any, \
     Dict, Property, cached_property, WeakRef, Delegate, \
     ToolbarButton, on_trait_change, Code, Expression, Button
     
-from enthought.traits.ui.api import \
+from etsproxy.traits.ui.api import \
     Item, View, HGroup, ListEditor, VGroup, VSplit, Group, HSplit
 
-from enthought.traits.ui.menu import \
+from etsproxy.traits.ui.menu import \
     NoButtons, OKButton, CancelButton, Action, CloseAction, Menu, \
     MenuBar, Separator
                                      

@@ -1,3 +1,6 @@
+
+from etsproxy.traits.api import HasTraits
+
 from scipy.stats.distributions import norm # import normal distribution
 import numpy as np # import numpy package
 import pylab as p # import matplotlib with matlab interface

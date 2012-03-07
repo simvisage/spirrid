@@ -25,10 +25,10 @@ from matplotlib.figure import Figure
 import wx
 from numpy import *
 
-from enthought.traits.ui.api import View, Item
-from enthought.traits.api import Any, Instance, on_trait_change
-from enthought.traits.ui.wx.editor import Editor
-from enthought.traits.ui.basic_editor_factory import BasicEditorFactory
+from etsproxy.traits.ui.api import View, Item
+from etsproxy.traits.api import Any, Instance, on_trait_change
+from etsproxy.traits.ui.wx.editor import Editor
+from etsproxy.traits.ui.basic_editor_factory import BasicEditorFactory
 from mfn_plot_adapter import MFnMultiPlotAdapter
 from matplotlib.ticker import MaxNLocator
 

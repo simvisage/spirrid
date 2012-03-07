@@ -17,8 +17,8 @@ import os
 cdir = os.path.abspath('../../')
 sys.path.append(cdir)
 
-from enthought.traits.api import HasTraits, Instance, Button
-from enthought.traits.ui.api import View, Item
+from etsproxy.traits.api import HasTraits, Instance, Button
+from etsproxy.traits.ui.api import View, Item
 
 from spirrid.examples import SPIRRIDLAB
 

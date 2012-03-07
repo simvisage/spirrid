@@ -12,7 +12,7 @@
 #
 # Created on Jun 2, 2010 by: rch
 
-from enthought.traits.api import Float, Str, implements
+from etsproxy.traits.api import Float, Str, implements
 from i_rf import IRF
 from matplotlib import pyplot as plt
 from numpy import sign, linspace

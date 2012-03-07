@@ -15,7 +15,7 @@
 from code_gen_compiled import CodeGenCompiledTGrid, CodeGenCompiledPGrid, \
     CodeGenCompiledIrregular
 from code_gen_numpy import CodeGenNumpy
-from enthought.traits.api import HasStrictTraits, Dict
+from etsproxy.traits.api import HasStrictTraits, Dict
 
 #===============================================================================
 # Factory classes to capture the dependency of C-code on the sampling type

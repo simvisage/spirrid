@@ -6,9 +6,9 @@
     cdf). The pdf, cdf, mean and stdev are plotted in the module pdistrib.py'''
 
 from decimal import Decimal
-from enthought.traits.api import HasTraits, Float, Property, cached_property, \
+from etsproxy.traits.api import HasTraits, Float, Property, cached_property, \
     Event, Array, Instance, Bool
-from enthought.traits.ui.api import Item, View, Group, VGroup, Label
+from etsproxy.traits.ui.api import Item, View, Group, VGroup, Label
 from numpy import array, arange, hstack, zeros, infty
 from scipy.optimize import fsolve
 from scipy.stats.distributions import rv_continuous

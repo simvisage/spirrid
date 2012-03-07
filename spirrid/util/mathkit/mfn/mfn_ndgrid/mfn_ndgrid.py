@@ -1,10 +1,10 @@
 
-from enthought.traits.api import \
+from etsproxy.traits.api import \
     HasTraits, Float, Int, Array, Property, cached_property, \
     Tuple, List, Str, on_trait_change, Button, Delegate, \
     Instance, Trait
 
-from enthought.traits.ui.api import \
+from etsproxy.traits.ui.api import \
     View, Item, Group, HGroup, VGroup, VSplit, HSplit, CheckListEditor, TextEditor
         
 from numpy import zeros, mgrid, c_, indices, transpose, array, arange, \
@@ -12,11 +12,11 @@ from numpy import zeros, mgrid, c_, indices, transpose, array, arange, \
 
 # tvtk related imports
 #
-from enthought.traits.ui.api import View, Item, HSplit, VSplit, InstanceEditor
-from enthought.tvtk.api import tvtk
+from etsproxy.traits.ui.api import View, Item, HSplit, VSplit, InstanceEditor
+from etsproxy.tvtk.api import tvtk
 
-from enthought.tvtk.pyface.scene_editor import SceneEditor
-from enthought.mayavi.core.source import Source
+from etsproxy.tvtk.pyface.scene_editor import SceneEditor
+from etsproxy.mayavi.core.source import Source
 
 from mathkit.geo.geo_ndgrid import GeoNDGrid, GridPoint
 
@@ -128,8 +128,8 @@ class MFnNDGrid( GeoNDGrid ):
     
 if __name__ == '__main__':
         
-    from enthought.mayavi.modules.api import Outline, Surface
-    from enthought.mayavi.scripts import mayavi2
+    from etsproxy.mayavi.modules.api import Outline, Surface
+    from etsproxy.mayavi.scripts import mayavi2
     mayavi2.standalone(globals())
    
     # Tests to write - set a quadrangle and values in the corner nodes

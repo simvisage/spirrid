@@ -1,5 +1,5 @@
 
-from enthought.traits.api import \
+from etsproxy.traits.api import \
     HasTraits, Int, Array, Property, cached_property, List, Trait, Dict, \
     Any
 from numpy import array, where, append

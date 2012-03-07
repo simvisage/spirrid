@@ -13,7 +13,7 @@
 # Created on Nov 8, 2011 by: rch
 
 from code_gen import CodeGen
-from enthought.traits.api import HasStrictTraits, Property, cached_property, \
+from etsproxy.traits.api import HasStrictTraits, Property, cached_property, \
     List, Str, Int, Trait, Bool, Interface, implements
 from rv import RV
 import numpy as np # import numpy package

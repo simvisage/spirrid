@@ -1,20 +1,20 @@
 
 from numpy import array, linspace, pi, arange, sin, cos, ones, frompyfunc, \
                   where, hstack
-from enthought.chaco.api import create_polar_plot
+from etsproxy.chaco.api import create_polar_plot
 
 
 # Enthought library imports
-from enthought.traits.api import \
+from etsproxy.traits.api import \
     Array, Enum, Float, HasTraits, Int, \
     Property, cached_property, Range, Str, TraitError
-from enthought.traits.ui.api import \
+from etsproxy.traits.ui.api import \
     Item, View, Handler, Group, VGroup, HGroup, Spring
-from enthought.traits.ui.menu import \
+from etsproxy.traits.ui.menu import \
     OKButton, CancelButton, Action, Menu, MenuBar
 
-from enthought.chaco.api import PlotLabel
-from enthought.chaco.tools.api import SimpleZoom
+from etsproxy.chaco.api import PlotLabel
+from etsproxy.chaco.tools.api import SimpleZoom
 from mfn_polar_editor import MFnPolarPlotItem
 
 

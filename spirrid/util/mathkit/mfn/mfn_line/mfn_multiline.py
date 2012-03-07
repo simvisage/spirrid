@@ -1,11 +1,11 @@
 from numpy import array,linspace, trapz, arange
-from enthought.traits.api import Array, Bool, Callable, Enum, Float, Event, HasTraits, \
+from etsproxy.traits.api import Array, Bool, Callable, Enum, Float, Event, HasTraits, \
                                  Instance, Int, Trait, ToolbarButton, Button, on_trait_change, \
                                  Property, cached_property, List
 
-from enthought.traits.ui.api import Item, View, Group, Handler, HGroup
+from etsproxy.traits.ui.api import Item, View, Group, Handler, HGroup
 
-from enthought.traits.ui.menu import NoButtons, OKButton, CancelButton, Action, CloseAction, Menu, \
+from etsproxy.traits.ui.menu import NoButtons, OKButton, CancelButton, Action, CloseAction, Menu, \
                                      MenuBar, Separator
 
 from mfn_line import MFnLineArray

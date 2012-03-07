@@ -12,7 +12,8 @@
 #
 # Created on Sep 8, 2011 by: rch
 
-from enthought.traits.api import HasStrictTraits, WeakRef, Bool, on_trait_change, \
+from etsproxy.traits.api import \
+    HasStrictTraits, WeakRef, Bool, on_trait_change, \
     Event
 from rv import RV
 import numpy as np # import numpy package

@@ -16,7 +16,7 @@ from spirrid import SPIRRID, RV, Heaviside
 from spirrid.examples import SPIRRIDLAB
 import math
 import numpy as np
-from enthought.traits.api import Float, Str, implements, Range
+from etsproxy.traits.api import Float, Str, implements, Range
 from math import pi, e
 from numpy import  cos, sqrt, exp
 from spirrid import IRF, RF

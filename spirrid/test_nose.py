@@ -24,7 +24,7 @@
   @todo: add C-code tests.
 '''
 
-from enthought.traits.api import implements, Str
+from etsproxy.traits.api import implements, Str
 from spirrid import SPIRRIDLAB, Heaviside, SPIRRID, RV, RF, IRF
 import nose
 import numpy as np

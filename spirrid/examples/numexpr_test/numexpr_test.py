@@ -12,7 +12,7 @@
 #
 # Created on Sep 8, 2011 by: kelidas
 
-from enthought.traits.api import implements, Str
+from etsproxy.traits.api import implements, Str
 from spirrid import SPIRRID, RV, RF, IRF, Heaviside
 import numexpr as ne
 import numpy as np

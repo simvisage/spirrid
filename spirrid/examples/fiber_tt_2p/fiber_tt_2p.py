@@ -12,7 +12,7 @@
 #
 # Created on Sep 8, 2011 by: rch
 
-from enthought.traits.api import implements, Str
+from etsproxy.traits.api import implements, Str
 from scipy.special import erf
 from spirrid import SPIRRID, Heaviside, RV, RF, IRF
 from spirrid.examples import SPIRRIDLAB

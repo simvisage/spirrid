@@ -13,31 +13,31 @@
 #-------------------------------------------------------------------------------
 
 # Enthought library imports
-from enthought.traits.api import \
+from etsproxy.traits.api import \
     Enum, false, Str, Range, Tuple, \
     Bool, Trait, Int, Any, Property, Instance, HasPrivateTraits, File
 
-from enthought.traits.ui.api import \
+from etsproxy.traits.ui.api import \
     Item, UI
-from enthought.traits.ui.menu import \
+from etsproxy.traits.ui.menu import \
     Action, ToolBar, Menu
 
-from enthought.enable.api import \
+from etsproxy.enable.api import \
     black_color_trait, LineStyle, ColorTrait, white_color_trait
-from enthought.kiva.traits.kiva_font_trait import \
+from etsproxy.kiva.traits.kiva_font_trait import \
     KivaFont
 
-from enthought.traits.ui.wx.editor import \
+from etsproxy.traits.ui.wx.editor import \
     Editor
-#from enthought.traits.ui.editor_factory import \
+#from etsproxy.traits.ui.editor_factory import \
 #    EditorFactory
-from enthought.traits.ui.basic_editor_factory import \
+from etsproxy.traits.ui.basic_editor_factory import \
     BasicEditorFactory
 
-from enthought.enable.api import \
+from etsproxy.enable.api import \
     Window, Component
     
-from enthought.chaco.api import \
+from etsproxy.chaco.api import \
     Plot, ArrayPlotData, create_line_plot, add_default_axes, \
     add_default_grids, OverlayPlotContainer, \
     PlotLabel, VPlotContainer, \
@@ -46,7 +46,7 @@ from enthought.chaco.api import \
     PlotAxis, ImageData, \
     DataRange1D, LinePlot, LinearMapper
 
-from enthought.chaco.tools.api import \
+from etsproxy.chaco.tools.api import \
     PanTool, RectZoomTool, SimpleZoom, \
     LegendTool, TraitsTool, DragZoom, \
     BroadcasterTool, ZoomTool
@@ -55,13 +55,13 @@ from mfn_plot_adapter import \
     MFnPlotAdapter
 
 import wx, os, sys
-from enthought.util.resource import find_resource
+from etsproxy.util.resource import find_resource
 
-from enthought.pyface.api import FileDialog, OK
+from etsproxy.pyface.api import FileDialog, OK
 
-from enthought.pyface.image_resource \
+from etsproxy.pyface.image_resource \
     import ImageResource
-from enthought.pyface.api \
+from etsproxy.pyface.api \
     import ImageResource
 
 import csv

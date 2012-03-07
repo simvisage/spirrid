@@ -12,9 +12,9 @@
 #
 # Created on Jun 2, 2010 by: rch
 
-from enthought.traits.api import HasTraits, List, Str, Property, Event, \
+from etsproxy.traits.api import HasTraits, List, Str, Property, Event, \
     on_trait_change, cached_property, Tuple
-from enthought.traits.ui.api import View, Item, VGroup
+from etsproxy.traits.ui.api import View, Item, VGroup
 from inspect import getargspec
 import numpy as np
 import string

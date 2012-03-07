@@ -12,7 +12,7 @@
 #
 #-------------------------------------------------------------------------------
 
-from enthought.traits.api import \
+from etsproxy.traits.api import \
     HasTraits, HasPrivateTraits, Color, Str, Int, Float, Enum, List, \
     Dict, Bool, Instance, Any, Font, Event, Property, Interface, \
     on_trait_change, cached_property, implements, Color, Tuple

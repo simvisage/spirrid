@@ -12,7 +12,7 @@
 #
 # Created on Sep 8, 2011 by: rch
 
-from enthought.traits.api import HasTraits, Property, Float, cached_property, \
+from etsproxy.traits.api import HasTraits, Property, Float, cached_property, \
     Str, Int
 from pdistrib import PDistrib as PD
 

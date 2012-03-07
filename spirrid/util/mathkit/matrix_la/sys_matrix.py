@@ -1,6 +1,6 @@
 
 
-from enthought.traits.api import HasTraits, Array, Property, cached_property
+from etsproxy.traits.api import HasTraits, Array, Property, cached_property
 from numpy import allclose, arange, eye, linalg, ones, ix_, array, zeros, \
                 hstack,meshgrid, vstack, dot, newaxis, c_, r_, copy, where,\
                 ones

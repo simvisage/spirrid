@@ -1,10 +1,10 @@
 
-from enthought.traits.api import \
+from etsproxy.traits.api import \
     HasTraits, Float, Int, Array, Property, cached_property, \
     Tuple, List, Str, on_trait_change, Button, Delegate, \
     Instance, Trait
 
-from enthought.traits.ui.api import \
+from etsproxy.traits.ui.api import \
     View, Item, Group, HGroup, VGroup, VSplit, HSplit, CheckListEditor, TextEditor
         
 from math import floor
@@ -13,11 +13,11 @@ from numpy import zeros, mgrid, c_, indices, transpose, array, arange, \
 
 # tvtk related imports
 #
-from enthought.traits.ui.api import View, Item, HSplit, VSplit, InstanceEditor
-from enthought.tvtk.api import tvtk
+from etsproxy.traits.ui.api import View, Item, HSplit, VSplit, InstanceEditor
+from etsproxy.tvtk.api import tvtk
 
-from enthought.tvtk.pyface.scene_editor import SceneEditor
-from enthought.mayavi.core.source import Source
+from etsproxy.tvtk.pyface.scene_editor import SceneEditor
+from etsproxy.mayavi.core.source import Source
 
 from ibvpy.plugins.mayavi.pipelines import \
     MVPolyData, MVPointLabels
@@ -314,11 +314,11 @@ class GeoNDGrid(Source):
 
 if __name__ == '__main__':
 
-    from enthought.mayavi.scripts import mayavi2
+    from etsproxy.mayavi.scripts import mayavi2
     from ibvpy.plugins.mayavi_engine import set_engine
     @mayavi2.standalone
     def view():
-        from enthought.mayavi.modules.api import Outline, Surface
+        from etsproxy.mayavi.modules.api import Outline, Surface
         # 'mayavi' is always defined on the interpreter.
         set_engine( mayavi )
         mayavi.new_scene()

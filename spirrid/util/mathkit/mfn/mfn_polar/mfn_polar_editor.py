@@ -4,39 +4,39 @@ traits.ui.wx.plot_editor.
 """
 
 # Enthought library imports
-from enthought.enable.api import black_color_trait, LineStyle, ColorTrait, \
+from etsproxy.enable.api import black_color_trait, LineStyle, ColorTrait, \
                                  white_color_trait
-from enthought.enable.wx_backend.api import Window
+from etsproxy.enable.wx_backend.api import Window
 
-from enthought.traits.api import false, Str, Range, Float, Bool, Int, Any, \
+from etsproxy.traits.api import false, Str, Range, Float, Bool, Int, Any, \
                                  List, HasPrivateTraits, Instance
-from enthought.traits.ui.api import Item, UI
-from enthought.traits.ui.wx.editor import Editor
-from enthought.traits.ui.wx.editor_factory import EditorFactory
-from enthought.traits.ui.menu import Action, ToolBar, Menu
-#from enthought.traits.ui.wx.helper import traits_ui_panel
+from etsproxy.traits.ui.api import Item, UI
+from etsproxy.traits.ui.wx.editor import Editor
+from etsproxy.traits.ui.wx.editor_factory import EditorFactory
+from etsproxy.traits.ui.menu import Action, ToolBar, Menu
+#from etsproxy.traits.ui.wx.helper import traits_ui_panel
 
 # Local relative imports
-from enthought.chaco.plot_containers import OverlayPlotContainer
-from enthought.chaco.plot_label import PlotLabel
+from etsproxy.chaco.plot_containers import OverlayPlotContainer
+from etsproxy.chaco.plot_label import PlotLabel
 
 # Somewhat unorthodox...
-from enthought.chaco.tools.api import SimpleZoom, DataLabelTool
-from enthought.chaco.api import OverlayPlotContainer, PlotLabel, Label, \
+from etsproxy.chaco.tools.api import SimpleZoom, DataLabelTool
+from etsproxy.chaco.api import OverlayPlotContainer, PlotLabel, Label, \
                                 DataLabel, TextBoxOverlay
-from enthought.chaco.polar_line_renderer import PolarLineRenderer
-from enthought.chaco.abstract_plot_renderer import AbstractPlotRenderer
-from enthought.chaco.polar_mapper import PolarMapper
-from enthought.chaco.array_data_source import ArrayDataSource
-from enthought.chaco.data_range_1d import DataRange1D
+from etsproxy.chaco.polar_line_renderer import PolarLineRenderer
+from etsproxy.chaco.abstract_plot_renderer import AbstractPlotRenderer
+from etsproxy.chaco.polar_mapper import PolarMapper
+from etsproxy.chaco.array_data_source import ArrayDataSource
+from etsproxy.chaco.data_range_1d import DataRange1D
 
 from numpy import frompyfunc, add, ndarray, arange, array, compress, \
                   concatenate, cos, pi, sin, transpose, zeros 
 
 import wx
 
-from enthought.pyface.image_resource import ImageResource
-from enthought.pyface.api import FileDialog, OK
+from etsproxy.pyface.image_resource import ImageResource
+from etsproxy.pyface.api import FileDialog, OK
 
 
 
@@ -695,7 +695,7 @@ class MFnPolarPlotEditorToolbar ( HasPrivateTraits ):
         getattr( self.editor, action.action )()
 
 
-#from enthought.chaco.polar_line_renderer import PolarLineRenderer
+#from etsproxy.chaco.polar_line_renderer import PolarLineRenderer
 
 #class MFnPolarLineRenderer(PolarLineRenderer):
 class MFnPolarLineRenderer(AbstractPlotRenderer):

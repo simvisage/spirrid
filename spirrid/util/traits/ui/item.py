@@ -8,7 +8,7 @@ Created on Apr 23, 2010
 #  Imports:
 #-------------------------------------------------------------------------------
 
-from enthought.traits.ui.api import \
+from etsproxy.traits.ui.api import \
     Item
 
 import re
@@ -16,11 +16,11 @@ import re
 from string \
     import find, rfind
 
-from enthought.traits.api \
+from etsproxy.traits.api \
     import Instance, Str, Float, Range, Constant, Bool, Callable, Property, \
            Delegate, Undefined, cached_property
 
-from enthought.traits.trait_base \
+from etsproxy.traits.trait_base \
     import user_name_for
 
 

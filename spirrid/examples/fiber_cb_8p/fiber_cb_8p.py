@@ -13,8 +13,8 @@
 # Created on Sep 29, 2011 by: rch
 
 
-from enthought.traits.api import Float, Str, implements
-from enthought.traits.ui.ui_traits import Image
+from etsproxy.traits.api import Float, Str, implements
+from etsproxy.traits.ui.api import Image
 from math import pi
 from numpy import sqrt, minimum, maximum
 from spirrid import SPIRRID, RV, make_ogrid, Heaviside
