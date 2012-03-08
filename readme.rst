@@ -25,6 +25,9 @@ the instructions at
 
 http://www.enthought.com/products/epd.php
 
+*On windows, there is some Cython problem (pyximport). At this time, we don't 
+have any simple solution. Due to this fact, it was removed from benchmark tests.*
+
 UBUNTU
 ------
 
