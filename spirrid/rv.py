@@ -1,16 +1,18 @@
 #-------------------------------------------------------------------------------
 #
-# Copyright (c) 2009, IMB, RWTH Aachen.
+# Copyright (c) 2012
+# IMB, RWTH Aachen University,
+# ISM, Brno University of Technology
 # All rights reserved.
 #
 # This software is provided without warranty under the terms of the BSD
-# license included in simvisage/LICENSE.txt and may be redistributed only
-# under the conditions described in the aforementioned license.  The license
-# is also available online at http://www.simvisage.com/licenses/BSD.txt
+# license included in the Spirrid top directory "licence.txt" and may be
+# redistributed only under the conditions described in the aforementioned
+# license.
 #
 # Thanks for using Simvisage open source!
 #
-# Created on Sep 8, 2011 by: rch
+#-------------------------------------------------------------------------------
 
 from etsproxy.traits.api import HasTraits, Property, Float, cached_property, \
     Str, Int
