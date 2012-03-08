@@ -66,7 +66,7 @@ def run():
                 e_arr = e_arr,
                 n_int = 10,
                 tvars = dict(la = RV('norm', m_la, std_la),
-                             xi = m_xi#RV('norm', m_xi, std_xi)
+                             xi = m_xi, #RV('norm', m_xi, std_xi)
                              ),
                 sampling_type = 'TGrid',
                 codegen_type = 'numpy',
