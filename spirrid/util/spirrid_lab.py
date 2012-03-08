@@ -467,14 +467,14 @@ class SPIRRIDLAB(HasTraits):
                   'bx-',
                   '$\mathsf{Python} _{\\varepsilon} \{\, \mathsf{C}_{\\theta}  \{\, q(\\varepsilon,\\theta) \cdot g[\\theta_1] \cdot \ldots \cdot g[\\theta_m] \,\} \,\} $ - %4.2f sec',
                  )]
-        if hasattr(self.q, 'cython_code'):
-            run_lst += [
-                ('cython',
-                 {'cached_dG'         : False,
-                  'compiled_eps_loop' : False },
-                  'bx-',
-                  '$\mathsf{Python} _{\\varepsilon} \{\, \mathsf{Cython}_{\\theta}  \{\, q(\\varepsilon,\\theta) \cdot g[\\theta_1] \cdot \ldots \cdot g[\\theta_m] \,\} \,\} $ - %4.2f sec',
-                 )]
+#        if hasattr(self.q, 'cython_code'):
+#            run_lst += [
+#                ('cython',
+#                 {'cached_dG'         : False,
+#                  'compiled_eps_loop' : False },
+#                  'bx-',
+#                  '$\mathsf{Python} _{\\varepsilon} \{\, \mathsf{Cython}_{\\theta}  \{\, q(\\varepsilon,\\theta) \cdot g[\\theta_1] \cdot \ldots \cdot g[\\theta_m] \,\} \,\} $ - %4.2f sec',
+#                 )]
         if hasattr(self.q, '__call__'):
             run_lst += [
                 ('numpy',
@@ -493,8 +493,8 @@ class SPIRRIDLAB(HasTraits):
     def codegen_language_efficiency(self):
         # define a tables with the run configurations to start in a batch
 
-        shutil.rmtree(default_dir()) # os.system('rm -fr ~/.python27_compiled')
-        shutil.rmtree(os.path.join(HOME_DIR, '.pyxbld')) #os.system('rm -fr ~/.pyxbld')
+        shutil.rmtree(default_dir(), ignore_errors = True) # os.system('rm -fr ~/.python27_compiled')
+        shutil.rmtree(os.path.join(HOME_DIR, '.pyxbld'), ignore_errors = True) #os.system('rm -fr ~/.pyxbld')
 
         qname = self.get_qname()
 
@@ -517,7 +517,7 @@ class SPIRRIDLAB(HasTraits):
                 for idx, run in enumerate(self.run_lst_language_config):
                     code, run_options, plot_options, legend_string = run
 
-                    #shutil.rmtree(default_dir())
+                    #shutil.rmtree(default_dir(), ignore_errors = True)
 
                     s.codegen_type = code
                     s.codegen.set(**run_options)
@@ -531,7 +531,8 @@ class SPIRRIDLAB(HasTraits):
                         exec_times_run.append(s.exec_time)
                         print 'execution time', s.exec_time
 
-                    legend_lst.append(legend_string[:-12])
+                    #legend_lst.append(legend_string[:-12])
+                    legend_lst = [dict(c = 'weave', cython = 'cython', numpy = 'numpy')[x[0]] for x in self.run_lst_language_config]
                     if s.codegen_type == 'c':
                         # load weave.inline time from tmp file and fix values in time_arr
                         #@todo - does not work on windows
@@ -673,7 +674,7 @@ class SPIRRIDLAB(HasTraits):
         fig = p.figure(figsize = (15, 3))
         rc('font', size = fsize)
         rc('legend', fontsize = fsize - 2)
-        legend_lst = ['weave', 'cython', 'numpy']
+        #legend_lst = ['weave', 'cython', 'numpy']
 
         # times are stored in 3d array - dimensions are:
         n_sampling, n_lang, n_run, n_times = time_arr.shape
