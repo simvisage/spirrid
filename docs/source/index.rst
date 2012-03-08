@@ -13,7 +13,7 @@ Contents:
 
    front
    intro
-   _components/index
+   examples/index
    modules
 
 Indices and tables

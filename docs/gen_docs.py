@@ -24,16 +24,20 @@ from examples.fiber_tt_5p import fiber_tt_5p
 from examples.fiber_po_8p import fiber_po_8p
 
 import os.path
+import shutil
+import fnmatch
 
-from os.path import expanduser
+SRC_DIR = 'source'
 
-HOME_DIR = expanduser("~")
-# build directory
-BUILD_DIR = os.path.join(HOME_DIR, '.spirrid', 'docs')
+HOME_DIR = os.path.expanduser("~")
 # output directory for the documentation
 DOCS_DIR = os.path.join(HOME_DIR, '.spirrid')
+# output directory for the documentation
+BUILD_DIR = os.path.join(DOCS_DIR, 'build')
 # output directory for the example documentation
-EX_OUTPUT_DIR = os.path.join(DOCS_DIR, 'examples')
+EX_BUILD_DIR = os.path.join(BUILD_DIR, 'examples')
+# build directory
+HTML_DIR = os.path.join(DOCS_DIR, 'html')
 
 class GenExampleDoc(HasTraits):
 
@@ -67,33 +71,37 @@ Latin Hypercube Sampling
     def _get_qname(self):
         return self.demo_object.get_qname()
 
-    output_dir = Property(depends_on = 'demo_module')
+    ex_build_dir = Property(depends_on = 'demo_module')
     @cached_property
-    def _get_output_dir(self):
-        return os.path.join(EX_OUTPUT_DIR, self.qname)
+    def _get_ex_build_dir(self):
+        # check if the directory exists
+        out_dir = os.path.join(EX_BUILD_DIR, self.qname)
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        return out_dir
 
     rst_file_name = Property(depends_on = 'demo_module')
     @cached_property
     def _get_rst_file_name(self):
-        return os.path.join(self.output_dir, 'index.rst')
+        return os.path.join(self.ex_build_dir, 'index.rst')
 
     def generate_examples_sampling_structure(self):
         dobj = self.demo_object
-        dobj.set(fig_output_dir = self.output_dir, show_output = False,
+        dobj.set(fig_ex_build_dir = self.ex_build_dir, show_output = False,
                  dpi = 70,
                  save_output = True, plot_mode = 'figures')
         dobj.sampling_structure()
 
     def generate_examples_sampling_efficiency(self):
         dobj = self.demo_object
-        dobj.set(fig_output_dir = self.output_dir, show_output = False,
+        dobj.set(fig_ex_build_dir = self.ex_build_dir, show_output = False,
                  dpi = 70,
                  save_output = True, plot_mode = 'figures')
         dobj.sampling_efficiency()
 
     def generate_examples_language_efficiency(self):
         dobj = self.demo_object
-        dobj.set(fig_output_dir = self.output_dir, show_output = False,
+        dobj.set(fig_ex_build_dir = self.ex_build_dir, show_output = False,
                  dpi = 70,
                  save_output = True, plot_mode = 'figures')
         dobj.codegen_language_efficiency()
@@ -151,7 +159,7 @@ Execution time evaluated for an increasing number of sampling points n_sim:
     :width: 100%%
 
             ''' % basename
-            print 'written file %s', basename
+            print 'written file %s' % basename
 
         rst_text += '\n'
 
@@ -167,14 +175,13 @@ Execution time evaluated for an numpy, weave and cython code:
     :width: 100%%
 
             ''' % basename
-            print 'written file %s', basename
+            print 'written file %s' % basename
 
         rst_text += '\n'
 
+        print 'writing rst file %s' % self.rst_file_name
         rst_file = open(self.rst_file_name, 'w')
-
         rst_file.write(rst_text)
-
         rst_file.close()
 
 class GenDoc(HasTraits):
@@ -183,13 +190,27 @@ class GenDoc(HasTraits):
     '''
     demo_modules = [fiber_tt_2p] #, fiber_tt_5p, fiber_po_8p]
 
-    build_mode = Enum('local', 'global')
-
-    build_dir = Property(depends_on = 'build_mode')
+    build_dir = Property()
+    @cached_property
     def _get_build_dir(self):
-        build_dir = {'local' : '.',
-                     'global' : BUILD_DIR }
-        return build_dir[self.build_mode]
+        # check if the directory exists
+        out_dir = os.path.join(BUILD_DIR)
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        return out_dir
+
+    ex_build_dir = Property()
+    @cached_property
+    def _get_ex_build_dir(self):
+        # check if the directory exists
+        out_dir = os.path.join(EX_BUILD_DIR)
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        return out_dir
+    
+    html_dir = Property(depends_on = 'build_mode')
+    def _get_html_dir(self):
+        return HTML_DIR
 
     html_server = 'root@mordred.imb.rwth-aachen.de:/var/www/docs/spirrid'
 
@@ -205,13 +226,39 @@ class GenDoc(HasTraits):
             ged = GenExampleDoc(demo_module = demo)
             getattr(ged, method_name)()
 
+    def generate_examples_index(self):
+        rst_text = '''
+========
+Examples
+========
+
+.. toctree::
+   :maxdepth: 2
+'''
+        for path, dirs, files in os.walk( self.ex_build_dir ):
+            for f in fnmatch.filter(files, '*.rst'):
+                abspath = os.path.join(path, f)
+                relpath = os.path.relpath(abspath, self.ex_build_dir)
+                rst_text += '   %s/index\n' % os.path.dirname(relpath)
+        print rst_text
+        rst_file_name = os.path.join(self.ex_build_dir,'index.rst')
+        rst_file = open(rst_file_name, 'w')
+        rst_file.write(rst_text)
+        rst_file.close()
+
     def generate_html(self):
+
+        shutil.rmtree(self.build_dir)
+        shutil.copytree( SRC_DIR, self.build_dir )
+
         for demo in self.demo_modules:
             ged = GenExampleDoc(demo_module = demo)
             ged.generate_html()
 
-        os.chdir(DOCS_DIR)
-        sphings_cmd = 'sphinx-build -b html -E . %s' % self.build_dir
+        self.generate_examples_index()
+
+        sphings_cmd = 'sphinx-build -b html -E %s %s' % \
+            (self.build_dir, self.html_dir)
         os.system(sphings_cmd)
 
     def push_html(self):
@@ -225,6 +272,6 @@ if __name__ == '__main__':
 
     gd = GenDoc(build_mode = 'global')
 
-    gd.generate_examples() # kind = 'sampling_efficiency')
+    #gd.generate_examples(kind = 'sampling_structure')
     gd.generate_html()
-    gd.push_html()
+    #gd.push_html()
