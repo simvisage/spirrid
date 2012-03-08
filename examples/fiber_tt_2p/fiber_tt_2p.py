@@ -64,7 +64,7 @@ breaking strain are considered random and normally distributed. The function
             }
             '''
 
-def create_demo_object():
+def create_demo_object( fig_output_dir = 'fig' ):
 
     m_la, std_la = 10., 1.0
     m_xi, std_xi = 1.0, 0.1
@@ -99,6 +99,7 @@ def create_demo_object():
     #===========================================================================
     slab = SPIRRIDLAB(s = s, save_output = False, show_output = True,
                       dpi = 300,
+                      fig_output_dir = fig_output_dir,
                       exact_arr = mu_q_ex(e_arr, m_xi, std_xi, m_la),
                       plot_mode = 'subplots',
                       n_int_range = n_int_range,

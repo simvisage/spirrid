@@ -15,7 +15,7 @@
 
 from etsproxy.traits.api import \
     HasTraits, Instance, Str, Property, cached_property, \
-    Enum
+    Enum, List
 from etsproxy.traits.ui.api import \
     View, Item
 
@@ -35,7 +35,7 @@ DOCS_DIR = os.path.join(HOME_DIR, '.spirrid')
 # output directory for the documentation
 BUILD_DIR = os.path.join(DOCS_DIR, 'build')
 # output directory for the example documentation
-EX_BUILD_DIR = os.path.join(BUILD_DIR, 'examples')
+EX_BUILD_DIR = os.path.join(DOCS_DIR, 'examples')
 # build directory
 HTML_DIR = os.path.join(DOCS_DIR, 'html')
 
@@ -61,17 +61,18 @@ Latin Hypercube Sampling
     #===========================================================================
     # Derived traits
     #===========================================================================
-    demo_object = Property(depends_on = 'demo_module')
+    demo_object = Property(depends_on='demo_module')
     @cached_property
     def _get_demo_object(self):
-        return self.demo_module.create_demo_object()
+        dm = self.demo_module
+        return dm.create_demo_object()
 
-    qname = Property(depends_on = 'demo_module')
+    qname = Property(depends_on='demo_module')
     @cached_property
     def _get_qname(self):
         return self.demo_object.get_qname()
 
-    ex_build_dir = Property(depends_on = 'demo_module')
+    ex_build_dir = Property(depends_on='demo_module')
     @cached_property
     def _get_ex_build_dir(self):
         # check if the directory exists
@@ -80,30 +81,39 @@ Latin Hypercube Sampling
             os.makedirs(out_dir)
         return out_dir
 
-    rst_file_name = Property(depends_on = 'demo_module')
+    fig_build_dir = Property()
+    @cached_property
+    def _get_fig_build_dir(self):
+        # check if the directory exists
+        out_dir = os.path.join(self.ex_build_dir, 'fig')
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        return out_dir
+
+    rst_file_name = Property(depends_on='demo_module')
     @cached_property
     def _get_rst_file_name(self):
         return os.path.join(self.ex_build_dir, 'index.rst')
 
     def generate_examples_sampling_structure(self):
         dobj = self.demo_object
-        dobj.set(fig_ex_build_dir = self.ex_build_dir, show_output = False,
-                 dpi = 70,
-                 save_output = True, plot_mode = 'figures')
+        dobj.set(fig_ex_build_dir=self.ex_build_dir, show_output=False,
+                 dpi=70,
+                 save_output=True, plot_mode='figures')
         dobj.sampling_structure()
 
     def generate_examples_sampling_efficiency(self):
         dobj = self.demo_object
-        dobj.set(fig_ex_build_dir = self.ex_build_dir, show_output = False,
-                 dpi = 70,
-                 save_output = True, plot_mode = 'figures')
+        dobj.set(fig_ex_build_dir=self.ex_build_dir, show_output=False,
+                 dpi=70,
+                 save_output=True, plot_mode='figures')
         dobj.sampling_efficiency()
 
     def generate_examples_language_efficiency(self):
         dobj = self.demo_object
-        dobj.set(fig_ex_build_dir = self.ex_build_dir, show_output = False,
-                 dpi = 70,
-                 save_output = True, plot_mode = 'figures')
+        dobj.set(fig_ex_build_dir=self.ex_build_dir, show_output=False,
+                 dpi=70,
+                 save_output=True, plot_mode='figures')
         dobj.codegen_language_efficiency()
 
     def generate_examples(self):
@@ -188,7 +198,7 @@ class GenDoc(HasTraits):
     '''
     Configuration of the document generation using sphinx.
     '''
-    demo_modules = [fiber_tt_2p] #, fiber_tt_5p, fiber_po_8p]
+    demo_modules = [fiber_tt_2p, fiber_tt_5p, fiber_po_8p]
 
     build_dir = Property()
     @cached_property
@@ -208,7 +218,7 @@ class GenDoc(HasTraits):
             os.makedirs(out_dir)
         return out_dir
     
-    html_dir = Property(depends_on = 'build_mode')
+    html_dir = Property(depends_on='build_mode')
     def _get_html_dir(self):
         return HTML_DIR
 
@@ -220,10 +230,18 @@ class GenDoc(HasTraits):
                          'language_efficiency' : 'generate_examples_language_efficiency',
                          }
 
-    def generate_examples(self, kind = 'all'):
+    genexdoc = Property(List)
+    @cached_property
+    def _get_genexdoc(self):
+        genexdoc = [ GenExampleDoc(demo_module=demo) 
+                     for demo in self.demo_modules ]
+        for gd in genexdoc:
+            gd.demo_object.fig_output_dir = gd.fig_build_dir
+        return genexdoc
+
+    def generate_examples(self, kind='all'):
         method_name = self.method_dispatcher[kind]
-        for demo in self.demo_modules:
-            ged = GenExampleDoc(demo_module = demo)
+        for ged in self.genexdoc:
             getattr(ged, method_name)()
 
     def generate_examples_index(self):
@@ -234,14 +252,15 @@ Examples
 
 .. toctree::
    :maxdepth: 2
+   
 '''
-        for path, dirs, files in os.walk( self.ex_build_dir ):
+        for path, dirs, files in os.walk(self.ex_build_dir):
             for f in fnmatch.filter(files, '*.rst'):
                 abspath = os.path.join(path, f)
                 relpath = os.path.relpath(abspath, self.ex_build_dir)
                 rst_text += '   %s/index\n' % os.path.dirname(relpath)
         print rst_text
-        rst_file_name = os.path.join(self.ex_build_dir,'index.rst')
+        rst_file_name = os.path.join(self.ex_build_dir, 'index.rst')
         rst_file = open(rst_file_name, 'w')
         rst_file.write(rst_text)
         rst_file.close()
@@ -249,10 +268,9 @@ Examples
     def generate_html(self):
 
         shutil.rmtree(self.build_dir)
-        shutil.copytree( SRC_DIR, self.build_dir )
+        shutil.copytree(SRC_DIR, self.build_dir)
 
-        for demo in self.demo_modules:
-            ged = GenExampleDoc(demo_module = demo)
+        for ged in self.genexdoc:
             ged.generate_html()
 
         self.generate_examples_index()
@@ -270,8 +288,8 @@ Examples
 
 if __name__ == '__main__':
 
-    gd = GenDoc(build_mode = 'global')
+    gd = GenDoc(build_mode='global')
 
-    #gd.generate_examples(kind = 'sampling_structure')
+    gd.generate_examples(kind='sampling_structure')
     gd.generate_html()
     #gd.push_html()

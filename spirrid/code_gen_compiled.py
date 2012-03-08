@@ -154,7 +154,10 @@ class CodeGenCompiled(CodeGen):
     def _get_theta_arrs(self):
         rv_getter = operator.itemgetter(*self.rand_var_idx_list)
         theta = self.spirrid.sampling.theta
-        return map(lambda x: x.flatten(), rv_getter(theta))
+        if len(self.rand_var_idx_list) == 1:
+            return theta
+        else:
+            return map(lambda x: x.flatten(), rv_getter(theta))
 
     # get the randomization arrays
     dG_arrs = Property(List, depends_on = 'tvars, recalc')
@@ -162,7 +165,10 @@ class CodeGenCompiled(CodeGen):
     def _get_dG_arrs(self):
         dG_ogrid = self.spirrid.sampling.dG_ogrid
         rv_getter = operator.itemgetter(*self.rand_var_idx_list)
-        return map(lambda x: x.flatten(), rv_getter(dG_ogrid))
+        if len(self.rand_var_idx_list) == 1:
+            return dG_ogrid
+        else:
+            return map(lambda x: x.flatten(), rv_getter(dG_ogrid))
 
     arg_names = Property(depends_on = 'rf_change, rand_change, +codegen_option, recalc')
     @cached_property

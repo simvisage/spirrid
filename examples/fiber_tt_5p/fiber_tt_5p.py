@@ -106,7 +106,7 @@ and 1 for :math:`\eta > 0`.
             }
         '''
 
-def create_demo_object():
+def create_demo_object(fig_output_dir='fig'):
 
     D = 26 * 1.0e-6 # m
     A = (D / 2.0) ** 2 * math.pi
@@ -185,34 +185,35 @@ def create_demo_object():
 
     # n_int range for sampling efficiency test
     powers = np.linspace(1, math.log(20, 10), 15)
-    n_int_range = np.array(np.power(10, powers), dtype = int)
+    n_int_range = np.array(np.power(10, powers), dtype=int)
 
     #===========================================================================
     # Randomization
     #===========================================================================
-    s = SPIRRID(q = fiber_tt_5p(),
-                e_arr = e_arr,
-                n_int = 10,
-                tvars = dict(lambd = g_la, xi = g_xi, E_mod = g_E, theta = g_th, A = g_A),
+    s = SPIRRID(q=fiber_tt_5p(),
+                e_arr=e_arr,
+                n_int=10,
+                tvars=dict(lambd=g_la, xi=g_xi, E_mod=g_E, theta=g_th, A=g_A),
                 )
 
     # Exact solution
     def mu_q_ex(e):
-        data = np.loadtxt(mu_ex_file, delimiter = delimiter)
+        data = np.loadtxt(mu_ex_file, delimiter=delimiter)
         x, y = data[:, 0], data[:, 1]
-        f = interp1d(x, y, kind = 'linear')
+        f = interp1d(x, y, kind='linear')
         return f(e)
 
     #===========================================================================
     # Lab
     #===========================================================================
-    slab = SPIRRIDLAB(s = s, save_output = False, show_output = True, dpi = 300,
-                      exact_arr = mu_q_ex(e_arr),
-                      plot_mode = 'subplots',
-                      n_int_range = n_int_range,
-                      extra_compiler_args = True,
-                      le_sampling_lst = ['LHS', 'PGrid'],
-                      le_n_int_lst = [25, 30])
+    slab = SPIRRIDLAB(s=s, save_output=False, show_output=True, dpi=300,
+                      fig_output_dir=fig_output_dir,
+                      exact_arr=mu_q_ex(e_arr),
+                      plot_mode='subplots',
+                      n_int_range=n_int_range,
+                      extra_compiler_args=True,
+                      le_sampling_lst=['LHS', 'PGrid'],
+                      le_n_int_lst=[25, 30])
 
     return slab
 
