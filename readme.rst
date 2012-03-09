@@ -3,7 +3,14 @@ SPIRRID
 ========
 
 The **SPIRRID** package is the part of the project SIMVISAGE 
-(https://github.com/simvisage/spirrid).
+(https://github.com/simvisage/spirrid). Use the zip button 
+to download the source code for testing. Examples are accompanying 
+the and extending the studies provided in the prepared paper 
+*Using Python for scientific computing:
+efficient and flexible evaluation of the statistical characteristics of functions with 
+mutivariate random inputs, R. Chudoba, V. Sadilek, R. Rypl, and M. Vorechovsky, 
+prepared for submission in CPC.
+*
 
 Documentation of the package generated using sphinx
 ===================================================
@@ -40,7 +47,18 @@ in the script examples.numexpr_test.numexpr_test
 the python-numpexpr package must be installed separately as it is not
 included in ubuntu 10.04 distribution.*
 
-For other systems and distributions and for the new ETS 4 use 
+UBUNTU 11.04
+------------
+
+Enthought Tool Suite (ETS 4) and additional utilities are installed as
+
+    $ sudo apt-get install mayavi2 python-matplotlib \
+        cython python-numexpr python-scipy
+
+Other systems
+-------------
+
+For other systems and distributions use 
 the description provided at and references there:
 
 http://blog.enthought.com/open-source/ets-4-0-released/
