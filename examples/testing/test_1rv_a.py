@@ -72,9 +72,13 @@ def run():
                 codegen_type = 'numpy',
                 )
     
+    
     p.plot(e_arr, s.mu_q_arr, 'b-x')
 
     s.codegen_type = 'c'
+    s.codegen.compiler_verbose = 2
+    print 'XXXXXXXXXXXXXXXXXXXXX'
+    print s.codegen.get_code()
 
     p.plot(e_arr, s.mu_q_arr, 'r-')
 

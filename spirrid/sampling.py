@@ -146,16 +146,37 @@ class FunctionRandomization(HasStrictTraits):
 
     tvars = Dict(input_change = True)
 
+    _tvars = Property(depends_on = 'tvars')
+    @cached_property
+    def _get__tvars(self):
+        _tvars = {}
+        for key, value in self.tvars.items():
+
+            # type checking
+            is_admissible = False
+            for admissible_type in [float, int, RV]:
+                if isinstance(value, admissible_type):
+                    is_admissible = True
+            if not is_admissible:
+                raise TypeError, 'bad type of theta variable %s' % key
+
+            # type conversion
+            if isinstance(value, int):
+                value = float(value)
+                
+            _tvars[key] = value
+        return _tvars
+
     tvar_lst = Property()
     def _get_tvar_lst(self):
         '''sort entries according to var_names
         '''
-        return [ self.tvars[ nm ] for nm in self.tvar_names ]
+        return [ self._tvars[ nm ] for nm in self.tvar_names ]
 
     tvar_names = Property
     def _get_tvar_names(self):
         '''get the tvar names in the order given by the callable'''
-        tvar_keys = self.tvars.keys()
+        tvar_keys = self._tvars.keys()
         return np.array([nm for nm in self.var_names if nm in tvar_keys ], dtype = str)
 
     tvar_str = Property()
@@ -222,8 +243,13 @@ class RegularGrid(RandomSampling):
         for tvar in self.randomization.tvar_lst:
             if isinstance(tvar, float):
                 theta_list.append(tvar)
-                continue
-            theta_list.append(self.get_theta_for_distrib(tvar))
+            elif isinstance(tvar, int):
+                theta_list.append(float(tvar))
+            elif isinstance(tvar, RV):
+                theta_list.append(self.get_theta_for_distrib(tvar))
+            else:
+                raise TypeError, 'bad random variable specification: %s' % tvar
+                
         return theta_list
 
     theta = Property(Array(float), depends_on = 'recalc')
@@ -409,8 +435,8 @@ if __name__ == '__main__':
     print 'tvars', s.tvar_lst
     print 'evars', s.evar_lst
 
-    print 'la:', s.tvars['xi']
-    s.tvars['xi'] = 1.0
+    print 'la:', s._tvars['xi']
+    s._tvars['xi'] = 1.0
 
     print 'mu_q', s.mu_q_arr
 
