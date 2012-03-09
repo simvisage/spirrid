@@ -4,7 +4,8 @@ SPIRRID
 
 The **SPIRRID** package is the part of the project SIMVISAGE 
 (https://github.com/simvisage/spirrid). Use the zip button 
-to download the source code for testing. Examples are accompanying 
+to download the source code for testing and see the Examples section below. 
+Examples are accompanying 
 and extending the studies provided in the prepared paper 
 *Using Python for scientific computing:
 efficient and flexible evaluation of the statistical characteristics of functions with 
@@ -20,8 +21,12 @@ http://mordred.imb.rwth-aachen.de/docs/spirrid/
 Installation instructions 
 =========================
 
-The Enthought Python Distribution (EPD) is available Windows, Linux and Mac 
-operating systems at
+Prerequisites
+-------------
+
+Windows, Linux and Mac
+^^^^^^^^^^^^
+The Enthought Python Distribution (EPD) is available in system independent form at
 
 http://www.enthought.com/products/epd.php
 
@@ -33,7 +38,7 @@ Free distribution of EPDFree does not contain all packages (mayavi, numexpr, cyt
 These packages must be installed manually.*  
  
 UBUNTU 10.04
-------------
+^^^^^^^^^^^^
 
 Enthought Tool Suite (ETS 3) and additional utilities can be installed using 
 the standard package manager as::
@@ -47,30 +52,30 @@ the python-numpexpr package must be installed separately as it is not
 included in ubuntu 10.04 distribution.*
 
 UBUNTU 11.04
-------------
-
+^^^^^^^^^^^^
 Enthought Tool Suite (ETS 4) and additional utilities are installed as::
 
     $ sudo apt-get install mayavi2 python-matplotlib \
         cython python-numexpr python-scipy
 
-Other systems
--------------
-
+Other distributions
+^^^^^^^^^^^^
 For other systems and distributions use 
 the description provided at and references there:
 
 http://blog.enthought.com/open-source/ets-4-0-released/
 
+Download and install
+--------------------
+Download and unzip the package from https://github.com/simvisage/spirrid.
+
 Examples
 ========
 
-spirrid/examples/demo.py
-------------------------
- 
-To test spirrid package on prepared examples run::
+To test spirrid package on prepared examples change to the top directory 
+of the spirrid package  run::
 
-	$ python demo.py
+	$ python examples/demo.py
 
 you get the user interface to run one of examples described in the last
 section this document.
@@ -98,7 +103,7 @@ This folder contains customized (extended) source code (enthought, scipy, numpy)
 needed for running spirrid.
 
 
-spirrid/examples/
+examples/
 --------
 
 The directories "fiber_*" provides the performance studies of the spirrid
