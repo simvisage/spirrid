@@ -5,12 +5,11 @@ SPIRRID
 The **SPIRRID** package is the part of the project SIMVISAGE 
 (https://github.com/simvisage/spirrid). Use the zip button 
 to download the source code for testing. Examples are accompanying 
-the and extending the studies provided in the prepared paper 
+and extending the studies provided in the prepared paper 
 *Using Python for scientific computing:
 efficient and flexible evaluation of the statistical characteristics of functions with 
 mutivariate random inputs, R. Chudoba, V. Sadilek, R. Rypl, and M. Vorechovsky, 
-prepared for submission in CPC.
-*
+prepared for submission in CPC.*
 
 Documentation of the package generated using sphinx
 ===================================================
@@ -27,7 +26,7 @@ operating systems at
 http://www.enthought.com/products/epd.php
 
 *On windows, there is some Cython problem (pyximport). At this time, we don't 
-   have any simple solution. Due to this fact, it was removed from benchmark tests.*
+have any simple solution. Due to this fact, it was removed from benchmark tests.*
 
 *There is a commercial and academic version of EPD containing all required packages.
 Free distribution of EPDFree does not contain all packages (mayavi, numexpr, cython).
