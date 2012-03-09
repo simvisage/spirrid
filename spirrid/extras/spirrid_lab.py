@@ -380,7 +380,7 @@ class SPIRRIDLAB(HasTraits):
     run_lst_detailed_config = Property(List)
     def _get_run_lst_detailed_config(self):
         run_lst = []
-        if hasattr(self.q, 'c_code'):
+        if hasattr(self.q, 'weave_code'):
             run_lst += [
 #                ('weave',
 #                 {'cached_dG'         : True,
@@ -509,7 +509,7 @@ class SPIRRIDLAB(HasTraits):
     run_lst_language_config = Property(List)
     def _get_run_lst_language_config(self):
         run_lst = []
-        if hasattr(self.q, 'c_code'):
+        if hasattr(self.q, 'weave_code'):
             run_lst += [
                 ('weave',
                  {'cached_dG'         : False,
@@ -593,7 +593,7 @@ class SPIRRIDLAB(HasTraits):
                         print 'execution time', s.exec_time
 
                     #legend_lst.append(legend_string[:-12])
-                    legend_lst = [dict(c_code = 'weave', cython = 'cython', numpy = 'numpy')[x[0]] for x in self.run_lst_language_config]
+                    legend_lst = [dict(weave = 'weave', cython = 'cython', numpy = 'numpy')[x[0]] for x in self.run_lst_language_config]
                     if s.codegen_type == 'weave':
                         # load weave.inline time from tmp file and fix values in time_arr
                         #@todo - does not work on windows
