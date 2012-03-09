@@ -26,6 +26,10 @@ import pylab as p # import matplotlib with matlab interface
 import types
 import shutil
 from os.path import expanduser
+from scipy.weave.catalog import default_dir
+
+HOME_DIR = expanduser("~")
+PYTHON_COMPILED_DIR = default_dir()
 
 #===============================================================================
 # Helper functions
@@ -376,7 +380,7 @@ class SPIRRIDLAB(HasTraits):
     run_lst_detailed_config = Property(List)
     def _get_run_lst_detailed_config(self):
         run_lst = []
-        if hasattr(self.q, 'c_code'):
+        if hasattr(self.q, 'weave_code'):
             run_lst += [
 #                ('weave',
 #                 {'cached_dG'         : True,
@@ -505,7 +509,7 @@ class SPIRRIDLAB(HasTraits):
     run_lst_language_config = Property(List)
     def _get_run_lst_language_config(self):
         run_lst = []
-        if hasattr(self.q, 'c_code'):
+        if hasattr(self.q, 'weave_code'):
             run_lst += [
                 ('weave',
                  {'cached_dG'         : False,
@@ -513,14 +517,14 @@ class SPIRRIDLAB(HasTraits):
                   'bx-',
                   '$\mathsf{Python} _{\\varepsilon} \{\, \mathsf{C}_{\\theta}  \{\, q(\\varepsilon,\\theta) \cdot g[\\theta_1] \cdot \ldots \cdot g[\\theta_m] \,\} \,\} $ - %4.2f sec',
                  )]
-        if hasattr(self.q, 'cython_code'):
-            run_lst += [
-                ('cython',
-                 {'cached_dG'         : False,
-                  'compiled_eps_loop' : False },
-                  'bx-',
-                  '$\mathsf{Python} _{\\varepsilon} \{\, \mathsf{Cython}_{\\theta}  \{\, q(\\varepsilon,\\theta) \cdot g[\\theta_1] \cdot \ldots \cdot g[\\theta_m] \,\} \,\} $ - %4.2f sec',
-                 )]
+#        if hasattr(self.q, 'cython_code'):
+#            run_lst += [
+#                ('cython',
+#                 {'cached_dG'         : False,
+#                  'compiled_eps_loop' : False },
+#                  'bx-',
+#                  '$\mathsf{Python} _{\\varepsilon} \{\, \mathsf{Cython}_{\\theta}  \{\, q(\\varepsilon,\\theta) \cdot g[\\theta_1] \cdot \ldots \cdot g[\\theta_m] \,\} \,\} $ - %4.2f sec',
+#                 )]
         if hasattr(self.q, '__call__'):
             run_lst += [
                 ('numpy',
@@ -548,15 +552,12 @@ class SPIRRIDLAB(HasTraits):
     def codegen_language_efficiency(self):
         # define a tables with the run configurations to start in a batch
 
-        home_dir = expanduser("~")
-
-#        pyxbld_dir = os.path.join(home_dir, '.pyxbld')
+#        pyxbld_dir = os.path.join(HOME_DIR, '.pyxbld')
 #        if os.path.exists(pyxbld_dir):
 #            shutil.rmtree(pyxbld_dir)
 
-        python_compiled_dir = os.path.join(home_dir, '.python27_compiled')
-        if os.path.exists(python_compiled_dir):
-            shutil.rmtree(python_compiled_dir)
+        if os.path.exists(PYTHON_COMPILED_DIR):
+            shutil.rmtree(PYTHON_COMPILED_DIR)
 
         for extra, fname in zip([self.extra_compiler_args], self.fnames_language_efficiency):
             print 'extra compilation args:', extra
@@ -591,7 +592,8 @@ class SPIRRIDLAB(HasTraits):
                         exec_times_run.append(s.exec_time)
                         print 'execution time', s.exec_time
 
-                    legend_lst.append(legend_string[:-12])
+                    #legend_lst.append(legend_string[:-12])
+                    legend_lst = [dict(weave = 'weave', cython = 'cython', numpy = 'numpy')[x[0]] for x in self.run_lst_language_config]
                     if s.codegen_type == 'weave':
                         # load weave.inline time from tmp file and fix values in time_arr
                         #@todo - does not work on windows
@@ -733,7 +735,7 @@ class SPIRRIDLAB(HasTraits):
         fig = p.figure(figsize = (15, 3))
         rc('font', size = fsize)
         rc('legend', fontsize = fsize - 2)
-        legend_lst = ['weave', 'cython', 'numpy']
+        #legend_lst = ['weave', 'cython', 'numpy']
 
         # times are stored in 3d array - dimensions are:
         n_sampling, n_lang, n_run, n_times = time_arr.shape
