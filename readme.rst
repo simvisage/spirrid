@@ -31,9 +31,15 @@ UBUNTU 10.04
 install Enthought Tool Suite (ETS 3) and additional utilities::
 
 	$ sudo apt-get install ipython python-traitsui python-scipy \
-  		python-matplotlib mayavi2 cython python-numexpr
+  		python-matplotlib mayavi2 cython
+  		
+*In order to make the comparison between numexpr and numpy efficiency
+in the script examples.numexpr_test.numexpr_test
+the python-numpexpr package must be installed separately as it is not
+included in ubuntu 10.04 distribution.
 
-For other systems and the new ETS 4 use the description
+For other systems and distributions and for the new ETS 4 use 
+the description provided at and references there
 
 http://blog.enthought.com/open-source/ets-4-0-released/
 
