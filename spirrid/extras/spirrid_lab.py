@@ -378,25 +378,25 @@ class SPIRRIDLAB(HasTraits):
         run_lst = []
         if hasattr(self.q, 'c_code'):
             run_lst += [
-#                ('c',
+#                ('weave',
 #                 {'cached_dG'         : True,
 #                  'compiled_eps_loop' : True },
 #                  'go-',
 #                  '$\mathsf{C}_{\\varepsilon} \{\, \mathsf{C}_{\\theta} \{\,  q(\\varepsilon,\\theta) \cdot G[\\theta] \,\}\,\} $ - %4.2f sec',
 #                  ),
-#                ('c',
+#                ('weave',
 #                 {'cached_dG'         : True,
 #                  'compiled_eps_loop' : False },
 #                 'r-2',
 #                 '$\mathsf{Python} _{\\varepsilon} \{\, \mathsf{C}_{\\theta} \{\,  q(\\varepsilon,\\theta) \cdot G[\\theta] \,\}\,\} $ - %4.2f sec'
 #                 ),
-#                ('c',
+#                ('weave',
 #                 {'cached_dG'         : False,
 #                  'compiled_eps_loop' : True },
 #                 'r-2',
 #                 '$\mathsf{C}_{\\varepsilon} \{\, \mathsf{C}_{\\theta} \{\, q(\\varepsilon,\\theta) \cdot g[\\theta_1] \cdot \ldots \cdot g[\\theta_m] \,\}\,\} $ - %4.2f sec'
 #                 ),
-                ('c',
+                ('weave',
                  {'cached_dG'         : False,
                   'compiled_eps_loop' : False },
                   'bx-',
@@ -507,7 +507,7 @@ class SPIRRIDLAB(HasTraits):
         run_lst = []
         if hasattr(self.q, 'c_code'):
             run_lst += [
-                ('c',
+                ('weave',
                  {'cached_dG'         : False,
                   'compiled_eps_loop' : False },
                   'bx-',
@@ -581,7 +581,7 @@ class SPIRRIDLAB(HasTraits):
 
                     s.codegen_type = code
                     s.codegen.set(**run_options)
-                    if s.codegen_type == 'c':
+                    if s.codegen_type == 'weave':
                         s.codegen.set(**dict(use_extra = extra))
                     print 'run', idx, run_options
 
@@ -592,7 +592,7 @@ class SPIRRIDLAB(HasTraits):
                         print 'execution time', s.exec_time
 
                     legend_lst.append(legend_string[:-12])
-                    if s.codegen_type == 'c':
+                    if s.codegen_type == 'weave':
                         # load weave.inline time from tmp file and fix values in time_arr
                         #@todo - does not work on windows
                         import tempfile

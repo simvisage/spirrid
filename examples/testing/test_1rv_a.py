@@ -15,10 +15,7 @@
 #-------------------------------------------------------------------------------
 
 from enthought.traits.api import implements, Str
-from scipy.special import erf
 from spirrid import SPIRRID, Heaviside, RV, RF, IRF
-from spirrid.extras.spirrid_lab import SPIRRIDLAB
-import math
 import numpy as np
 import pylab as p
 
@@ -67,20 +64,19 @@ def run():
     s = SPIRRID(q = fiber_tt_2p(),
                 e_arr = e_arr,
                 n_int = 10,
-                tvars = dict(la = m_la, # la = RV('norm', m_la, std_la),
+                tvars = dict(la = m_la,
+                             #la = RV('norm', m_la, std_la),
+                             #xi = m_xi,
                              xi = RV('norm', m_xi, std_xi)
                              ),
-                sampling_type = 'TGrid',
+                sampling_type = 'MCS',
                 codegen_type = 'numpy',
                 )
     
     
     p.plot(e_arr, s.mu_q_arr, 'b-x')
 
-    s.codegen_type = 'c'
-    s.codegen.compiler_verbose = 2
-    print 'XXXXXXXXXXXXXXXXXXXXX'
-    print s.codegen.get_code()
+    s.codegen_type = 'weave'
 
     p.plot(e_arr, s.mu_q_arr, 'r-')
 

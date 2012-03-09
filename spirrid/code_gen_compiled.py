@@ -154,23 +154,19 @@ class CodeGenCompiled(CodeGen):
     theta_arrs = Property(List, depends_on = 'tvars, recalc')
     @cached_property
     def _get_theta_arrs(self):
-        rv_getter = operator.itemgetter(*self.rand_var_idx_list)
+        '''Get flattened list of theta arrays.
+        '''
         theta = self.spirrid.sampling.theta
-        if len(self.rand_var_idx_list) == 1:
-            return theta
-        else:
-            return map(lambda x: x.flatten(), rv_getter(theta))
-
+        return _get_flat_arrays_from_list(self.rand_var_idx_list, theta)
+        
     # get the randomization arrays
     dG_arrs = Property(List, depends_on = 'tvars, recalc')
     @cached_property
     def _get_dG_arrs(self):
-        dG_ogrid = self.spirrid.sampling.dG_ogrid
-        rv_getter = operator.itemgetter(*self.rand_var_idx_list)
-        if len(self.rand_var_idx_list) == 1:
-            return dG_ogrid
-        else:
-            return map(lambda x: x.flatten(), rv_getter(dG_ogrid))
+        '''Get flattened list of weight factor arrays.
+        '''
+        theta = self.spirrid.sampling.theta
+        return _get_flat_arrays_from_list(self.rand_var_idx_list, theta)
 
     arg_names = Property(depends_on = 'rf_change, rand_change, +codegen_option, recalc')
     @cached_property
@@ -190,7 +186,7 @@ class CodeGenCompiled(CodeGen):
 
         return arg_names
 
-    ld = Trait('c', dict(c = CodeGenLangDictC(),
+    ld = Trait('weave', dict(c = CodeGenLangDictC(),
                          cython = CodeGenLangDictCython()))
 
     #===========================================================================
@@ -346,7 +342,7 @@ class CodeGenCompiled(CodeGen):
             return 'mingw32'
 
     def get_code(self):
-        if self.ld == 'c':
+        if self.ld == 'weave':
             return self.get_c_code()
         elif self.ld == 'cython':
             return self.get_cython_code()
@@ -429,6 +425,7 @@ class CodeGenCompiled(CodeGen):
             self._set_compiler()
 
             compiler_args, linker_args = self.extra_args
+            print 'compiler arguments'
             print compiler_args
 
             # prepare the array of the control variable discretization
@@ -449,6 +446,7 @@ class CodeGenCompiled(CodeGen):
 
             # prepare the lengths of the arrays to set the iteration bounds
             #
+
             for name, theta_arr in zip(self.rand_var_names, self.theta_arrs):
                 arg_values[ '%s_flat' % name ] = theta_arr
 
@@ -701,3 +699,23 @@ class CodeGenCompiledIrregular(CodeGenCompiled):
         code_str += self.ld_.LD_END_THETA_FLAT_LOOP
 
         return code_str
+
+def _get_flat_arrays_from_list(idx_list, array_list):
+    '''Get a selection from a list of possible orthognoal arrays.
+    
+    The returned arrays are flattened. 
+    '''
+    if len(idx_list) == 0:
+        return [] 
+
+    rv_getter = operator.itemgetter(*idx_list)
+    arrs = rv_getter(array_list)
+
+    # if only one variable is random - the getter returns 
+    # directly the array and not the list of arrays.
+    # For type consistency this must be handled here.        
+    if len(idx_list) == 1:
+        return [arrs]
+    else:
+        return map(lambda x: x.flatten(), arrs)
+    

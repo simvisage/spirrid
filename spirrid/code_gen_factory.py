@@ -43,7 +43,7 @@ class CodeGenCFactory(CodeGenCompiledFactory):
     '''
     def __call__(self, spirrid):
         code_gen_type = self.mapping_table[ spirrid.sampling_type ]
-        return code_gen_type(spirrid = spirrid, ld = 'c')
+        return code_gen_type(spirrid = spirrid, ld = 'weave')
 
 class CodeGenCythonFactory(CodeGenCompiledFactory):
     '''Used codegen with cython-language .

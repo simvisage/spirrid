@@ -76,7 +76,7 @@ def run():
 
     p.plot(e_arr, s.mu_q_arr, 'b-x')
 
-    s.codegen_type = 'c'
+    s.codegen_type = 'weave'
 
     p.plot(e_arr, s.mu_q_arr, 'r-')
 

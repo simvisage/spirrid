@@ -140,7 +140,7 @@ class SPIRRIDAlgTest(unittest.TestCase):
     #===========================================================================
     def test_c_tgrid01(self):
         '''Check the C-implementation for TGrid'''
-        self.s.codegen_type = 'c'
+        self.s.codegen_type = 'weave'
         self.s.codegen.set(cached_dG = False, compiled_eps = False)
         self.s.sampling_type = 'TGrid'
         max_mu_q = np.max(self.s.mu_q_arr)
@@ -148,7 +148,7 @@ class SPIRRIDAlgTest(unittest.TestCase):
 
     def test_c_tgrid02(self):
         '''Check the C-implementation for TGrid'''
-        self.s.codegen_type = 'c'
+        self.s.codegen_type = 'weave'
         self.s.codegen.set(cached_dG = True, compiled_eps = False)
         self.s.sampling_type = 'TGrid'
         max_mu_q = np.max(self.s.mu_q_arr)
@@ -156,7 +156,7 @@ class SPIRRIDAlgTest(unittest.TestCase):
 
     def test_c_tgrid03(self):
         '''Check the C-implementation for TGrid'''
-        self.s.codegen_type = 'c'
+        self.s.codegen_type = 'weave'
         self.s.codegen.set(cached_dG = False, compiled_eps = True)
         self.s.sampling_type = 'TGrid'
         max_mu_q = np.max(self.s.mu_q_arr)
@@ -164,7 +164,7 @@ class SPIRRIDAlgTest(unittest.TestCase):
 
     def test_c_tgrid04(self):
         '''Check the C-implementation for TGrid'''
-        self.s.codegen_type = 'c'
+        self.s.codegen_type = 'weave'
         self.s.codegen.set(cached_dG = True, compiled_eps = True)
         self.s.sampling_type = 'TGrid'
         max_mu_q = np.max(self.s.mu_q_arr)

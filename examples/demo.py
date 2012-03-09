@@ -51,7 +51,7 @@ class Demo(HasTraits):
 
     fiber_cb_8p = Button()
     def _fiber_cb_8p_fired(self):
-        return fiber_cb_8p.main()
+        return fiber_cb_8p.create_demo_object()
 
     mask_arr_b = Button()
     def _mask_arr_b_fired(self):

@@ -55,7 +55,7 @@ class SPIRRID(FunctionRandomization):
     #===========================================================================
 
     codegen_type = Trait('numpy', {'numpy' : CodeGenNumpyFactory(),
-                                   'c' : CodeGenCFactory(),
+                                   'weave' : CodeGenCFactory(),
                                    'cython' : CodeGenCythonFactory()},
                          input_change = True)
 
