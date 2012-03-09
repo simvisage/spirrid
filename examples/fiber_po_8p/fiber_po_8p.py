@@ -238,5 +238,5 @@ if __name__ == '__main__':
     # Compare the code efficiency
     #===========================================================================
 
-    slab.codegen_language_efficiency()
+    #slab.codegen_language_efficiency()
 
