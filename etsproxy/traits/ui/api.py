@@ -14,4 +14,9 @@
 #
 #-------------------------------------------------------------------------------
 
-from enthought.traits.ui.api import *
+try:
+# ETS 3
+    from enthought.traits.ui.api import *
+# ETS 4
+except ImportError:
+    from traitsui.api import *

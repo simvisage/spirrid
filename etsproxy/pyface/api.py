@@ -14,4 +14,9 @@
 #
 #-------------------------------------------------------------------------------
 
-from enthought.pyface.api import *
+try:
+# ETS 3
+    from enthought.pyface.api import *
+# ETS 4
+except ImportError:
+    from pyface.api import *
