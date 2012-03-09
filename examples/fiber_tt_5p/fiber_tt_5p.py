@@ -14,7 +14,7 @@
 #
 #-------------------------------------------------------------------------------
 
-from enthought.traits.api import implements, Str
+from etsproxy.traits.api import implements, Str
 from scipy.interpolate import interp1d
 from spirrid.extras import SPIRRIDLAB
 from spirrid import  SPIRRID, RV, RF, IRF, Heaviside

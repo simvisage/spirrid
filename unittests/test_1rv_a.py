@@ -14,7 +14,7 @@
 #
 #-------------------------------------------------------------------------------
 
-from enthought.traits.api import implements, Str
+from etsproxy.traits.api import implements, Str
 from spirrid import SPIRRID, Heaviside, RV, RF, IRF
 import numpy as np
 import pylab as p
