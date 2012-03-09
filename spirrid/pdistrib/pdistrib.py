@@ -19,8 +19,7 @@ from etsproxy.pyface.api import ImageResource
 from etsproxy.traits.api import HasTraits, Float, Int, Event, Array, Interface, \
     Tuple, Property, cached_property, Instance, Enum, on_trait_change
 from etsproxy.traits.ui.api import \
-    Item, View, Group, HSplit, VGroup, Tabbed, \
-    OKButton, CancelButton
+    Item, View, Group, HSplit, VGroup, Tabbed
 from math import sqrt
 from matplotlib.figure import Figure
 from numpy import linspace
@@ -269,7 +268,7 @@ class PDistrib(HasTraits):
                                 id = 'pdistrib.view',
                                 dock = 'tab',
                                 title = 'Statistical distribution',
-                                buttons = [OKButton, CancelButton],
+                                buttons = ['Ok', 'Cancel'],
                                 scrollable = True,
                                 resizable = True,
                                 width = 600, height = 400

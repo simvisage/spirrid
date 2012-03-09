@@ -91,6 +91,16 @@ spirrid/pdistrib (library of statistical distributions)
 
 The package provides a traited wrapper for the scipy distributions.
 
+spirrid/docs
+--------
+
+Package generating the documentation from the source code 
+and from the demonstration examples. 
+
+spirrid/etsproxy
+--------
+
+Subsidiary package needed to support both ETS 3 and ETS 4 with changed import paths. 
 
 spirrid/util
 --------
