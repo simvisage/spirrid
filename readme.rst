@@ -14,21 +14,23 @@ http://mordred.imb.rwth-aachen.de/docs/spirrid/
 Installation instructions 
 =========================
 
-WINDOWS
--------
-
-install the Enthought Python Distribution (EPD) following
-the instructions at
+The Enthought Python Distribution (EPD) is available Windows, Linux and Mac 
+operating systems at
 
 http://www.enthought.com/products/epd.php
 
 *On windows, there is some Cython problem (pyximport). At this time, we don't 
-have any simple solution. Due to this fact, it was removed from benchmark tests.*
+   have any simple solution. Due to this fact, it was removed from benchmark tests.*
 
+*There is a commercial and academic version of EPD containing all required packages.
+Free distribution of EPDFree does not contain all packages (mayavi, numexpr, cython).
+These packages must be installed manually.*  
+ 
 UBUNTU 10.04
 ------------
 
-install Enthought Tool Suite (ETS 3) and additional utilities::
+Enthought Tool Suite (ETS 3) and additional utilities can be installed using 
+the standard package manager as::
 
 	$ sudo apt-get install ipython python-traitsui python-scipy \
   		python-matplotlib mayavi2 cython
@@ -36,10 +38,10 @@ install Enthought Tool Suite (ETS 3) and additional utilities::
 *In order to make the comparison between numexpr and numpy efficiency
 in the script examples.numexpr_test.numexpr_test
 the python-numpexpr package must be installed separately as it is not
-included in ubuntu 10.04 distribution.
+included in ubuntu 10.04 distribution.*
 
 For other systems and distributions and for the new ETS 4 use 
-the description provided at and references there
+the description provided at and references there:
 
 http://blog.enthought.com/open-source/ets-4-0-released/
 
