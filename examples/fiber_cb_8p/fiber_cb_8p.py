@@ -73,7 +73,7 @@ class CBClampedFiber(RF):
     x_label = Str('crack opening [mm]')
     y_label = Str('force [N]')
 
-    C_code = Str('')
+    weave_code = Str('')
 
     # TODO: case where Lmin is zero - gives a double sided pullout
     # should be one sided though
@@ -143,7 +143,7 @@ class CBClampedFiberSP(CBClampedFiber):
     x_label = Str('position [mm]')
     y_label = Str('force [N]')
 
-    C_code = Str('')
+    weave_code = Str('')
 
     def __call__(self, w, x, tau, l, D_f, E_f, theta, xi, phi, Ll, Lr):
 

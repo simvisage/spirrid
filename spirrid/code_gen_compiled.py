@@ -186,8 +186,8 @@ class CodeGenCompiled(CodeGen):
 
         return arg_names
 
-    ld = Trait('weave', dict(c = CodeGenLangDictC(),
-                         cython = CodeGenLangDictCython()))
+    ld = Trait('weave', dict(weave = CodeGenLangDictC(),
+                             cython = CodeGenLangDictCython()))
 
     #===========================================================================
     # Configuration of the code

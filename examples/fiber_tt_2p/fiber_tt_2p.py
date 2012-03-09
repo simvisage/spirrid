@@ -57,7 +57,7 @@ breaking strain are considered random and normally distributed. The function
                 q = la * eps
             '''
 
-    c_code = '''
+    weave_code = '''
             // Computation of the q( ... ) function
             if ( eps < 0 || eps > xi ){
                 q = 0.0;
@@ -66,7 +66,7 @@ breaking strain are considered random and normally distributed. The function
             }
             '''
 
-def create_demo_object( fig_output_dir = 'fig' ):
+def create_demo_object(fig_output_dir = 'fig'):
 
     m_la, std_la = 10., 1.0
     m_xi, std_xi = 1.0, 0.1
@@ -93,7 +93,7 @@ def create_demo_object( fig_output_dir = 'fig' ):
     # Exact solution
     #===========================================================================
     def mu_q_ex(e, m_xi, std_xi, m_la):
-        return e * (0.5 - 0.5 *
+        return e * (0.5 - 0.5 * 
                     erf(0.5 * math.sqrt(2) * (e - m_xi) / std_xi)) * m_la
 
     #===========================================================================
@@ -111,35 +111,8 @@ def create_demo_object( fig_output_dir = 'fig' ):
 
     return slab
 
-import types
-
 if __name__ == '__main__':
 
     slab = create_demo_object()
 
     slab.configure_traits()
-
-    #===============================================================================
-    # RUN SPIRRID_LAB TESTS
-    #===============================================================================
-    #===========================================================================
-    # Compare efficiency of sampling types 
-    #===========================================================================
-#    powers = np.linspace(1, math.log(1000, 10), 100)
-#    n_int_range = np.array(np.power(10, powers), dtype = int)
-#
-#    slab.sampling_efficiency()
-
-    #===========================================================================
-    # Compare the structure of sampling
-    #===========================================================================
-
-    #slab.sampling_structure(ylim = 18.0, xlim = 1.2,)
-
-    #===========================================================================
-    # Compare the language efficiency
-    #===========================================================================
-#    e_arr = np.linspace(0, 2.0, 80)
-#    s.set(e_arr = e_arr, n_int = 400)
-#    slab.set(n_recalc = 2, exact_arr = mu_q_ex(e_arr, m_xi, std_xi, m_la))
-#    slab.codegen_language_efficiency(extra_compiler_args = False)

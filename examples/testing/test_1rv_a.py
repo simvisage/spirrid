@@ -41,7 +41,7 @@ class fiber_tt_2p(RF):
                 q = la * eps
             '''
 
-    c_code = '''
+    weave_code = '''
             // Computation of the q( ... ) function
             if ( eps < 0 || eps > xi ){
                 q = 0.0;

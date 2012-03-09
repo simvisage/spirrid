@@ -10,9 +10,6 @@ Documentation of the package generated using sphinx
 
 http://mordred.imb.rwth-aachen.de/docs/spirrid/
 
-This project is developed on Linux (Kubuntu, Suse) ETS version < 4.0.
-note for ets >= 4.0: 
-http://blog.enthought.com/open-source/ets-4-0-released/
 
 Installation instructions 
 =========================
@@ -28,14 +25,17 @@ http://www.enthought.com/products/epd.php
 *On windows, there is some Cython problem (pyximport). At this time, we don't 
 have any simple solution. Due to this fact, it was removed from benchmark tests.*
 
-UBUNTU
-------
+UBUNTU 10.04
+------------
 
-install Enthought Tool Suite (ETS) and additional utilities::
+install Enthought Tool Suite (ETS 3) and additional utilities::
 
 	$ sudo apt-get install ipython python-traitsui python-scipy \
   		python-matplotlib mayavi2 cython python-numexpr
 
+For other systems and the new ETS 4 use the description
+
+http://blog.enthought.com/open-source/ets-4-0-released/
 
 Examples
 ========
