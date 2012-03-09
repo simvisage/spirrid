@@ -50,7 +50,7 @@ included in ubuntu 10.04 distribution.*
 UBUNTU 11.04
 ------------
 
-Enthought Tool Suite (ETS 4) and additional utilities are installed as
+Enthought Tool Suite (ETS 4) and additional utilities are installed as::
 
     $ sudo apt-get install mayavi2 python-matplotlib \
         cython python-numexpr python-scipy
