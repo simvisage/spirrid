@@ -80,6 +80,11 @@ of the spirrid package  run::
 you get the user interface to run one of examples described in the last
 section this document.
 
+In order to start the individual examples the top level directory of spirrid
+package must be included in the PYTHONPATH environment 
+variable or in the sys.path variable
+of the executed script. 
+
 Package structure
 =================
 
