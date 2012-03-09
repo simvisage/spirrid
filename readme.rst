@@ -33,7 +33,7 @@ UBUNTU
 
 install Enthought Tool Suite (ETS) and additional utilities::
 
-	$ sudo apt-get install ipython python-traitsgui python-scipy \
+	$ sudo apt-get install ipython python-traitsui python-scipy \
   		python-matplotlib mayavi2 cython python-numexpr
 
 
