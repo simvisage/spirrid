@@ -13,7 +13,6 @@
 # Created on Sep 8, 2011 by: rch
 
 from spirrid import SPIRRID, RV, Heaviside
-from spirrid.util.spirrid_lab import SPIRRIDLAB
 import math
 import numpy as np
 from etsproxy.traits.api import Float, Str, implements, Range
@@ -80,18 +79,6 @@ class ConstantFrictionFiniteFiber(RF):
             // Computation of the q( ... ) function
             q = P_deb + P_pull;
         '''
-
-    def __callx__(self, w, fu, qf, L, A, E_mod, z, phi, f):
-        '''Intial vectorized implementation - without regarding
-        the lexical structure of the expression.
-        '''
-        Le = L / 2. - z / cos(phi)
-        w_deb = e ** (f * phi) * qf * Le ** 2.0 / E_mod / A
-        P_deb_full = sqrt(2. * w / 2. * E_mod * A * qf) * e ** (f * phi)
-        P_deb = P_deb_full * Heaviside(fu * A - P_deb_full) * Heaviside(w_deb - w) * Heaviside(Le)
-        P_pull_x = (Le * qf - Le * qf / (Le - w_deb) * (w - w_deb)) * e ** (f * phi)
-        P_pull = P_pull_x * Heaviside(P_pull_x) * Heaviside(w - w_deb)
-        return P_deb + P_pull
 
     def __call__(self, w, fu, qf, L, A, E_mod, z, phi, f):
         '''Lexically optimized expresseion - each result is 
