@@ -156,8 +156,8 @@ And:
 
   More detailed issues concerning the efficiency of the covered 
   sampling and implementation techniques are described in paper 
-  "Using Python for scientific
+  *Using Python for scientific
   computing: efficient and flexible evaluation of the statistical
-  characteristics of functions with multivariate random inputs"
+  characteristics of functions with multivariate random inputs*
   prepared for submission in CPC.
 
