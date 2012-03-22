@@ -18,6 +18,7 @@ generate the documentation. The root directory
 of the **spirrid** package must be contained in the 
 PYTHONPATH environment variable. 
 
+
     $ cd docs
     $ export PYTHONPATH="../"
     $ python gen_docs.py
