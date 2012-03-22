@@ -54,6 +54,7 @@ one of the options
  * language_efficiency
 
 or commenting out one or more of the response functions
+
  * fiber_tt_2p - two parametric response function
  * fiber_tt_5p - five parametric response function
  * fiber_po_8p - eight parametric response function
