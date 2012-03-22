@@ -12,11 +12,6 @@ efficient and flexible evaluation of the statistical characteristics of function
 mutivariate random inputs, R. Chudoba, V. Sadilek, R. Rypl, and M. Vorechovsky, 
 prepared for submission in CPC.*
 
-Documentation of the package generated using sphinx
-===================================================
-
-http://simvisage.com/docs/spirrid
-
 Installation instructions 
 =========================
 
@@ -106,7 +101,7 @@ Package generating the documentation from the source code
 and from the demonstration examples. See the docs/readme.rst
 file for further details on generating the documentation. 
 The current documented is available in html format online
-at http://simvisage.com/docs/spirrid/
+at http://mordred.imb.rwth-aachen.de/docs/spirrid
 
 spirrid/etsproxy
 --------

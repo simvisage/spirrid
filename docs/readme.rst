@@ -3,7 +3,7 @@ Source directory for documentation generation
 
 The generated documentation is available online at
 
-http://simvisage.com/docs/spirrid
+http://mordred.imb.rwth-aachen.de/docs/spirrid
  
 In order to generate the
 documentation you need to install sphinx utility
