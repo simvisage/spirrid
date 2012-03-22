@@ -319,6 +319,6 @@ if __name__ == '__main__':
                                 ]
                 )
 
-    gd.generate_examples(kind = 'all')
+    gd.generate_examples(kind = 'sampling_structure')
     gd.generate_html()
     gd.push_html()
