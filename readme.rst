@@ -15,8 +15,7 @@ prepared for submission in CPC.*
 Documentation of the package generated using sphinx
 ===================================================
 
-http://mordred.imb.rwth-aachen.de/docs/spirrid/
-
+http://simvisage.com/docs/spirrid
 
 Installation instructions 
 =========================
@@ -104,7 +103,10 @@ spirrid/docs
 --------
 
 Package generating the documentation from the source code 
-and from the demonstration examples. 
+and from the demonstration examples. See the docs/readme.rst
+file for further details on generating the documentation. 
+The current documented is available in html format online
+at http://simvisage.com/docs/spirrid/
 
 spirrid/etsproxy
 --------
