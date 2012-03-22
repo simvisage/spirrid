@@ -262,7 +262,6 @@ class RegularGrid(RandomSampling):
     dG = Property(Array(float), depends_on = 'recalc')
     @cached_property
     def _get_dG(self):
-        print '******** recalculating dG'
         if len(self.dG_ogrid) == 0:
             # deterministic case
             return 1.0
