@@ -16,7 +16,7 @@ it can be installed by issuing
 Then, the **gen_docs.py** script can be run to 
 generate the documentation. The root directory
 of the **spirrid** package must be contained in the 
-PYTHONPATH environment variable.
+PYTHONPATH environment variable. 
 ::
 
     $ cd docs
