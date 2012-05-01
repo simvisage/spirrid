@@ -16,8 +16,8 @@
 
 from etsproxy.traits.api import HasTraits
 
-from scipy.stats.distributions import norm # import normal distribution
-import numpy as np # import numpy package
+from scipy.stats.distributions import norm
+import numpy as np
 import pylab as p # import matplotlib with matlab interface
 import platform
 import time
