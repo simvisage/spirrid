@@ -2,7 +2,7 @@
 SPIRRID
 ========
 
-The **SPIRRID** package is the part of the project SIMVISAGE 
+The **SPIRRID** package is the part of the project Simvisage 
 (https://github.com/simvisage/spirrid). Use the zip button 
 to download the source code for testing and see the Examples section below. 
 Examples are accompanying 
