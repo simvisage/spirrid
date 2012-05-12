@@ -27,7 +27,6 @@ import types
 import shutil
 from os.path import expanduser
 from scipy.weave.catalog import default_dir
-from spirrid.util.traits.either_type import EitherType
 
 HOME_DIR = expanduser("~")
 PYTHON_COMPILED_DIR = default_dir()
@@ -264,7 +263,6 @@ class SPIRRIDLAB(HasTraits):
             self.s.set(n_int=n_int, sampling_type=sampling_type)
             self.s.recalc = True
             n_sim = self.s.sampling.n_sim
-            print self.exec_time_dict
             exec_time = self.exec_time_dict[self.exec_time_lst]
             return self.s.mu_q_arr, exec_time, n_sim
 
@@ -277,7 +275,6 @@ class SPIRRIDLAB(HasTraits):
 
         run_estimation_vct([5], ['PGrid'])
 
-        print self.sampling_types_
         sampling_types = self.sampling_types_
         sampling_colors = np.array(['grey', 'black', 'grey', 'black'], dtype=str) # 'blue', 'green', 'red', 'magenta'
         sampling_linestyle = np.array(['--', '--', '-', '-'], dtype=str)
