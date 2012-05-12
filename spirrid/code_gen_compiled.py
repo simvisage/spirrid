@@ -120,47 +120,47 @@ class CodeGenCompiled(CodeGen):
     #===========================================================================
     # Inspection of the randomization - needed by CodeGenCompiled 
     #===========================================================================
-    evar_names = Property(depends_on = 'q, recalc')
+    evar_names = Property(depends_on='q, recalc')
     @cached_property
     def _get_evar_names(self):
         return self.spirrid.evar_names
 
-    var_names = Property(depends_on = 'q, recalc')
+    var_names = Property(depends_on='q, recalc')
     @cached_property
     def _get_var_names(self):
         return self.spirrid.tvar_names
 
     # count the random variables
-    n_rand_vars = Property(depends_on = 'tvars, recalc')
+    n_rand_vars = Property(depends_on='tvars, recalc')
     @cached_property
     def _get_n_rand_vars(self):
         dt = map(type, self.spirrid.tvar_lst)
         return dt.count(RV)
 
     # get the indexes of the random variables within the parameter list
-    rand_var_idx_list = Property(depends_on = 'tvars, recalc')
+    rand_var_idx_list = Property(depends_on='tvars, recalc')
     @cached_property
     def _get_rand_var_idx_list(self):
         dt = np.array(map(type, self.spirrid.tvar_lst))
         return np.where(dt == RV)[0]
 
     # get the names of the random variables
-    rand_var_names = Property(depends_on = 'tvars, recalc')
+    rand_var_names = Property(depends_on='tvars, recalc')
     @cached_property
     def _get_rand_var_names(self):
         return self.var_names[ self.rand_var_idx_list ]
 
     # get the randomization arrays
-    theta_arrs = Property(List, depends_on = 'tvars, recalc')
+    theta_arrs = Property(List, depends_on='tvars, recalc')
     @cached_property
     def _get_theta_arrs(self):
         '''Get flattened list of theta arrays.
         '''
         theta = self.spirrid.sampling.theta
         return _get_flat_arrays_from_list(self.rand_var_idx_list, theta)
-        
+
     # get the randomization arrays
-    dG_arrs = Property(List, depends_on = 'tvars, recalc')
+    dG_arrs = Property(List, depends_on='tvars, recalc')
     @cached_property
     def _get_dG_arrs(self):
         '''Get flattened list of weight factor arrays.
@@ -168,7 +168,7 @@ class CodeGenCompiled(CodeGen):
         theta = self.spirrid.sampling.theta
         return _get_flat_arrays_from_list(self.rand_var_idx_list, theta)
 
-    arg_names = Property(depends_on = 'rf_change, rand_change, +codegen_option, recalc')
+    arg_names = Property(depends_on='rf_change, rand_change, +codegen_option, recalc')
     @cached_property
     def _get_arg_names(self):
 
@@ -186,8 +186,8 @@ class CodeGenCompiled(CodeGen):
 
         return arg_names
 
-    ld = Trait('weave', dict(weave = CodeGenLangDictC(),
-                             cython = CodeGenLangDictCython()))
+    ld = Trait('weave', dict(weave=CodeGenLangDictC(),
+                             cython=CodeGenLangDictCython()))
 
     #===========================================================================
     # Configuration of the code
@@ -196,13 +196,13 @@ class CodeGenCompiled(CodeGen):
     # compiled_eps_loop:
     # If set True, the loop over the control variable epsilon is compiled
     # otherwise, python loop is used.
-    compiled_eps_loop = Bool(False, codegen_option = True)
+    compiled_eps_loop = Bool(False, codegen_option=True)
 
     #===========================================================================
     # compiled_eps_loop - dependent code
     #===========================================================================
 
-    compiled_eps_loop_feature = Property(depends_on = 'compiled_eps_loop, recalc')
+    compiled_eps_loop_feature = Property(depends_on='compiled_eps_loop, recalc')
     @cached_property
     def _get_compiled_eps_loop_feature(self):
         if self.compiled_eps_loop == True:
@@ -224,12 +224,12 @@ class CodeGenCompiled(CodeGen):
     # will be precalculated and stored in an n-dimensional grid
     # otherwise the product is performed for every epsilon in the inner loop anew
     # 
-    cached_dG = Bool(True, codegen_option = True)
+    cached_dG = Bool(True, codegen_option=True)
 
     #===========================================================================
     # cached_dG - dependent code
     #===========================================================================
-    cached_dG_feature = Property(depends_on = 'cached_dG, recalc')
+    cached_dG_feature = Property(depends_on='cached_dG, recalc')
     @cached_property
     def _get_cached_dG_feature(self):
         if self.compiled_eps_loop:
@@ -271,7 +271,7 @@ class CodeGenCompiled(CodeGen):
     #------------------------------------------------------------------------------------
     # Configurable generation of C-code for the mean curve evaluation
     #------------------------------------------------------------------------------------
-    code = Property(depends_on = 'rf_change, rand_change, +codegen_option, eps_change, recalc')
+    code = Property(depends_on='rf_change, rand_change, +codegen_option, eps_change, recalc')
     @cached_property
     def _get_code(self):
 
@@ -389,7 +389,7 @@ class CodeGenCompiled(CodeGen):
 
         import pyximport
         t = sysclock()
-        pyximport.install(reload_support = True)
+        pyximport.install(reload_support=True)
         import spirrid_cython
         if regenerate_code:
             reload(spirrid_cython)
@@ -431,7 +431,7 @@ class CodeGenCompiled(CodeGen):
             # prepare the array of the control variable discretization
             #
             eps_arr = e
-            mu_q_arr = np.zeros_like(eps_arr)
+            mu_q_arr = np.zeros_like(eps_arr, dtype='float')
 
             # prepare the parameters for the compiled function in 
             # a separate dictionary
@@ -461,11 +461,11 @@ class CodeGenCompiled(CodeGen):
 
                 # C loop over eps, all inner loops must be compiled as well
                 #
-                weave.inline(self.code, self.arg_names, local_dict = arg_values,
-                             extra_compile_args = compiler_args,
-                             extra_link_args = linker_args,
-                             type_converters = conv, compiler = self.compiler,
-                             verbose = self.compiler_verbose)
+                weave.inline(self.code, self.arg_names, local_dict=arg_values,
+                             extra_compile_args=compiler_args,
+                             extra_link_args=linker_args,
+                             type_converters=conv, compiler=self.compiler,
+                             verbose=self.compiler_verbose)
 
             else:
 
@@ -477,12 +477,12 @@ class CodeGenCompiled(CodeGen):
                     #
                     arg_values['e'] = e # prepare the parameter
                     mu_q = weave.inline(self.code, self.arg_names,
-                                         local_dict = arg_values,
-                                         extra_compile_args = compiler_args,
-                                         extra_link_args = linker_args,
-                                         type_converters = conv,
-                                         compiler = self.compiler,
-                                         verbose = self.compiler_verbose)
+                                         local_dict=arg_values,
+                                         extra_compile_args=compiler_args,
+                                         extra_link_args=linker_args,
+                                         type_converters=conv,
+                                         compiler=self.compiler,
+                                         verbose=self.compiler_verbose)
 
                     # add the value to the return array
                     mu_q_arr[idx] = mu_q
@@ -496,9 +496,9 @@ class CodeGenCompiled(CodeGen):
     #===========================================================================
     # Extra compiler arguments
     #===========================================================================
-    use_extra = Bool(False, codegen_option = True)
+    use_extra = Bool(False, codegen_option=True)
 
-    extra_args = Property(depends_on = 'use_extra, +codegen_option, recalc')
+    extra_args = Property(depends_on='use_extra, +codegen_option, recalc')
     @cached_property
     def _get_extra_args(self):
         if self.use_extra == True:
@@ -706,7 +706,7 @@ def _get_flat_arrays_from_list(idx_list, array_list):
     The returned arrays are flattened. 
     '''
     if len(idx_list) == 0:
-        return [] 
+        return []
 
     rv_getter = operator.itemgetter(*idx_list)
     arrs = rv_getter(array_list)
@@ -718,4 +718,4 @@ def _get_flat_arrays_from_list(idx_list, array_list):
         return [arrs]
     else:
         return map(lambda x: x.flatten(), arrs)
-    
+
