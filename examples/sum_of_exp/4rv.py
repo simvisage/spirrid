@@ -68,7 +68,7 @@ def create_demo_object(fig_output_dir='fig'):
     e_arr = np.array([1.0])#np.linspace(0, 2.0, 80)
 
     # n_int range for sampling efficiency test
-    powers = np.linspace(1, math.log(60, 10), 20)
+    powers = np.linspace(1, math.log(40, 10), 20)
     n_int_range = np.array(np.power(10, powers), dtype=int)
 
     #===========================================================================

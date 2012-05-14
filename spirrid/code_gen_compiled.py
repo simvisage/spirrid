@@ -69,7 +69,7 @@ class CodeGenLangDictC(HasStrictTraits):
     LD_DECLARE_DG_PTR = '\tdouble dG = '
     LD_ACCESS_DG_IDX = 'i_%s'
     LD_ACCESS_DG_PTR = '*( %s_dG + i_%s)'
-    LD_ASSIGN_DG = 'double dG = %g;\n'
+    LD_ASSIGN_DG = 'double dG = %.100g;\n'
     LD_END_BRACE = ');\n'
 
 
@@ -107,7 +107,7 @@ class CodeGenLangDictCython(HasStrictTraits):
     LD_DECLARE_DG_PTR = '%(t)s\tdG = '
     LD_ACCESS_DG_IDX = 'i_%s'
     LD_ACCESS_DG_PTR = '%s_dG[i_%s]'
-    LD_ASSIGN_DG = '\tdG = %g\n'
+    LD_ASSIGN_DG = '\tdG = %.100g\n'
     LD_END_BRACE = ']\n'
 
 #===============================================================================
@@ -196,7 +196,7 @@ class CodeGenCompiled(CodeGen):
     # compiled_eps_loop:
     # If set True, the loop over the control variable epsilon is compiled
     # otherwise, python loop is used.
-    compiled_eps_loop = Bool(False, codegen_option=True)
+    compiled_eps_loop = Bool(True, codegen_option=True)
 
     #===========================================================================
     # compiled_eps_loop - dependent code
@@ -404,7 +404,7 @@ class CodeGenCompiled(CodeGen):
             else:
                 # Python loop over eps
                 # 
-                mu_q_arr = np.zeros_like(eps)
+                mu_q_arr = np.zeros_like(eps, dtype=np.float64)
                 for idx, e in enumerate(eps):
                     # C loop over random dimensions
                     #
@@ -431,7 +431,7 @@ class CodeGenCompiled(CodeGen):
             # prepare the array of the control variable discretization
             #
             eps_arr = e
-            mu_q_arr = np.zeros_like(eps_arr, dtype='float')
+            mu_q_arr = np.zeros_like(eps_arr, dtype=np.float64)
 
             # prepare the parameters for the compiled function in 
             # a separate dictionary

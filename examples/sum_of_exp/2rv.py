@@ -50,10 +50,10 @@ class RV2(RF):
 def create_demo_object(fig_output_dir='fig'):
 
     # discretize the control variable (x-axis)
-    e_arr = np.array([1])#np.linspace(0, 2.0, 80)
+    e_arr = np.array([1.0])#np.linspace(0, 2.0, 80)
 
     # n_int range for sampling efficiency test
-    powers = np.linspace(1, math.log(1500, 10), 50)
+    powers = np.linspace(1, math.log(1000, 10), 50)
     n_int_range = np.array(np.power(10, powers), dtype=int)
     #n_int_range = np.array([10, 100, 200, 300, 400, 500, 800, 1000, 1500, 2000])
 
@@ -62,12 +62,12 @@ def create_demo_object(fig_output_dir='fig'):
     #===========================================================================
     s = SPIRRID(q=RV2(),
                 e_arr=e_arr,
-                n_int=400,
+                n_int=100,
                 tvars=dict(x1=RV('norm', 0, 1),
                            x2=RV('norm', 0, 1)
                              ),
                 #codegen_type='weave',
-                sampling_type='LHS'
+                sampling_type='PGrid'
                 )
     from decimal import Decimal
     print Decimal((s.mu_q_arr / 2.)[0])

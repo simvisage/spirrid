@@ -20,6 +20,7 @@ from itertools import combinations, chain
 from matplotlib import rc
 from socket import gethostname
 from spirrid import SPIRRID
+from scipy import stats, polyval
 import numpy as np
 import os.path
 import pylab as p # import matplotlib with matlab interface
@@ -346,6 +347,13 @@ class SPIRRIDLAB(HasTraits):
             p.title('max rel. lack of fit')
             for i, (sampling, color, linestyle) in enumerate(zip(sampling_types, sampling_colors, sampling_linestyle)):
                 p.loglog(n_sim_range[:, i], error_table[:, i, 0], color=color, label=sampling, linestyle=linestyle)
+                #Linear regression using stats.linregress
+                (a_s, b_s, r, tt, stderr) = stats.linregress(np.log(n_sim_range[:, i]), np.log(error_table[:, i, 0]))
+                print('Linear regression using stats.linregress')
+                print('%s regression: a=%.2f b=%.2f, std error= %.3f => %f' % (sampling, a_s, b_s, stderr, 1. / a_s))
+                err_reg = polyval([a_s, b_s], np.log(n_sim_range[:, i]))
+                p.loglog(n_sim_range[:, i], np.exp(err_reg), 'r-')
+
 
             #p.ylim( 0, 10 )
             p.legend()
@@ -483,6 +491,7 @@ class SPIRRIDLAB(HasTraits):
             code, run_options, plot_options, legend_string = run
             s.codegen_type = code
             s.codegen.set(**run_options)
+            s.recalc = True
             print 'run', idx, run_options
 
             for i in range(self.n_recalc):
