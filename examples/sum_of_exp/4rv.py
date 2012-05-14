@@ -82,15 +82,19 @@ def create_demo_object(fig_output_dir='fig'):
                            x3=RV('norm', 0., 1.),
                            x4=RV('norm', 0., 1.),
                              ),
-                codegen_type='weave',
+                #codegen_type='weave',
                 )
-    print 'mu', s.mu_q_arr / 4.
+    from decimal import Decimal
+    print Decimal((s.mu_q_arr / 2.)[0])
 
     #===========================================================================
     # Exact solution
     #===========================================================================
     def mu_q_ex():
         return np.array([4.0 * np.sqrt(3) / 3.])
+
+    print Decimal((s.mu_q_arr - mu_q_ex())[0])
+
 
     #===========================================================================
     # Lab
