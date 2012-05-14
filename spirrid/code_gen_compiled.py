@@ -224,7 +224,7 @@ class CodeGenCompiled(CodeGen):
     # will be precalculated and stored in an n-dimensional grid
     # otherwise the product is performed for every epsilon in the inner loop anew
     # 
-    cached_dG = Bool(True, codegen_option=True)
+    cached_dG = Bool(False, codegen_option=True)
 
     #===========================================================================
     # cached_dG - dependent code

@@ -84,14 +84,18 @@ def create_demo_object(fig_output_dir='fig'):
                            x5=RV('norm', 0., 1.),
                              ),
                 codegen_type='weave',
+                sampling_type='TGrid'
                 )
-    print 'mu', s.mu_q_arr / 5.
+    from decimal import Decimal
+    print Decimal((s.mu_q_arr / 5.)[0])
 
     #===========================================================================
     # Exact solution
     #===========================================================================
     def mu_q_ex():
         return np.array([5 * np.sqrt(3) / 3.])
+    
+    print Decimal((s.mu_q_arr - mu_q_ex())[0])
 
     #===========================================================================
     # Lab

@@ -66,8 +66,8 @@ def create_demo_object(fig_output_dir='fig'):
                 tvars=dict(x1=RV('norm', 0, 1),
                            x2=RV('norm', 0, 1)
                              ),
-                #codegen_type='weave',
-                sampling_type='PGrid'
+                codegen_type='weave',
+                sampling_type='TGrid'
                 )
     from decimal import Decimal
     print Decimal((s.mu_q_arr / 2.)[0])
