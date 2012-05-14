@@ -50,26 +50,26 @@ class RV2(RF):
             }
             '''
 
-def create_demo_object(fig_output_dir='fig'):
+def create_demo_object(fig_output_dir = 'fig'):
 
     # discretize the control variable (x-axis)
-    e_arr = np.array([1])#np.linspace(0, 2.0, 80)
+    e_arr = np.array([1.0])#np.linspace(0, 2.0, 80)
 
     # n_int range for sampling efficiency test
     powers = np.linspace(1, math.log(1000, 10), 50)
-    n_int_range = np.array(np.power(10, powers), dtype=int)
+    n_int_range = np.array(np.power(10, powers), dtype = int)
 
     #===========================================================================
     # Randomization
     #===========================================================================
-    s = SPIRRID(q=RV2(),
-                e_arr=e_arr,
-                n_int=1000,
-                tvars=dict(x1=RV('norm', 0, 1),
-                           x2=RV('norm', 0, 1)
+    s = SPIRRID(q = RV2(),
+                e_arr = e_arr,
+                n_int = 1000,
+                tvars = dict(x1 = RV('norm', 0, 1),
+                           x2 = RV('norm', 0, 1)
                              ),
-                #codegen_type='weave',
-                sampling_type='LHS'
+                codegen_type = 'weave',
+                sampling_type = 'LHS'
                 )
     from decimal import Decimal
     print Decimal((s.mu_q_arr / 2.)[0])
@@ -83,15 +83,15 @@ def create_demo_object(fig_output_dir='fig'):
     #===========================================================================
     # Lab
     #===========================================================================
-    slab = SPIRRIDLAB(s=s, save_output=False, show_output=True,
-                      dpi=300,
-                      fig_output_dir=fig_output_dir,
-                      plot_mode='subplots',
-                      exact_arr=mu_q_ex(),
-                      n_int_range=n_int_range,
-                      extra_compiler_args=True,
-                      le_sampling_lst=['LHS', 'PGrid'],
-                      le_n_int_lst=[440, 5000])
+    slab = SPIRRIDLAB(s = s, save_output = False, show_output = True,
+                      dpi = 300,
+                      fig_output_dir = fig_output_dir,
+                      plot_mode = 'subplots',
+                      exact_arr = mu_q_ex(),
+                      n_int_range = n_int_range,
+                      extra_compiler_args = True,
+                      le_sampling_lst = ['LHS', 'PGrid'],
+                      le_n_int_lst = [440, 5000])
 
     return slab
 

@@ -160,8 +160,8 @@ class SPIRRID(FunctionRandomization):
     #===========================================================================
     # Introspection
     #===========================================================================
-    # report the current configuration of the integrator
     def __str__(self):
+        '''Report the current configuration of the integrator.'''
         
         # get the name either of the method or of the class
         try:
