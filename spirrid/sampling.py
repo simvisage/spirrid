@@ -38,7 +38,7 @@ def make_ogrid(args):
     i = 0
     for arg in args:
         if isinstance(arg, np.ndarray):
-            shape = np.ones((n_arr,), dtype = 'int')
+            shape = np.ones((n_arr,), dtype='int')
             shape[i] = len(arg)
             i += 1
             oarg = np.copy(arg).reshape(tuple(shape))
@@ -55,9 +55,9 @@ def make_ogrid_full(args):
     n_args = len(args)
     for i, arg in enumerate(args):
         if isinstance(arg, types.FloatType):
-            arg = np.array([arg], dtype = 'd')
+            arg = np.array([arg], dtype='d')
 
-        shape = np.ones((n_args,), dtype = 'int')
+        shape = np.ones((n_args,), dtype='int')
         shape[i] = len(arg)
         i += 1
         oarg = np.copy(arg).reshape(tuple(shape))
@@ -70,12 +70,12 @@ def make_ogrid_full(args):
 class FunctionRandomization(HasStrictTraits):
 
     # response function
-    q = Callable(input = True)
+    q = Callable(input=True)
 
     #===========================================================================
     # Inspection of the response function parameters
     #===========================================================================
-    var_spec = Property(depends_on = 'q')
+    var_spec = Property(depends_on='q')
     @cached_property
     def _get_var_spec(self):
         '''Get the names of the q_parameters'''
@@ -90,7 +90,7 @@ class FunctionRandomization(HasStrictTraits):
         dflt = np.array(argspec.defaults)
         return args, dflt
 
-    var_names = Property(depends_on = 'q')
+    var_names = Property(depends_on='q')
     @cached_property
     def _get_var_names(self):
         '''Get the array of default values.
@@ -98,7 +98,7 @@ class FunctionRandomization(HasStrictTraits):
         '''
         return self.var_spec[0]
 
-    var_defaults = Property(depends_on = 'q')
+    var_defaults = Property(depends_on='q')
     @cached_property
     def _get_var_defaults(self):
         '''Get the array of default values.
@@ -113,7 +113,7 @@ class FunctionRandomization(HasStrictTraits):
     #===========================================================================
     # Control variable specification
     #===========================================================================
-    evars = Dict(Str, Array, input_change = True)
+    evars = Dict(Str, Array, input_change=True)
     def __evars_default(self):
         return { 'e': [0, 1] }
 
@@ -122,7 +122,7 @@ class FunctionRandomization(HasStrictTraits):
         ''' sort entries according to var_names.'''
         return [ self.evars[ nm ] for nm in self.evar_names ]
 
-    evar_names = Property(depends_on = '_evars')
+    evar_names = Property(depends_on='_evars')
     @cached_property
     def _get_evar_names(self):
         evar_keys = self.evars.keys()
@@ -146,9 +146,9 @@ class FunctionRandomization(HasStrictTraits):
     # Specification of parameter value / distribution
     #===========================================================================
 
-    tvars = Dict(input_change = True)
+    tvars = Dict(input_change=True)
 
-    _tvars = Property(depends_on = 'tvars')
+    _tvars = Property(depends_on='tvars')
     @cached_property
     def _get__tvars(self):
         _tvars = {}
@@ -165,7 +165,7 @@ class FunctionRandomization(HasStrictTraits):
             # type conversion
             if isinstance(value, int):
                 value = float(value)
-                
+
             _tvars[key] = value
         return _tvars
 
@@ -179,7 +179,7 @@ class FunctionRandomization(HasStrictTraits):
     def _get_tvar_names(self):
         '''get the tvar names in the order given by the callable'''
         tvar_keys = self._tvars.keys()
-        return np.array([nm for nm in self.var_names if nm in tvar_keys ], dtype = str)
+        return np.array([nm for nm in self.var_names if nm in tvar_keys ], dtype=str)
 
     tvar_str = Property()
     def _get_tvar_str(self):
@@ -188,7 +188,7 @@ class FunctionRandomization(HasStrictTraits):
         return string.join(s_list, '\n')
 
     # number of integration points
-    n_int = Int(10, input_change = True)
+    n_int = Int(10, input_change=True)
 
 #===============================================================================
 # Randomization classes
@@ -220,8 +220,8 @@ class RandomSampling(HasStrictTraits):
             n_int = tvar.n_int
         else:
             n_int = self.randomization.n_int
-        min_theta = tvar.ppf(1e-5)
-        max_theta = tvar.ppf(1 - 1e-5)
+        min_theta = tvar.ppf(1e-16)
+        max_theta = tvar.ppf(1 - 1e-16)
         len_theta = max_theta - min_theta
         d_theta = len_theta / n_int
         return min_theta, max_theta, d_theta
@@ -236,7 +236,7 @@ class RandomSampling(HasStrictTraits):
 class RegularGrid(RandomSampling):
     '''Grid shape randomization
     '''
-    theta_list = Property(Array(float), depends_on = 'recalc')
+    theta_list = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_theta_list(self):
         '''Get the orthogonally oriented arrays of random variables. 
@@ -251,15 +251,15 @@ class RegularGrid(RandomSampling):
                 theta_list.append(self.get_theta_for_distrib(tvar))
             else:
                 raise TypeError, 'bad random variable specification: %s' % tvar
-                
+
         return theta_list
 
-    theta = Property(Array(float), depends_on = 'recalc')
+    theta = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_theta(self):
         return make_ogrid(self.theta_list)
 
-    dG = Property(Array(float), depends_on = 'recalc')
+    dG = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_dG(self):
         if len(self.dG_ogrid) == 0:
@@ -277,7 +277,7 @@ class RegularGrid(RandomSampling):
         # full orthogonalization (including scalars)
         otheta = make_ogrid_full(self.theta_list)
         # array of ones used for expansion 
-        oarray = np.ones(np.broadcast(*otheta).shape, dtype = float)
+        oarray = np.ones(np.broadcast(*otheta).shape, dtype=float)
         # expand (broadcast), flatten and stack the arrays
         return np.vstack([ (t * oarray).flatten()[idx] for t in otheta ])
 
@@ -301,7 +301,7 @@ class TGrid(RegularGrid):
         return np.linspace(min_theta + 0.5 * d_theta,
                             max_theta - 0.5 * d_theta, n_int)
 
-    dG_ogrid = Property(Array(float), depends_on = 'recalc')
+    dG_ogrid = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_dG_ogrid(self):
         dG_ogrid = [ 1.0 for i in range(len(self.theta)) ]
@@ -326,7 +326,7 @@ class PGrid(RegularGrid):
     def get_theta_for_distrib(self, distrib):
         return distrib.ppf(self.pi)
 
-    dG_ogrid = Property(Array(float), depends_on = 'recalc')
+    dG_ogrid = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_dG_ogrid(self):
         return np.repeat(1. / self.randomization.n_int, self.n_rand_vars)
@@ -360,7 +360,7 @@ class MonteCarlo(IrregularSampling):
         number of sampling points.
     '''
 
-    theta = Property(Array(float), depends_on = 'recalc')
+    theta = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_theta(self):
 
@@ -385,7 +385,7 @@ class LatinHypercubeSampling(IrregularSampling):
         return np.linspace(0.5 / self.n_sim,
                             1. - 0.5 / self.n_sim, self.n_sim)
 
-    theta = Property(Array(float), depends_on = 'recalc')
+    theta = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_theta(self):
 
