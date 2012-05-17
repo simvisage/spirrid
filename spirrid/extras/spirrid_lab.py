@@ -242,7 +242,7 @@ class SPIRRIDLAB(HasTraits):
     exec_time_lst = Trait('total time', {'total time' : 'total time',
                                     'data setup' : 'data setup',
                                     'method setup' : 'method setup',
-                                    'exec setup' : 'exec setup'})
+                                    'exec time' : 'exec time'})
 
     exec_time_dict = Property(Dict)
     def _get_exec_time_dict(self):
@@ -250,6 +250,8 @@ class SPIRRIDLAB(HasTraits):
                 'data setup' : self.s.exec_time[0],
                 'method setup' : self.s.exec_time[1],
                 'exec time' : self.s.exec_time[2]}
+
+    regression = Bool(True)
 
     sampling_efficiency_btn = Button(label='compare sampling efficiency')
     @on_trait_change('sampling_efficiency_btn')
@@ -347,12 +349,17 @@ class SPIRRIDLAB(HasTraits):
             p.title('max rel. lack of fit')
             for i, (sampling, color, linestyle) in enumerate(zip(sampling_types, sampling_colors, sampling_linestyle)):
                 p.loglog(n_sim_range[:, i], error_table[:, i, 0], color=color, label=sampling, linestyle=linestyle)
-                #Linear regression using stats.linregress
-                (a_s, b_s, r, tt, stderr) = stats.linregress(np.log(n_sim_range[:, i]), np.log(error_table[:, i, 0]))
-                print('Linear regression using stats.linregress')
-                print('%s regression: a=%.2f b=%.2f, std error= %.3f => %f' % (sampling, a_s, b_s, stderr, 1. / a_s))
-                err_reg = polyval([a_s, b_s], np.log(n_sim_range[:, i]))
-                p.loglog(n_sim_range[:, i], np.exp(err_reg), 'r-')
+                if self.regression:
+                    #Linear regression using stats.linregress
+                    (a_s, b_s, r, tt, stderr) = stats.linregress(np.log(n_sim_range[:, i]), np.log(error_table[:, i, 0]))
+                    print('Linear regression using stats.linregress')
+                    print('%s regression: a=%.2f b=%.2f, std error= %.3f => %f' % (sampling, a_s, b_s, stderr, 1. / a_s))
+                    err_reg = polyval([a_s, b_s], np.log(n_sim_range[:, i]))
+                    x = n_sim_range[:, i]
+                    y = np.exp(err_reg)
+                    p.loglog(x, y, 'r-')
+                    if str(a_s) != 'nan':
+                        p.text(x[x.shape[0] / 2.], y[y.shape[0] / 2.], '%.3f' % (1. / a_s), color='red')
 
 
             #p.ylim( 0, 10 )
@@ -943,6 +950,7 @@ class SPIRRIDLAB(HasTraits):
                        '_',
                        'sampling_types',
                        'exec_time_lst',
+                       'regression',
                        Item('sampling_efficiency_btn', show_label=False),
                        '_',
                        Item('language_efficiency_btn', show_label=False),

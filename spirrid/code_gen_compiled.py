@@ -165,8 +165,8 @@ class CodeGenCompiled(CodeGen):
     def _get_dG_arrs(self):
         '''Get flattened list of weight factor arrays.
         '''
-        theta = self.spirrid.sampling.theta
-        return _get_flat_arrays_from_list(self.rand_var_idx_list, theta)
+        dG = self.spirrid.sampling.dG_ogrid
+        return _get_flat_arrays_from_list(self.rand_var_idx_list, dG)
 
     arg_names = Property(depends_on='rf_change, rand_change, +codegen_option, recalc')
     @cached_property
@@ -316,7 +316,7 @@ class CodeGenCompiled(CodeGen):
         if self.n_rand_vars > 0:
             inner_code_str += self._get_code_dG_access()
             inner_code_str += q_code + '\n' + \
-                        (self.LD_N_TAB + 1) * '\t' + self.ld_.LD_EVAL_MU_Q
+                        (self.LD_N_TAB) * '\t' + self.ld_.LD_EVAL_MU_Q
         else:
             inner_code_str += q_code + \
                        self.ld_.LD_ADD_MU_Q
