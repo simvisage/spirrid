@@ -59,7 +59,7 @@ breaking strain are considered random and normally distributed. The function
             '''
 
     weave_code = '''
-            q = exp(-pow(x1,2.)) + exp(-pow(x2,2.)) + exp(-pow(x3,2.)) + exp(-pow(x4,2.));
+            q = exp(-x1*x1) + exp(-x2*x2) + exp(-x3*x3) + exp(-x4*x4);
             '''
 
 def create_demo_object(fig_output_dir='fig'):
@@ -68,7 +68,7 @@ def create_demo_object(fig_output_dir='fig'):
     e_arr = np.array([1.0])#np.linspace(0, 2.0, 80)
 
     # n_int range for sampling efficiency test
-    powers = np.linspace(1, math.log(60, 10), 20)
+    powers = np.linspace(1, math.log(60, 10), 40)
     n_int_range = np.array(np.power(10, powers), dtype=int)
 
     #===========================================================================
@@ -82,10 +82,11 @@ def create_demo_object(fig_output_dir='fig'):
                            x3=RV('norm', 0., 1.),
                            x4=RV('norm', 0., 1.),
                              ),
-                #codegen_type='weave',
+                codegen_type='weave',
+                sampling_type='TGrid'
                 )
     from decimal import Decimal
-    print Decimal((s.mu_q_arr / 2.)[0])
+    print Decimal((s.mu_q_arr / 4.)[0])
 
     #===========================================================================
     # Exact solution

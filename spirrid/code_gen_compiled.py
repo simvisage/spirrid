@@ -69,7 +69,7 @@ class CodeGenLangDictC(HasStrictTraits):
     LD_DECLARE_DG_PTR = '\tdouble dG = '
     LD_ACCESS_DG_IDX = 'i_%s'
     LD_ACCESS_DG_PTR = '*( %s_dG + i_%s)'
-    LD_ASSIGN_DG = 'double dG = %g;\n'
+    LD_ASSIGN_DG = 'double dG = %.100g;\n'
     LD_END_BRACE = ');\n'
 
 
@@ -107,7 +107,7 @@ class CodeGenLangDictCython(HasStrictTraits):
     LD_DECLARE_DG_PTR = '%(t)s\tdG = '
     LD_ACCESS_DG_IDX = 'i_%s'
     LD_ACCESS_DG_PTR = '%s_dG[i_%s]'
-    LD_ASSIGN_DG = '\tdG = %g\n'
+    LD_ASSIGN_DG = '\tdG = %.100g\n'
     LD_END_BRACE = ']\n'
 
 #===============================================================================
@@ -165,8 +165,8 @@ class CodeGenCompiled(CodeGen):
     def _get_dG_arrs(self):
         '''Get flattened list of weight factor arrays.
         '''
-        theta = self.spirrid.sampling.theta
-        return _get_flat_arrays_from_list(self.rand_var_idx_list, theta)
+        dG = self.spirrid.sampling.dG_ogrid
+        return _get_flat_arrays_from_list(self.rand_var_idx_list, dG)
 
     arg_names = Property(depends_on = 'rf_change, rand_change, +codegen_option, recalc')
     @cached_property
@@ -196,7 +196,7 @@ class CodeGenCompiled(CodeGen):
     # compiled_eps_loop:
     # If set True, the loop over the control variable epsilon is compiled
     # otherwise, python loop is used.
-    compiled_eps_loop = Bool(False, codegen_option = True)
+    compiled_eps_loop = Bool(True, codegen_option = True)
 
     #===========================================================================
     # compiled_eps_loop - dependent code
@@ -224,7 +224,7 @@ class CodeGenCompiled(CodeGen):
     # will be precalculated and stored in an n-dimensional grid
     # otherwise the product is performed for every epsilon in the inner loop anew
     # 
-    cached_dG = Bool(True, codegen_option = True)
+    cached_dG = Bool(False, codegen_option = True)
 
     #===========================================================================
     # cached_dG - dependent code
@@ -316,7 +316,7 @@ class CodeGenCompiled(CodeGen):
         if self.n_rand_vars > 0:
             inner_code_str += self._get_code_dG_access()
             inner_code_str += q_code + '\n' + \
-                        (self.LD_N_TAB + 1) * '\t' + self.ld_.LD_EVAL_MU_Q
+                        (self.LD_N_TAB) * '\t' + self.ld_.LD_EVAL_MU_Q
         else:
             inner_code_str += q_code + \
                        self.ld_.LD_ADD_MU_Q
@@ -404,7 +404,7 @@ class CodeGenCompiled(CodeGen):
             else:
                 # Python loop over eps
                 # 
-                mu_q_arr = np.zeros_like(eps)
+                mu_q_arr = np.zeros_like(eps, dtype = np.float64)
                 for idx, e in enumerate(eps):
                     # C loop over random dimensions
                     #
@@ -431,7 +431,7 @@ class CodeGenCompiled(CodeGen):
             # prepare the array of the control variable discretization
             #
             eps_arr = e
-            mu_q_arr = np.zeros_like(eps_arr)
+            mu_q_arr = np.zeros_like(eps_arr, dtype = np.float64)
 
             # prepare the parameters for the compiled function in 
             # a separate dictionary
