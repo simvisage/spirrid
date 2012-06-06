@@ -72,7 +72,7 @@ def create_demo_object(fig_output_dir='fig'):
 
     # n_int range for sampling efficiency test
     #powers = np.linspace(1, math.log(5, 9), 5)
-    n_int_range = np.arange(4, 8, 1, dtype=int)#np.array(np.power(10, powers), dtype=int)
+    n_int_range = np.arange(4, 7, 1, dtype=int)#np.array(np.power(10, powers), dtype=int)
 
     #===========================================================================
     # Randomization
@@ -81,7 +81,7 @@ def create_demo_object(fig_output_dir='fig'):
                 sampling_type='PGrid',
                 codegen_type='weave',
                 e_arr=e_arr,
-                n_int=10,
+                n_int=4,
                 tvars=dict(x1=RV('norm', 0., 1.),
                            x2=RV('norm', 0., 1.),
                            x3=RV('norm', 0., 1.),

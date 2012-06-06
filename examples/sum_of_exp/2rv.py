@@ -37,13 +37,12 @@ class RV2(RF):
         return np.exp(-x1 ** 2) + np.exp(-x2 ** 2)
 
     cython_code = '''
-            if 1:
                 q = np.exp(-x1*x1) + np.exp(-x2*x2)
             '''
 
     weave_code = '''{
                   q = exp(-x1*x1) + exp(-x2*x2);
-                  //printf("%f\\n",q);
+                  //printf("%100f\\n",q);
             }
             '''
 
@@ -53,7 +52,7 @@ def create_demo_object(fig_output_dir='fig'):
     e_arr = np.array([1.0])#np.linspace(0, 2.0, 80)
 
     # n_int range for sampling efficiency test
-    powers = np.linspace(1, math.log(1000, 10), 50)
+    powers = np.linspace(1, math.log(1500, 10), 100)
     n_int_range = np.array(np.power(10, powers), dtype=int)
     #n_int_range = np.array([10, 100, 200, 300, 400, 500, 800, 1000, 1500, 2000])
 

@@ -68,22 +68,23 @@ def create_demo_object(fig_output_dir='fig'):
     e_arr = np.array([1.0])#np.linspace(0, 2.0, 80)
 
     # n_int range for sampling efficiency test
-    powers = np.linspace(1, math.log(30, 10), 20)
+    powers = np.linspace(1, math.log(14, 10), 10)
     n_int_range = np.array(np.power(10, powers), dtype=int)
+    n_int_range = np.arange(1, 40, 1)
 
     #===========================================================================
     # Randomization
     #===========================================================================
     s = SPIRRID(q=fiber_tt_2p(),
                 e_arr=e_arr,
-                n_int=10,
+                n_int=20,
                 tvars=dict(x1=RV('norm', 0., 1.),
                            x2=RV('norm', 0., 1.),
                            x3=RV('norm', 0., 1.),
                            x4=RV('norm', 0., 1.),
                            x5=RV('norm', 0., 1.),
                              ),
-                codegen_type='weave',
+                #codegen_type='weave',
                 sampling_type='TGrid'
                 )
     from decimal import Decimal
@@ -94,7 +95,7 @@ def create_demo_object(fig_output_dir='fig'):
     #===========================================================================
     def mu_q_ex():
         return np.array([5 * np.sqrt(3) / 3.])
-    
+
     print Decimal((s.mu_q_arr - mu_q_ex())[0])
 
     #===========================================================================
