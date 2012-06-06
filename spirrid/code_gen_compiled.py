@@ -17,7 +17,6 @@
 from code_gen import CodeGen
 from etsproxy.traits.api import HasStrictTraits, Property, cached_property, \
     List, Str, Int, Trait, Bool, Interface, implements
-from rv import RV
 import numpy as np # import numpy package
 import operator
 import os
@@ -134,15 +133,13 @@ class CodeGenCompiled(CodeGen):
     n_rand_vars = Property(depends_on = 'tvars, recalc')
     @cached_property
     def _get_n_rand_vars(self):
-        dt = map(type, self.spirrid.tvar_lst)
-        return dt.count(RV)
+        return self.spirrid.n_rand_vars
 
     # get the indexes of the random variables within the parameter list
     rand_var_idx_list = Property(depends_on = 'tvars, recalc')
     @cached_property
     def _get_rand_var_idx_list(self):
-        dt = np.array(map(type, self.spirrid.tvar_lst))
-        return np.where(dt == RV)[0]
+        return self.spirrid.rand_var_idx_list
 
     # get the names of the random variables
     rand_var_names = Property(depends_on = 'tvars, recalc')
@@ -431,7 +428,7 @@ class CodeGenCompiled(CodeGen):
             # prepare the array of the control variable discretization
             #
             eps_arr = e
-            mu_q_arr = np.zeros_like(eps_arr, dtype = np.float64)
+            mu_q_arr = np.zeros_like(eps_arr)
 
             # prepare the parameters for the compiled function in 
             # a separate dictionary
