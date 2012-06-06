@@ -32,12 +32,12 @@ class RV2(RF):
 
     title = Str('brittle filament')
 
-    def __call__(self, e, x1, x2):
+    def __call__(self, e, x1, x2, x3):
         ''' Response function of a single fiber '''
-        return np.exp(-x1 ** 2) + np.exp(-x2 ** 2)
+        return np.exp(-x1 ** 2) + np.exp(-x2 ** 2) + np.exp(-x3 ** 2)
 
     cython_code = '''
-                q = np.exp(-x1*x1) + np.exp(-x2*x2)
+                q = np.exp(-x1*x1) + np.exp(-x2*x2) + np.exp(-x3*x3)
             '''
 
     weave_code = '''{
@@ -52,8 +52,7 @@ def create_demo_object(fig_output_dir='fig'):
     e_arr = np.array([1.0])#np.linspace(0, 2.0, 80)
 
     # n_int range for sampling efficiency test
-
-    powers = np.linspace(1, math.log(1000, 10), 50)
+    powers = np.linspace(1, math.log(40, 10), 50)
     n_int_range = np.array(np.power(10, powers), dtype=int)
     #n_int_range = np.array([10, 100, 200, 300, 400, 500, 800, 1000, 1500, 2000])
 
@@ -64,19 +63,20 @@ def create_demo_object(fig_output_dir='fig'):
                 e_arr=e_arr,
                 n_int=100,
                 tvars=dict(x1=RV('norm', 0, 1),
-                           x2=RV('norm', 0, 1)
+                           x2=RV('norm', 0, 1),
+                           x3=RV('norm', 0, 1)
                              ),
-                codegen_type='weave',
+                #codegen_type='weave',
                 sampling_type='TGrid'
                 )
     from decimal import Decimal
-    print Decimal((s.mu_q_arr / 2.)[0])
+    print Decimal((s.mu_q_arr / 3.)[0])
 
     #===========================================================================
     # Exact solution
     #===========================================================================
     def mu_q_ex():
-        return np.array([2 * np.sqrt(3) / 3.])
+        return np.array([3 * np.sqrt(3) / 3.])
 
     print Decimal((s.mu_q_arr - mu_q_ex())[0])
 

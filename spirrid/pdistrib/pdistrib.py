@@ -98,7 +98,7 @@ class PDistrib(HasTraits):
     # Methods preparing visualization
     #------------------------------------------------------------------------
 
-    quantile = Float(0.00001, auto_set = False, enter_set = True)
+    quantile = Float(1e-14, auto_set = False, enter_set = True)
     range = Property(Tuple(Float), depends_on = \
                       'distr_type.changed, quantile')
     @cached_property

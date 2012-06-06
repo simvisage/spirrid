@@ -17,178 +17,10 @@
 from etsproxy.traits.api import HasStrictTraits, Array, Property, Float, \
     cached_property, Callable, Str, Int, WeakRef, Dict, Event
 from rv import RV
-import inspect
 import numpy as np
-import string
 import types
-
-
-#===============================================================================
-# Helper methoods to produce an-dimensional array from a list of arrays 
-#===============================================================================
-def make_ogrid(args):
-    '''Orthogonalize a list of one-dimensional arrays.
-    scalar values are left untouched.
-    '''
-    # count the number of arrays in the list
-    dt = map(type, args)
-    n_arr = dt.count(np.ndarray)
-
-    oargs = []
-    i = 0
-    for arg in args:
-        if isinstance(arg, np.ndarray):
-            shape = np.ones((n_arr,), dtype='int')
-            shape[i] = len(arg)
-            i += 1
-            oarg = np.copy(arg).reshape(tuple(shape))
-            oargs.append(oarg)
-        elif isinstance(arg, types.FloatType):
-            oargs.append(arg)
-    return oargs
-
-def make_ogrid_full(args):
-    '''Orthogonalize a list of one-dimensional arrays.\
-    including scalar values in args.
-    '''
-    oargs = []
-    n_args = len(args)
-    for i, arg in enumerate(args):
-        if isinstance(arg, types.FloatType):
-            arg = np.array([arg], dtype='d')
-
-        shape = np.ones((n_args,), dtype='int')
-        shape[i] = len(arg)
-        i += 1
-        oarg = np.copy(arg).reshape(tuple(shape))
-        oargs.append(oarg)
-    return oargs
-
-#===============================================================================
-# Function randomization
-#===============================================================================
-class FunctionRandomization(HasStrictTraits):
-
-    # response function
-    q = Callable(input=True)
-
-    #===========================================================================
-    # Inspection of the response function parameters
-    #===========================================================================
-    var_spec = Property(depends_on='q')
-    @cached_property
-    def _get_var_spec(self):
-        '''Get the names of the q_parameters'''
-        if type(self.q) is types.FunctionType:
-            arg_offset = 0
-            q = self.q
-        else:
-            arg_offset = 1
-            q = self.q.__call__
-        argspec = inspect.getargspec(q)
-        args = np.array(argspec.args[ arg_offset:])
-        dflt = np.array(argspec.defaults)
-        return args, dflt
-
-    var_names = Property(depends_on='q')
-    @cached_property
-    def _get_var_names(self):
-        '''Get the array of default values.
-        None - means no default has been specified
-        '''
-        return self.var_spec[0]
-
-    var_defaults = Property(depends_on='q')
-    @cached_property
-    def _get_var_defaults(self):
-        '''Get the array of default values.
-        None - means no default has been specified
-        '''
-        dflt = self.var_spec[1]
-        defaults = np.repeat(None, len(self.var_names))
-        start_idx = min(len(dflt), len(defaults))
-        defaults[ -start_idx: ] = dflt[ -start_idx:]
-        return defaults
-
-    #===========================================================================
-    # Control variable specification
-    #===========================================================================
-    evars = Dict(Str, Array, input_change=True)
-    def __evars_default(self):
-        return { 'e': [0, 1] }
-
-    evar_lst = Property()
-    def _get_evar_lst(self):
-        ''' sort entries according to var_names.'''
-        return [ self.evars[ nm ] for nm in self.evar_names ]
-
-    evar_names = Property(depends_on='_evars')
-    @cached_property
-    def _get_evar_names(self):
-        evar_keys = self.evars.keys()
-        return [nm for nm in self.var_names if nm in evar_keys ]
-
-    evar_str = Property()
-    def _get_evar_str(self):
-        s_list = ['%s = [%g, ..., %g] (%d)' % (name, value[0], value[-1], len(value))
-                  for name, value in zip(self.evar_names, self.evar_lst)]
-        return string.join(s_list, '\n')
-
-    # convenience property to specify a single control variable without
-    # the need to send a dictionary
-    e_arr = Property
-    def _set_e_arr(self, e_arr):
-        '''Get the first free argument of var_names and set it to e vars
-        '''
-        self.evars[self.var_names[0]] = e_arr
-
-    #===========================================================================
-    # Specification of parameter value / distribution
-    #===========================================================================
-
-    tvars = Dict(input_change=True)
-
-    _tvars = Property(depends_on='tvars')
-    @cached_property
-    def _get__tvars(self):
-        _tvars = {}
-        for key, value in self.tvars.items():
-
-            # type checking
-            is_admissible = False
-            for admissible_type in [float, int, RV]:
-                if isinstance(value, admissible_type):
-                    is_admissible = True
-            if not is_admissible:
-                raise TypeError, 'bad type of theta variable %s' % key
-
-            # type conversion
-            if isinstance(value, int):
-                value = float(value)
-
-            _tvars[key] = value
-        return _tvars
-
-    tvar_lst = Property()
-    def _get_tvar_lst(self):
-        '''sort entries according to var_names
-        '''
-        return [ self._tvars[ nm ] for nm in self.tvar_names ]
-
-    tvar_names = Property
-    def _get_tvar_names(self):
-        '''get the tvar names in the order given by the callable'''
-        tvar_keys = self._tvars.keys()
-        return np.array([nm for nm in self.var_names if nm in tvar_keys ], dtype=str)
-
-    tvar_str = Property()
-    def _get_tvar_str(self):
-        s_list = ['%s = %s' % (name, str(value))
-                  for name, value in zip(self.tvar_names, self.tvar_lst)]
-        return string.join(s_list, '\n')
-
-    # number of integration points
-    n_int = Int(10, input_change=True)
+from function_randomization import \
+    FunctionRandomization, make_ogrid, make_ogrid_full
 
 #===============================================================================
 # Randomization classes
@@ -203,8 +35,7 @@ class RandomSampling(HasStrictTraits):
     # count the random variables
     n_rand_vars = Property
     def _get_n_rand_vars(self):
-        dt = map(type, self.randomization.tvar_lst)
-        return dt.count(RV)
+        return self.randomization.n_rand_vars
 
     n_sim = Property
     def _get_n_sim(self):
@@ -236,7 +67,7 @@ class RandomSampling(HasStrictTraits):
 class RegularGrid(RandomSampling):
     '''Grid shape randomization
     '''
-    theta_list = Property(Array(float), depends_on='recalc')
+    theta_list = Property(Array(float), depends_on = 'recalc')
     @cached_property
     def _get_theta_list(self):
         '''Get the orthogonally oriented arrays of random variables. 
@@ -254,12 +85,12 @@ class RegularGrid(RandomSampling):
 
         return theta_list
 
-    theta = Property(Array(float), depends_on='recalc')
+    theta = Property(Array(float), depends_on = 'recalc')
     @cached_property
     def _get_theta(self):
         return make_ogrid(self.theta_list)
 
-    dG = Property(Array(float), depends_on='recalc')
+    dG = Property(Array(float), depends_on = 'recalc')
     @cached_property
     def _get_dG(self):
         if len(self.dG_ogrid) == 0:
@@ -277,7 +108,7 @@ class RegularGrid(RandomSampling):
         # full orthogonalization (including scalars)
         otheta = make_ogrid_full(self.theta_list)
         # array of ones used for expansion 
-        oarray = np.ones(np.broadcast(*otheta).shape, dtype=float)
+        oarray = np.ones(np.broadcast(*otheta).shape, dtype = float)
         # expand (broadcast), flatten and stack the arrays
         return np.vstack([ (t * oarray).flatten()[idx] for t in otheta ])
 
@@ -301,7 +132,7 @@ class TGrid(RegularGrid):
         return np.linspace(min_theta + 0.5 * d_theta,
                             max_theta - 0.5 * d_theta, n_int)
 
-    dG_ogrid = Property(Array(float), depends_on='recalc')
+    dG_ogrid = Property(Array(float), depends_on = 'recalc')
     @cached_property
     def _get_dG_ogrid(self):
         dG_ogrid = [ 1.0 for i in range(len(self.theta)) ]
@@ -326,7 +157,7 @@ class PGrid(RegularGrid):
     def get_theta_for_distrib(self, distrib):
         return distrib.ppf(self.pi)
 
-    dG_ogrid = Property(Array(float), depends_on='recalc')
+    dG_ogrid = Property(Array(float), depends_on = 'recalc')
     @cached_property
     def _get_dG_ogrid(self):
         return np.repeat(1. / self.randomization.n_int, self.n_rand_vars)
@@ -360,7 +191,7 @@ class MonteCarlo(IrregularSampling):
         number of sampling points.
     '''
 
-    theta = Property(Array(float), depends_on='recalc')
+    theta = Property(Array(float), depends_on = 'recalc')
     @cached_property
     def _get_theta(self):
 
@@ -385,7 +216,7 @@ class LatinHypercubeSampling(IrregularSampling):
         return np.linspace(0.5 / self.n_sim,
                             1. - 0.5 / self.n_sim, self.n_sim)
 
-    theta = Property(Array(float), depends_on='recalc')
+    theta = Property(Array(float), depends_on = 'recalc')
     @cached_property
     def _get_theta(self):
 

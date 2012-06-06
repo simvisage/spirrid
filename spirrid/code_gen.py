@@ -17,9 +17,6 @@
 from etsproxy.traits.api import \
     HasStrictTraits, WeakRef, Bool, on_trait_change, \
     Event
-from rv import RV
-import numpy as np # import numpy package
-
 
 #===============================================================================
 # Generator of the integration code 
