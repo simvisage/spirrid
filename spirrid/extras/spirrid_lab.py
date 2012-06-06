@@ -503,7 +503,7 @@ class SPIRRIDLAB(HasTraits):
 
             for i in range(self.n_recalc):
                 s.recalc = True # automatically proagated within spirrid
-                print 'execution time', self.exec_time
+                print 'execution time', self.exec_time_dict['total time']
 
             p.plot(s.evar_lst[0], s.mu_q_arr, plot_options)
 
@@ -604,7 +604,7 @@ class SPIRRIDLAB(HasTraits):
             for item, n_int in meth_lst:
                 print 'sampling method:', item
                 s = self.s
-                self.exec_time # eliminate first load time delay (first column)
+                self.exec_time_dict['total time'] # eliminate first load time delay (first column)
                 s.n_int = n_int
                 s.sampling_type = item
                 exec_times_lang = []
@@ -623,8 +623,11 @@ class SPIRRIDLAB(HasTraits):
                     exec_times_run = []
                     for i in range(self.n_recalc):
                         s.recalc = True # automatically propagated
-                        exec_times_run.append(self.exec_time)
-                        print 'execution time', self.exec_time
+                        exec_times = [self.exec_time_dict['data setup'],
+                                     self.exec_time_dict['method setup'],
+                                     self.exec_time_dict['exec time']]
+                        exec_times_run.append(exec_times)
+                        print 'execution time', self.exec_time_dict['total time']
 
                     #legend_lst.append(legend_string[:-12])
                     legend_lst = [dict(weave='weave', cython='cython', numpy='numpy')[x[0]] for x in self.run_lst_language_config]
