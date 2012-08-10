@@ -59,11 +59,12 @@ def multip():
 
 def power():
 
-    a = np.linspace(0, 1, 1000000)
+    a = np.linspace(0, 1, 5)
     a0 = a.copy()
     par = 0.5
-    a0[a > par] = 0
-    a_m = np.ma.array(a, mask=a > par)
+    mask = a > par
+    a0[mask] = 0
+    a_m = np.ma.array(a, mask=mask)
 
     res1a = a0.copy()
     start = sysclock()
@@ -92,12 +93,11 @@ def power():
     res4 = (a * Heaviside(par - a)) ** 2
     print sysclock() - start, 'Heaviside, two passes - res4 = (a * Heaviside(-a + 0.5)) ** 2'
 
-    mask = a <= par
-    print 'all arrays are equal -', (np.array_equal(res1a[mask], res1b[mask]) and
-                                      np.array_equal(res2a.data[mask], res2b.data[mask]) and
-                                      np.array_equal(res1a[mask], res2a.data[mask]) and
-                                      np.array_equal(res2b.data[mask], res3[mask]) and
-                                      np.array_equal(res4[mask], res3[mask]))
+    print 'all arrays are equal -', (np.array_equal(res1a[~mask], res1b[~mask]) and
+                                      np.array_equal(res2a.data[~mask], res2b.data[~mask]) and
+                                      np.array_equal(res1a[~mask], res2a.data[~mask]) and
+                                      np.array_equal(res2b.data[~mask], res3[~mask]) and
+                                      np.array_equal(res4[~mask], res3[~mask]))
 
 if __name__ == '__main__':
     print '##### MULTIPLICATION'
