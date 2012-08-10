@@ -16,15 +16,15 @@ elif platform.system() == 'Windows':
 def Heaviside(x):
     ''' Heaviside function '''
     return x >= 0
-    
+
 def multip():
 
     a = np.linspace(0, 1, 1000000)
     b = np.linspace(0, 1, 1000000)
     a[a > 0.5] = 0
     b[b > 0.5] = 0
-    a_m = np.ma.array(a, mask = a > 0.5)
-    b_m = np.ma.array(b, mask = b > 0.5)
+    a_m = np.ma.array(a, mask=a > 0.5)
+    b_m = np.ma.array(b, mask=b > 0.5)
 
     res1a = a.copy()
     start = sysclock()
@@ -61,8 +61,9 @@ def power():
 
     a = np.linspace(0, 1, 1000000)
     a0 = a.copy()
-    a0[a > 0.5] = 0
-    a_m = np.ma.array(a, mask = a > 0.5)
+    par = 0.5
+    a0[a > par] = 0
+    a_m = np.ma.array(a, mask=a > par)
 
     res1a = a0.copy()
     start = sysclock()
@@ -84,16 +85,19 @@ def power():
 
     res3 = a.copy()
     start = sysclock()
-    res3[a > 0.5] **= 2
+    res3[a <= par] **= 2
     print sysclock() - start, 'explicit mask, inplace, two passes through array - res3[res3 > 0] **= 2'
 
     start = sysclock()
-    res4 = (a * Heaviside(0.5 - a)) ** 2
+    res4 = (a * Heaviside(par - a)) ** 2
     print sysclock() - start, 'Heaviside, two passes - res4 = (a * Heaviside(-a + 0.5)) ** 2'
 
-    print 'all arrays are equal -', np.array_equal(res1a, res1b) and np.array_equal(res2a.data, res2b.data)\
-                                 and np.array_equal(res1a, res2a.data) and np.array_equal(res2b.data, res3)\
-                                 and np.array_equal(res4, res3)
+    mask = a <= par
+    print 'all arrays are equal -', (np.array_equal(res1a[mask], res1b[mask]) and
+                                      np.array_equal(res2a.data[mask], res2b.data[mask]) and
+                                      np.array_equal(res1a[mask], res2a.data[mask]) and
+                                      np.array_equal(res2b.data[mask], res3[mask]) and
+                                      np.array_equal(res4[mask], res3[mask]))
 
 if __name__ == '__main__':
     print '##### MULTIPLICATION'
