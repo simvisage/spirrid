@@ -17,7 +17,7 @@
 from etsproxy.traits.api import implements, Str
 from scipy.interpolate import interp1d
 from spirrid.extras import SPIRRIDLAB
-from spirrid import  SPIRRID, RV, RF, IRF, Heaviside
+from spirrid import SPIRRID, RV, RF, IRF, Heaviside
 import math
 import numpy as np
 import os
@@ -108,7 +108,7 @@ and 1 for :math:`\eta > 0`.
             }
         '''
 
-def create_demo_object(fig_output_dir = 'fig'):
+def create_demo_object(fig_output_dir='fig'):
 
     D = 26 * 1.0e-6 # m
     A = (D / 2.0) ** 2 * math.pi
@@ -186,36 +186,37 @@ def create_demo_object(fig_output_dir = 'fig'):
     e_arr = np.linspace(0, 0.04, 40)
 
     # n_int range for sampling efficiency test
-    powers = np.linspace(1, math.log(20, 10), 15)
-    n_int_range = np.array(np.power(10, powers), dtype = int)
+    powers = np.linspace(1, math.log(20, 10), 10)
+    n_int_range = np.array(np.power(10, powers), dtype=int)
 
     #===========================================================================
     # Randomization
     #===========================================================================
-    s = SPIRRID(q = fiber_tt_5p(),
-                e_arr = e_arr,
-                n_int = 10,
-                tvars = dict(lambd = g_la, xi = g_xi, E_mod = g_E, theta = g_th, A = g_A),
+    s = SPIRRID(q=fiber_tt_5p(),
+                codegen_type='cython',
+                e_arr=e_arr,
+                n_int=10,
+                theta_vars=dict(lambd=g_la, xi=g_xi, E_mod=g_E, theta=g_th, A=g_A),
                 )
 
     # Exact solution
     def mu_q_ex(e):
-        data = np.loadtxt(mu_ex_file, delimiter = delimiter)
+        data = np.loadtxt(mu_ex_file, delimiter=delimiter)
         x, y = data[:, 0], data[:, 1]
-        f = interp1d(x, y, kind = 'linear')
+        f = interp1d(x, y, kind='linear')
         return f(e)
 
     #===========================================================================
     # Lab
     #===========================================================================
-    slab = SPIRRIDLAB(s = s, save_output = False, show_output = True, dpi = 300,
-                      fig_output_dir = fig_output_dir,
-                      exact_arr = mu_q_ex(e_arr),
-                      plot_mode = 'subplots',
-                      n_int_range = n_int_range,
-                      extra_compiler_args = True,
-                      le_sampling_lst = ['LHS', 'PGrid'],
-                      le_n_int_lst = [25, 30])
+    slab = SPIRRIDLAB(s=s, save_output=False, show_output=True, dpi=300,
+                      fig_output_dir=fig_output_dir,
+                      exact_arr=mu_q_ex(e_arr),
+                      plot_mode='subplots',
+                      n_int_range=n_int_range,
+                      extra_compiler_args=True,
+                      le_sampling_lst=['LHS', 'PGrid'],
+                      le_n_int_lst=[25, 30])
 
     return slab
 

@@ -79,10 +79,10 @@ class SPIRRIDAlgTest(unittest.TestCase):
         #===========================================================================
 
         cls.s = SPIRRID(q = fiber_tt_2p(),
-                         evars = {'e':e_arr},
+                         eps_vars = {'e':e_arr},
                          codegen_type = 'numpy',
                          n_int = 10,
-                         tvars = dict(la = RV('norm', cls.m_la, cls.std_la),
+                         theta_vars = dict(la = RV('norm', cls.m_la, cls.std_la),
                                       xi = RV('norm', cls.m_xi, cls.std_xi)
                                       ),
                          )
@@ -174,7 +174,7 @@ class SPIRRIDAlgTest(unittest.TestCase):
         '''Check the C-implementation for TGrid'''
         self.s.codegen_type = 'numpy'
         self.s.sampling_type = 'PGrid'
-        self.s.tvars['xi'] = self.m_xi
+        self.s.theta_vars['xi'] = self.m_xi
         max_mu_q = np.max(self.s.mu_q_arr)
         self.assertAlmostEqual(max_mu_q, 0.12000000000000001, 10)
 
@@ -188,7 +188,7 @@ class SPIRRIDChangeTest(unittest.TestCase):
         np.random.seed(2356)
 
     def test_e_arr(self):
-        '''Check the convenience constructor for evars
+        '''Check the convenience constructor for eps_vars
         '''
         #===========================================================================
         # Control variable
@@ -206,7 +206,7 @@ class SPIRRIDChangeTest(unittest.TestCase):
                          e_arr = e_arr,
                          codegen_type = 'numpy',
                          n_int = 10,
-                         tvars = dict(la = m_la,
+                         theta_vars = dict(la = m_la,
                                       xi = m_xi
                                       ),
                          )

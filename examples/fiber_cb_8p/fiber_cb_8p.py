@@ -162,11 +162,11 @@ if __name__ == '__main__':
     
     s = SPIRRID(q = q,
                 sampling_type = 'LHS',
-                evars = dict(w = np.linspace(0.0, 0.4, 50),
+                eps_vars = dict(w = np.linspace(0.0, 0.4, 50),
                              x = np.linspace(-20.1, 20.5, 100),
                              Lr = np.linspace(0.1, 20.0, 50)
                              ),
-                tvars = dict(tau = RV('uniform', 0.7, 1.0),
+                theta_vars = dict(tau = RV('uniform', 0.7, 1.0),
                              l = RV('uniform', 5.0, 10.0),
                              D_f = 26e-3,
                              E_f = 72e3,

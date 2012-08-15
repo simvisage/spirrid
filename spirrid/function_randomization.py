@@ -112,19 +112,19 @@ class FunctionRandomization(HasStrictTraits):
     #===========================================================================
     # Control variable specification
     #===========================================================================
-    evars = Dict(Str, Array, input_change = True)
-    def __evars_default(self):
+    eps_vars = Dict(Str, Array, input_change = True)
+    def __eps_vars_default(self):
         return { 'e': [0, 1] }
 
     evar_lst = Property()
     def _get_evar_lst(self):
         ''' sort entries according to var_names.'''
-        return [ self.evars[ nm ] for nm in self.evar_names ]
+        return [ self.eps_vars[ nm ] for nm in self.evar_names ]
 
-    evar_names = Property(depends_on = '_evars')
+    evar_names = Property(depends_on = '_eps_vars')
     @cached_property
     def _get_evar_names(self):
-        evar_keys = self.evars.keys()
+        evar_keys = self.eps_vars.keys()
         return [nm for nm in self.var_names if nm in evar_keys ]
 
     evar_str = Property()
@@ -139,19 +139,19 @@ class FunctionRandomization(HasStrictTraits):
     def _set_e_arr(self, e_arr):
         '''Get the first free argument of var_names and set it to e vars
         '''
-        self.evars[self.var_names[0]] = e_arr
+        self.eps_vars[self.var_names[0]] = e_arr
 
     #===========================================================================
     # Specification of parameter value / distribution
     #===========================================================================
 
-    tvars = Dict(input_change = True)
+    theta_vars = Dict(input_change = True)
 
-    _tvars = Property(depends_on = 'tvars')
+    _theta_vars = Property(depends_on = 'theta_vars')
     @cached_property
-    def _get__tvars(self):
-        _tvars = {}
-        for key, value in self.tvars.items():
+    def _get__theta_vars(self):
+        _theta_vars = {}
+        for key, value in self.theta_vars.items():
 
             # type checking
             is_admissible = False
@@ -165,19 +165,19 @@ class FunctionRandomization(HasStrictTraits):
             if isinstance(value, int):
                 value = float(value)
 
-            _tvars[key] = value
-        return _tvars
+            _theta_vars[key] = value
+        return _theta_vars
 
     tvar_lst = Property()
     def _get_tvar_lst(self):
         '''sort entries according to var_names
         '''
-        return [ self._tvars[ nm ] for nm in self.tvar_names ]
+        return [ self._theta_vars[ nm ] for nm in self.tvar_names ]
 
     tvar_names = Property
     def _get_tvar_names(self):
         '''get the tvar names in the order given by the callable'''
-        tvar_keys = self._tvars.keys()
+        tvar_keys = self._theta_vars.keys()
         return np.array([nm for nm in self.var_names if nm in tvar_keys ], dtype = str)
 
     tvar_str = Property()
@@ -196,7 +196,7 @@ class FunctionRandomization(HasStrictTraits):
         return dt.count(RV)
 
     # get the indexes of the random variables within the parameter list
-    rand_var_idx_list = Property(depends_on = 'tvars, recalc')
+    rand_var_idx_list = Property(depends_on = 'theta_vars, recalc')
     @cached_property
     def _get_rand_var_idx_list(self):
         dt = np.array(map(type, self.tvar_lst))
@@ -204,6 +204,6 @@ class FunctionRandomization(HasStrictTraits):
     
 if __name__ == '__main__':
     fr = FunctionRandomization(q = lambda eps, theta : eps * theta,
-                               evars = dict(eps = [1.0]),
-                               tvars = dict(theta = 1.0))
+                               eps_vars = dict(eps = [1.0]),
+                               theta_vars = dict(theta = 1.0))
     print 'n_rand_vars', fr.n_rand_vars

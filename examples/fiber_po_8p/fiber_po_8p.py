@@ -178,7 +178,7 @@ def create_demo_object(fig_output_dir = 'fig'):
     #===========================================================================
     # Randomization
     #===========================================================================
-    tvars = dict(fu = RV('weibull_min', 1200.0e6, 200.),
+    theta_vars = dict(fu = RV('weibull_min', 1200.0e6, 200.),
                   qf = 1500.0,
                   # qf = RV('uniform', 1500., 100.),
                   L = 0.02, # 
@@ -197,7 +197,7 @@ def create_demo_object(fig_output_dir = 'fig'):
     s = SPIRRID(q = ConstantFrictionFiniteFiber(),
                 e_arr = e_arr,
                 n_int = 10,
-                tvars = tvars,
+                theta_vars = theta_vars,
                 )
 
     #===========================================================================

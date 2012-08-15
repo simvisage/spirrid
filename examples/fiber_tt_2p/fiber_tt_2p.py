@@ -66,7 +66,7 @@ breaking strain are considered random and normally distributed. The function
             }
             '''
 
-def create_demo_object(fig_output_dir = 'fig'):
+def create_demo_object(fig_output_dir='fig'):
 
     m_la, std_la = 10., 1.0
     m_xi, std_xi = 1.0, 0.1
@@ -76,17 +76,17 @@ def create_demo_object(fig_output_dir = 'fig'):
 
     # n_int range for sampling efficiency test
     powers = np.linspace(1, math.log(500, 10), 50)
-    n_int_range = np.array(np.power(10, powers), dtype = int)
+    n_int_range = np.array(np.power(10, powers), dtype=int)
 
     #===========================================================================
     # Randomization
     #===========================================================================
-    s = SPIRRID(q = fiber_tt_2p(),
-                codegen_type = 'weave',
-                e_arr = e_arr,
-                n_int = 10,
-                tvars = dict(la = RV('norm', m_la, std_la),
-                             xi = RV('norm', m_xi, std_xi)
+    s = SPIRRID(q=fiber_tt_2p(),
+                codegen_type='weave',
+                e_arr=e_arr,
+                n_int=10,
+                theta_vars=dict(la=RV('norm', m_la, std_la),
+                             xi=RV('norm', m_xi, std_xi)
                              ),
                 )
 
@@ -94,21 +94,21 @@ def create_demo_object(fig_output_dir = 'fig'):
     # Exact solution
     #===========================================================================
     def mu_q_ex(e, m_xi, std_xi, m_la):
-        return e * (0.5 - 0.5 * 
+        return e * (0.5 - 0.5 *
                     erf(0.5 * math.sqrt(2) * (e - m_xi) / std_xi)) * m_la
 
     #===========================================================================
     # Lab
     #===========================================================================
-    slab = SPIRRIDLAB(s = s, save_output = False, show_output = True,
-                      dpi = 300,
-                      fig_output_dir = fig_output_dir,
-                      exact_arr = mu_q_ex(e_arr, m_xi, std_xi, m_la),
-                      plot_mode = 'subplots',
-                      n_int_range = n_int_range,
-                      extra_compiler_args = True,
-                      le_sampling_lst = ['LHS', 'PGrid'],
-                      le_n_int_lst = [440, 5000])
+    slab = SPIRRIDLAB(s=s, save_output=False, show_output=True,
+                      dpi=300,
+                      fig_output_dir=fig_output_dir,
+                      exact_arr=mu_q_ex(e_arr, m_xi, std_xi, m_la),
+                      plot_mode='subplots',
+                      n_int_range=n_int_range,
+                      extra_compiler_args=True,
+                      le_sampling_lst=['LHS', 'PGrid'],
+                      le_n_int_lst=[440, 5000])
 
     return slab
 

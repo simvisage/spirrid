@@ -102,12 +102,12 @@ def main():
     s_ne = SPIRRID(q = fiber_tt_5p_ne(),
                 e_arr = e_arr,
                 n_int = 10,
-                tvars = dict(lambd = g_la, xi = g_xi, E_mod = g_E, theta = g_th, A = g_A),
+                theta_vars = dict(lambd = g_la, xi = g_xi, E_mod = g_E, theta = g_th, A = g_A),
                 )
     s_np = SPIRRID(q = fiber_tt_5p_np(),
                 e_arr = e_arr,
                 n_int = 10,
-                tvars = dict(lambd = g_la, xi = g_xi, E_mod = g_E, theta = g_th, A = g_A),
+                theta_vars = dict(lambd = g_la, xi = g_xi, E_mod = g_E, theta = g_th, A = g_A),
                 )
 
     print 'Evaluation using NumPy'

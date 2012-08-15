@@ -121,7 +121,7 @@ def create_demo_object():
     #===========================================================================
     # Randomization
     #===========================================================================
-    tvars = dict(#fu = 1200.0e6,
+    theta_vars = dict(#fu = 1200.0e6,
                  fu = RV('weibull_min', 1200.0e6, 200.),
                   qf = RV('uniform', 1500., 100.),
                   #qf = 1500.0,
@@ -146,7 +146,7 @@ def create_demo_object():
     s = SPIRRID(q = ConstantFrictionFiniteFiber(),
                 e_arr = e_arr,
                 n_int = 10,
-                tvars = tvars,
+                theta_vars = theta_vars,
                 )
 
     import pylab as p

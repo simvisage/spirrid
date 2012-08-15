@@ -43,12 +43,12 @@ class SPIRRID(FunctionRandomization):
                                       'PGrid' : PGrid,
                                       'MCS' : MonteCarlo,
                                       'LHS': LatinHypercubeSampling },
-                          input_change = True)
+                          input_change=True)
 
-    sampling = Property(depends_on = 'input_change')
+    sampling = Property(depends_on='input_change')
     @cached_property
     def _get_sampling(self):
-        return self.sampling_type_(randomization = self)
+        return self.sampling_type_(randomization=self)
 
     #===========================================================================
     # Code generator
@@ -57,18 +57,18 @@ class SPIRRID(FunctionRandomization):
     codegen_type = Trait('numpy', {'numpy' : CodeGenNumpyFactory(),
                                    'weave' : CodeGenCFactory(),
                                    'cython' : CodeGenCythonFactory()},
-                         input_change = True)
+                         input_change=True)
 
     # object representing the code generator
-    codegen = Property(depends_on = 'codegen_type,sampling_type')
+    codegen = Property(depends_on='codegen_type,sampling_type')
     @cached_property
     def _get_codegen(self):
-        return self.codegen_type_(spirrid = self)
+        return self.codegen_type_(spirrid=self)
 
     #===========================================================================
     # Inspection methods
     #===========================================================================
-    def get_samples(self, n = 20):
+    def get_samples(self, n=20):
         '''Return the first n randomly selected samples.
         '''
         self.sampling.get_samples(n)
@@ -76,7 +76,7 @@ class SPIRRID(FunctionRandomization):
     #===========================================================================
     # Template for the integration of a response function in the time loop
     #===========================================================================
-    mu_q_method = Property(Callable, depends_on = 'input_change,alg_option,recalc')
+    mu_q_method = Property(Callable, depends_on='input_change,alg_option,recalc')
     @cached_property
     def _get_mu_q_method(self):
         '''Generate an integrator method for the particular data type
@@ -87,7 +87,7 @@ class SPIRRID(FunctionRandomization):
     #===========================================================================
     # Run the estimation of the mean response
     #===========================================================================
-    results = Property(depends_on = 'input_change,codegen_option, recalc')
+    results = Property(depends_on='input_change,codegen_option, recalc')
     @cached_property
     def _get_results(self):
         '''Estimate the mean value function given the randomization pattern.
@@ -162,7 +162,7 @@ class SPIRRID(FunctionRandomization):
     #===========================================================================
     def __str__(self):
         '''Report the current configuration of the integrator.'''
-        
+
         # get the name either of the method or of the class
         try:
             qname = self.q.__name__
@@ -171,11 +171,11 @@ class SPIRRID(FunctionRandomization):
 
         s = 'q = %s(%s)\n' % (qname, string.join(self.var_names, ','))
 
-        s += '** evars:\n'
+        s += '** eps_vars:\n'
         s += self.evar_str
 
         s += '\n'
-        s += '** tvars[n_int = %d]:\n' % self.n_int
+        s += '** theta_vars[n_int = %d]:\n' % self.n_int
         s += self.tvar_str
 
         s += '\n'
