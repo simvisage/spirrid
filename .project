@@ -3,6 +3,8 @@
 	<name>spirrid</name>
 	<comment></comment>
 	<projects>
+		<project>quaducom</project>
+		<project>rostar</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
