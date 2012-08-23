@@ -7,6 +7,78 @@ with parameters that can be prescribed random using arbitrary
 probabilistic distributions.
 
 
+Estimation of statistical moments of a function with independent random variables
+--------------------
+
+SPIRRID enables estimation of the statistical moments of a random
+problem :math:`Q` given as a function of a control variable
+:math:`\varepsilon` and of random variables :math:`\theta_1 \ldots \theta_m`
+constituting the random domain :math:`\mathbf{\Theta}`:
+
+.. math::
+	Q  = q\left( {\varepsilon;{\theta_1},\ldots,{\theta_m}} \right).
+	:label: generic_rf
+
+The :math:`k`-th raw statistical moment of such a random problem is given as
+
+.. math::
+	\mu_k( \varepsilon ) =
+	\displaystyle\int_{ \mathbf{\Theta}}^{}
+	\left[
+	q{\left( \varepsilon;{\mathbf \theta} \right)}
+	\right]^k
+	g( \mathbf{\theta} ) \, \mathrm{d}
+	\mathbf{\theta}.
+	:label:  mu_i1
+	
+	
+Since only independent random variables are considered here, 
+the joint probability density function :math:`g(\mathbf{\theta})` 
+(PDF) of the random vector :math:`\mathbf{\theta}` can be replaced 
+with the product of univariate marginal densities
+
+.. math::
+	\mu_k( \varepsilon ) =
+	\displaystyle\int_{\Theta_1}^{} \ldots
+	\displaystyle\int_{\Theta_{m}}^{}
+	\left[
+	q{\left( \varepsilon;{\mathbf \theta} \right)}
+	\right]^k
+	g_1(\theta_1) \ldots g_{m}( \theta_m )
+	\;
+	\mathrm{d}{\theta_1} \ldots \mathrm{d}{\theta_{m}}.
+	:label: mu_i2
+	
+The integration is to be performed numerically as a summation of discrete values
+distributed over the discretized random domain
+
+.. math::
+    \mu_k(\varepsilon)  =  
+    \displaystyle\sum_{\Theta_1}^{}\,  \ldots
+	\displaystyle\sum_{\Theta_m}^{}\,
+	{\underbrace{
+	\left[ q\left( \varepsilon;{\theta_1 \ldots \theta_m} \right)
+	\right]^k
+	}_{Q^k}
+	\underbrace{
+	{\Delta G_1(\theta_1)} \ldots {\Delta G_{m}(\theta_m)}
+	}_{\Delta G}},
+    :label: mu_i3
+	
+where :math:`\Delta G_i(\theta_i)` denote the weighting factors
+that depend on the particular type of sampling as specified below.
+The distribution of the integration points :math:`\Theta_m` within
+the random domain can be expressed as
+
+.. math::
+	\Theta_i = [\theta_{ij}, j \in 1\ldots n_i], \; i \in 1\ldots m,
+	:label: sampling_points
+	
+where :math:`n_i` is the number of discretization points 
+for the :math:`i`-th variable and :math:`j` counts the 
+disretization point along a variable.
+
+
 Illustrative example
 --------------------
 
@@ -26,7 +98,7 @@ Let us consider the function
 where the variables :math:`\lambda` and :math:`\xi` are considered random and normally distributed.
 The function :math:`H(\eta)` represents the Heaviside function with values 0 for :math:`\eta < 0`
 and 1 for :math:`\eta > 0`.
-The mean response of the function is obtained as
+The mean response of the function is obtained using Eq. :eq:`mu_i3` as
 
 .. math::
 	    \mu_{q}(\varepsilon)  =  \sum_{\Theta_\lambda}^{}  \sum_{ \Theta_\xi }^{}
@@ -48,9 +120,6 @@ are shown in the right diagram of the Figure.
 The corresponding code delivering the mean estimates using the spirrid package
 is constructed as follows:  
 ::
-
-    from traits.api import Delegate, HasTraits, Instance,\
-                                     Int, Str
 
     from simvisage.spirrid import SPIRRID, RV, Heaviside
     import numpy as np
