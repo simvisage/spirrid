@@ -153,8 +153,8 @@ And:
 
   More detailed issues concerning the efficiency of the covered 
   sampling and implementation techniques are described in paper 
-  *Using Python for scientific
-  computing: efficient and flexible evaluation of the statistical
-  characteristics of functions with multivariate random inputs*
-  prepared for submission in CPC.
-
+  *CHUDOBA, R.; SADÍLEK, V.; RYPL, R.; VOŘECHOVSKÝ, M.
+  Using Python for scientific computing: Efficient and flexible evaluation 
+  of the statistical characteristics of functions with multivariate random 
+  inputs. COMPUTER PHYSICS COMMUNICATIONS, 2012. `10.1016/j.cpc.2012.08.021`_.
+  .. _10.1016/j.cpc.2012.08.021: http://dx.doi.org/10.1016/j.cpc.2012.08.021
