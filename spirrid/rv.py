@@ -1,30 +1,30 @@
-#-------------------------------------------------------------------------------
-#
+# -------------------------------------------------------------------------------
+# 
 # Copyright (c) 2012
 # IMB, RWTH Aachen University,
 # ISM, Brno University of Technology
 # All rights reserved.
-#
+# 
 # This software is provided without warranty under the terms of the BSD
 # license included in the Spirrid top directory "licence.txt" and may be
 # redistributed only under the conditions described in the aforementioned
 # license.
-#
+# 
 # Thanks for using Simvisage open source!
-#
-#-------------------------------------------------------------------------------
+# 
+# -------------------------------------------------------------------------------
 
 from etsproxy.traits.api import HasTraits, Property, Float, cached_property, \
     Str, Int
 from pdistrib import PDistrib as PD
 
 
-#===============================================================================
+# ===============================================================================
 # Probability distribution specification
-#===============================================================================
+# ===============================================================================
 class RV(HasTraits):
 
-    def __init__(self, type, loc = 0.0, scale = 0.0, shape = 1.0,
+    def __init__(self, type, loc=0.0, scale=0.0, shape=1.0,
                   *args, **kw):
         '''Convenience initialization'''
         super(RV, self).__init__(*args, **kw)
@@ -55,7 +55,7 @@ class RV(HasTraits):
     type = Str
 
     # hidden property instance of the scipy stats distribution
-    _distr = Property(depends_on = 'mu,std,loc,type')
+    _distr = Property(depends_on='mu,std,loc,type')
     @cached_property
     def _get__distr(self):
         '''Construct a distribution.
@@ -64,8 +64,8 @@ class RV(HasTraits):
             n_segments = 10
         else:
             n_segments = self.n_int
-        pd = PD(distr_choice = self.type, n_segments = n_segments)
-        pd.distr_type.set(scale = self.scale, shape = self.shape, loc = self.loc)
+        pd = PD(distr_choice=self.type, n_segments=n_segments)
+        pd.distr_type.set(scale=self.scale, shape=self.shape, loc=self.loc)
         return pd
 
     # access methods to pdf, ppf, rvs

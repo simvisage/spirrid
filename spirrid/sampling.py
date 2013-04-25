@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 #
 # Copyright (c) 2012
 # IMB, RWTH Aachen University,
@@ -12,7 +12,7 @@
 #
 # Thanks for using Simvisage open source!
 #
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 from etsproxy.traits.api import HasStrictTraits, Array, Property, Float, \
     cached_property, Callable, Str, Int, WeakRef, Dict, Event
@@ -22,9 +22,9 @@ import types
 from function_randomization import \
     FunctionRandomization, make_ogrid, make_ogrid_full
 
-#===============================================================================
+# ===============================================================================
 # Randomization classes
-#===============================================================================
+# ===============================================================================
 class RandomSampling(HasStrictTraits):
     '''Deliver the discretized theta and dG
     '''
@@ -67,7 +67,7 @@ class RandomSampling(HasStrictTraits):
 class RegularGrid(RandomSampling):
     '''Grid shape randomization
     '''
-    theta_list = Property(Array(float), depends_on = 'recalc')
+    theta_list = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_theta_list(self):
         '''Get the orthogonally oriented arrays of random variables. 
@@ -85,12 +85,12 @@ class RegularGrid(RandomSampling):
 
         return theta_list
 
-    theta = Property(Array(float), depends_on = 'recalc')
+    theta = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_theta(self):
         return make_ogrid(self.theta_list)
 
-    dG = Property(Array(float), depends_on = 'recalc')
+    dG = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_dG(self):
         if len(self.dG_ogrid) == 0:
@@ -107,8 +107,8 @@ class RegularGrid(RandomSampling):
         idx = np.random.permutation(np.arange(self.n_sim))[:n]
         # full orthogonalization (including scalars)
         otheta = make_ogrid_full(self.theta_list)
-        # array of ones used for expansion 
-        oarray = np.ones(np.broadcast(*otheta).shape, dtype = float)
+        # array of ones used for expansion
+        oarray = np.ones(np.broadcast(*otheta).shape, dtype=float)
         # expand (broadcast), flatten and stack the arrays
         return np.vstack([ (t * oarray).flatten()[idx] for t in otheta ])
 
@@ -132,7 +132,7 @@ class TGrid(RegularGrid):
         return np.linspace(min_theta + 0.5 * d_theta,
                             max_theta - 0.5 * d_theta, n_int)
 
-    dG_ogrid = Property(Array(float), depends_on = 'recalc')
+    dG_ogrid = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_dG_ogrid(self):
         dG_ogrid = [ 1.0 for i in range(len(self.theta)) ]
@@ -157,7 +157,7 @@ class PGrid(RegularGrid):
     def get_theta_for_distrib(self, distrib):
         return distrib.ppf(self.pi)
 
-    dG_ogrid = Property(Array(float), depends_on = 'recalc')
+    dG_ogrid = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_dG_ogrid(self):
         return np.repeat(1. / self.randomization.n_int, self.n_rand_vars)
@@ -191,7 +191,7 @@ class MonteCarlo(IrregularSampling):
         number of sampling points.
     '''
 
-    theta = Property(Array(float), depends_on = 'recalc')
+    theta = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_theta(self):
 
@@ -216,7 +216,7 @@ class LatinHypercubeSampling(IrregularSampling):
         return np.linspace(0.5 / self.n_sim,
                             1. - 0.5 / self.n_sim, self.n_sim)
 
-    theta = Property(Array(float), depends_on = 'recalc')
+    theta = Property(Array(float), depends_on='recalc')
     @cached_property
     def _get_theta(self):
 
