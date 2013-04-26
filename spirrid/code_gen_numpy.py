@@ -44,7 +44,7 @@ class CodeGenNumpy(CodeGen):
                 Q_dG = s.q(**args)
                 Q2_dG = Q_dG ** 2
 
-                Q_dG *= s.sampling.dG # in-place multiplication
+                Q_dG *= s.sampling.dG  # in-place multiplication
                 Q2_dG *= s.sampling.dG
 
                 # sum all squared values to get the variance
@@ -62,15 +62,16 @@ class CodeGenNumpy(CodeGen):
 
                 Q_dG = s.q(**args)
 
-                Q_dG *= s.sampling.dG # in-place multiplication
+                Q_dG *= s.sampling.dG  # in-place multiplication
 
                 # sum all squared values to get the variance
                 mu_q = np.sum(Q_dG)
 
                 return mu_q, None
-
-        otypes = [ float for i in range(n * 2)]
-        return np.vectorize(mu_q_method, otypes = otypes)
+        # otypes list of the length n = number of output parameters of mu_q_method
+        # mu_q, var_q => 2
+        otypes = [ float for i in range(2)]
+        return np.vectorize(mu_q_method, otypes=otypes)
 
     def __str__(self):
         return 'numpy\nvar_eval: %s\n' % `self.implicit_var_eval`
