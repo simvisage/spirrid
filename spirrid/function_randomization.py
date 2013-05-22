@@ -166,7 +166,6 @@ class FunctionRandomization(HasStrictTraits):
                 value = float(value)
 
             _theta_vars[key] = value
-        print 'theta vars', _theta_vars
         return _theta_vars
 
     tvar_lst = Property()
