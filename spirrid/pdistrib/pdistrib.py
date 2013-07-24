@@ -24,6 +24,7 @@ from math import sqrt
 from matplotlib.figure import Figure
 from numpy import linspace
 from scipy.stats import norm, uniform, weibull_min
+from piecewise_uniform_distr import piecewise_uniform
 from sin2x_distr import sin2x
 from sinus_distribution import sin_distr
 from spirrid.util.traits.editors.mpl_figure_editor import MPLFigureEditor
@@ -60,12 +61,13 @@ class PDistrib(HasTraits):
     # into the Enum trait
     # distr_choice = Enum(distr_enum)
 
-    distr_choice = Enum('sin2x', 'weibull_min', 'sin_distr', 'uniform', 'norm')
+    distr_choice = Enum('sin2x', 'weibull_min', 'sin_distr', 'uniform', 'norm', 'piecewise_uniform')
     distr_dict = {'sin2x' : sin2x,
                   'uniform' : uniform,
                   'norm' : norm,
                   'weibull_min' : weibull_min,
-                  'sin_distr' : sin_distr}
+                  'sin_distr' : sin_distr,
+                'piecewise_uniform' : piecewise_uniform}
 
     # instantiating the continuous distributions
     distr_type = Property(Instance(Distribution), depends_on='distr_choice')
