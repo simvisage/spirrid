@@ -24,6 +24,7 @@ from math import sqrt
 from matplotlib.figure import Figure
 from numpy import linspace
 from scipy.stats import norm, uniform, weibull_min
+from piecewise_uniform_distr import piecewise_uniform
 from sin2x_distr import sin2x
 from sinus_distribution import sin_distr
 from spirrid.util.traits.editors.mpl_figure_editor import MPLFigureEditor
@@ -33,7 +34,7 @@ import tempfile
 ''' a dictionary filled with distribution names (keys) and
     scipy.stats.distribution attributes having None
     or 1 shape parameters (values)'''
-#for distr in distributions.__all__[2:84]:
+# for distr in distributions.__all__[2:84]:
 #    if distributions.__dict__[distr].shapes == None:
 #        distr_dict[distr] = distributions.__dict__[distr]
 #        distr_enum.append(distr)
@@ -60,15 +61,16 @@ class PDistrib(HasTraits):
     # into the Enum trait
     # distr_choice = Enum(distr_enum)
 
-    distr_choice = Enum('sin2x', 'weibull_min', 'sin_distr', 'uniform', 'norm')
+    distr_choice = Enum('sin2x', 'weibull_min', 'sin_distr', 'uniform', 'norm', 'piecewise_uniform')
     distr_dict = {'sin2x' : sin2x,
                   'uniform' : uniform,
                   'norm' : norm,
                   'weibull_min' : weibull_min,
-                  'sin_distr' : sin_distr}
+                  'sin_distr' : sin_distr,
+                'piecewise_uniform' : piecewise_uniform}
 
     # instantiating the continuous distributions
-    distr_type = Property(Instance(Distribution), depends_on = 'distr_choice')
+    distr_type = Property(Instance(Distribution), depends_on='distr_choice')
     @cached_property
     def _get_distr_type(self):
         return Distribution(self.distr_dict[self.distr_choice])
@@ -98,16 +100,16 @@ class PDistrib(HasTraits):
     # Methods preparing visualization
     #------------------------------------------------------------------------
 
-    quantile = Float(1e-14, auto_set = False, enter_set = True)
-    range = Property(Tuple(Float), depends_on = \
+    quantile = Float(1e-14, auto_set=False, enter_set=True)
+    range = Property(Tuple(Float), depends_on=\
                       'distr_type.changed, quantile')
     @cached_property
     def _get_range(self):
         return (self.distr_type.distr.ppf(self.quantile), self.distr_type.distr.ppf(1 - self.quantile))
 
-    n_segments = Int(500, auto_set = False, enter_set = True)
+    n_segments = Int(500, auto_set=False, enter_set=True)
 
-    dx = Property(Float, depends_on = \
+    dx = Property(Float, depends_on=\
                       'distr_type.changed, quantile, n_segments')
     @cached_property
     def _get_dx(self):
@@ -117,7 +119,7 @@ class PDistrib(HasTraits):
     #-------------------------------------------------------------------------
     # Discretization of the distribution domain
     #-------------------------------------------------------------------------
-    x_array = Property(Array('float_'), depends_on = \
+    x_array = Property(Array('float_'), depends_on=\
                         'distr_type.changed,'\
                         'quantile, n_segments')
     @cached_property
@@ -146,7 +148,7 @@ class PDistrib(HasTraits):
     # PDF - permanent array
     #===========================================================================
 
-    pdf_array = Property(Array('float_'), depends_on = \
+    pdf_array = Property(Array('float_'), depends_on=\
                                     'distr_type.changed,'\
                                      'quantile, n_segments')
     @cached_property
@@ -161,7 +163,7 @@ class PDistrib(HasTraits):
     #===========================================================================
     # CDF permanent array
     #===========================================================================
-    cdf_array = Property(Array('float_'), depends_on = \
+    cdf_array = Property(Array('float_'), depends_on=\
                                     'distr_type.changed,'\
                                      'quantile, n_segments')
     @cached_property
@@ -181,7 +183,7 @@ class PDistrib(HasTraits):
 
     figure = Instance(Figure)
     def _figure_default(self):
-        figure = Figure(facecolor = 'white')
+        figure = Figure(facecolor='white')
         return figure
 
     data_changed = Event
@@ -191,32 +193,32 @@ class PDistrib(HasTraits):
         figure.clear()
         axes = figure.gca()
         # plot PDF
-        axes.plot(self.x_array, self.pdf_array, lw = 1.0, color = 'blue', \
-                  label = 'PDF')
+        axes.plot(self.x_array, self.pdf_array, lw=1.0, color='blue', \
+                  label='PDF')
         axes2 = axes.twinx()
         # plot CDF on a separate axis (tick labels left)
-        axes2.plot(self.x_array, self.cdf_array, lw = 2, color = 'red', \
-                  label = 'CDF')
+        axes2.plot(self.x_array, self.cdf_array, lw=2, color='red', \
+                  label='CDF')
         # fill the unity area given by integrating PDF along the X-axis
-        axes.fill_between(self.x_array, 0, self.pdf_array, color = 'lightblue',
-                           alpha = 0.8, linewidth = 2)
+        axes.fill_between(self.x_array, 0, self.pdf_array, color='lightblue',
+                           alpha=0.8, linewidth=2)
         # plot mean
         mean = self.distr_type.distr.stats('m')
         axes.plot([mean, mean], [0.0, self.distr_type.distr.pdf(mean)],
-                   lw = 1.5, color = 'black', linestyle = '-')
+                   lw=1.5, color='black', linestyle='-')
         # plot stdev
         stdev = sqrt(self.distr_type.distr.stats('v'))
         axes.plot([mean - stdev, mean - stdev],
                    [0.0, self.distr_type.distr.pdf(mean - stdev)],
-                   lw = 1.5, color = 'black', linestyle = '--')
+                   lw=1.5, color='black', linestyle='--')
         axes.plot([mean + stdev, mean + stdev],
                    [0.0, self.distr_type.distr.pdf(mean + stdev)],
-                   lw = 1.5, color = 'black', linestyle = '--')
+                   lw=1.5, color='black', linestyle='--')
 
-        axes.legend(loc = 'center left')
-        axes2.legend(loc = 'center right')
-        axes.ticklabel_format(scilimits = (-3., 4.))
-        axes2.ticklabel_format(scilimits = (-3., 4.))
+        axes.legend(loc='center left')
+        axes2.legend(loc='center right')
+        axes.ticklabel_format(scilimits=(-3., 4.))
+        axes2.ticklabel_format(scilimits=(-3., 4.))
 
         # plot limits on X and Y axes
         axes.set_ylim(0.0, max(self.pdf_array) * 1.15)
@@ -231,47 +233,47 @@ class PDistrib(HasTraits):
         self.plot(self.figure)
         self.data_changed = True
 
-    icon = Property(Instance(ImageResource), depends_on = 'distr_type.changed,quantile,n_segments')
+    icon = Property(Instance(ImageResource), depends_on='distr_type.changed,quantile,n_segments')
     @cached_property
     def _get_icon(self):
-        fig = plt.figure(figsize = (4, 4), facecolor = 'white')
+        fig = plt.figure(figsize=(4, 4), facecolor='white')
         self.plot(fig)
         tf_handle, tf_name = tempfile.mkstemp('.png')
-        fig.savefig(tf_name, dpi = 35)
-        return ImageResource(name = tf_name)
+        fig.savefig(tf_name, dpi=35)
+        return ImageResource(name=tf_name)
 
-    traits_view = View(HSplit(VGroup(Group(Item('distr_choice', show_label = False),
-                                           Item('@distr_type', show_label = False),
+    traits_view = View(HSplit(VGroup(Group(Item('distr_choice', show_label=False),
+                                           Item('@distr_type', show_label=False),
                                            ),
-                                      id = 'pdistrib.distr_type.pltctrls',
-                                      label = 'Distribution parameters',
-                                      scrollable = True,
+                                      id='pdistrib.distr_type.pltctrls',
+                                      label='Distribution parameters',
+                                      scrollable=True,
                                       ),
                                 Tabbed(Group(Item('figure',
-                                            editor = MPLFigureEditor(),
-                                            show_label = False,
-                                            resizable = True),
-                                            scrollable = True,
-                                            label = 'Plot',
+                                            editor=MPLFigureEditor(),
+                                            show_label=False,
+                                            resizable=True),
+                                            scrollable=True,
+                                            label='Plot',
                                             ),
-                                       Group(Item('quantile', label = 'quantile'),
-                                             Item('n_segments', label = 'plot points'),
-                                             label = 'Plot parameters'
+                                       Group(Item('quantile', label='quantile'),
+                                             Item('n_segments', label='plot points'),
+                                             label='Plot parameters'
                                             ),
-                                        label = 'Plot',
-                                        id = 'pdistrib.figure.params',
-                                        dock = 'tab',
+                                        label='Plot',
+                                        id='pdistrib.figure.params',
+                                        dock='tab',
                                        ),
-                                dock = 'tab',
-                                id = 'pdistrib.figure.view'
+                                dock='tab',
+                                id='pdistrib.figure.view'
                                 ),
-                                id = 'pdistrib.view',
-                                dock = 'tab',
-                                title = 'Statistical distribution',
-                                buttons = ['Ok', 'Cancel'],
-                                scrollable = True,
-                                resizable = True,
-                                width = 600, height = 400
+                                id='pdistrib.view',
+                                dock='tab',
+                                title='Statistical distribution',
+                                buttons=['Ok', 'Cancel'],
+                                scrollable=True,
+                                resizable=True,
+                                width=600, height=400
                         )
 
 

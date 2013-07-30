@@ -1,27 +1,27 @@
-#-------------------------------------------------------------------------------
-#
+# -------------------------------------------------------------------------------
+# 
 # Copyright (c) 2012
 # IMB, RWTH Aachen University,
 # ISM, Brno University of Technology
 # All rights reserved.
-#
+# 
 # This software is provided without warranty under the terms of the BSD
 # license included in the Spirrid top directory "licence.txt" and may be
 # redistributed only under the conditions described in the aforementioned
 # license.
-#
+# 
 # Thanks for using Simvisage open source!
-#
-#-------------------------------------------------------------------------------
+# 
+# -------------------------------------------------------------------------------
 
 from etsproxy.traits.api import HasStrictTraits, Property, Float, cached_property, \
     Str, Int, Tuple, Dict
 
 from pdistrib import PDistrib as PD
 
-#===============================================================================
+# ===============================================================================
 # Probability distribution specification
-#===============================================================================
+# ===============================================================================
 class RV(HasStrictTraits):
 
     def __init__(self, type, loc=0.0, scale=0.0, shape=1.0,

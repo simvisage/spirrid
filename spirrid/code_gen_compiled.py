@@ -1,27 +1,27 @@
-#-------------------------------------------------------------------------------
-#
+# -------------------------------------------------------------------------------
+# 
 # Copyright (c) 2012
 # IMB, RWTH Aachen University,
 # ISM, Brno University of Technology
 # All rights reserved.
-#
+# 
 # This software is provided without warranty under the terms of the BSD
 # license included in the Spirrid top directory "licence.txt" and may be
 # redistributed only under the conditions described in the aforementioned
 # license.
-#
+# 
 # Thanks for using Simvisage open source!
-#
-#-------------------------------------------------------------------------------
+# 
+# -------------------------------------------------------------------------------
 
 from code_gen import CodeGen
 from etsproxy.traits.api import HasStrictTraits, Property, cached_property, \
     List, Str, Int, Trait, Bool, Interface, implements
-import numpy as np # import numpy package
+import numpy as np  # import numpy package
 import operator
 import os
 import platform
-import scipy.stats.distributions as distr # import distributions
+import scipy.stats.distributions as distr  # import distributions
 import util.weave as weave
 
 import time
@@ -109,16 +109,16 @@ class CodeGenLangDictCython(HasStrictTraits):
     LD_ASSIGN_DG = '\tdG = %.100g\n'
     LD_END_BRACE = ']\n'
 
-#===============================================================================
-# Generator of the C-code 
-#===============================================================================
+# ===============================================================================
+# Generator of the C-code
+# ===============================================================================
 class CodeGenCompiled(CodeGen):
     '''
         C-code is generated using the inline feature of scipy.
     '''
-    #===========================================================================
-    # Inspection of the randomization - needed by CodeGenCompiled 
-    #===========================================================================
+    # ===========================================================================
+    # Inspection of the randomization - needed by CodeGenCompiled
+    # ===========================================================================
     evar_names = Property(depends_on='q, recalc')
     @cached_property
     def _get_evar_names(self):
@@ -186,18 +186,18 @@ class CodeGenCompiled(CodeGen):
     ld = Trait('weave', dict(weave=CodeGenLangDictC(),
                              cython=CodeGenLangDictCython()))
 
-    #===========================================================================
+    # ===========================================================================
     # Configuration of the code
-    #===========================================================================
-    #
+    # ===========================================================================
+    # 
     # compiled_eps_loop:
     # If set True, the loop over the control variable epsilon is compiled
     # otherwise, python loop is used.
     compiled_eps_loop = Bool(True, codegen_option=True)
 
-    #===========================================================================
+    # ===========================================================================
     # compiled_eps_loop - dependent code
-    #===========================================================================
+    # ===========================================================================
 
     compiled_eps_loop_feature = Property(depends_on='compiled_eps_loop, recalc')
     @cached_property
@@ -223,9 +223,9 @@ class CodeGenCompiled(CodeGen):
     # 
     cached_dG = Bool(False, codegen_option=True)
 
-    #===========================================================================
+    # ===========================================================================
     # cached_dG - dependent code
-    #===========================================================================
+    # ===========================================================================
     cached_dG_feature = Property(depends_on='cached_dG, recalc')
     @cached_property
     def _get_cached_dG_feature(self):
@@ -265,9 +265,9 @@ class CodeGenCompiled(CodeGen):
             else:
                 return self.n_rand_vars + 1
 
-    #------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------
     # Configurable generation of C-code for the mean curve evaluation
-    #------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------
     code = Property(depends_on='rf_change, rand_change, +codegen_option, eps_change, recalc')
     @cached_property
     def _get_code(self):
@@ -276,7 +276,7 @@ class CodeGenCompiled(CodeGen):
         if self.compiled_eps_loop:
 
             # create code string for inline function
-            #
+            # 
             n_eps = len(self.spirrid.evar_lst[0])
             code_str += self.LD_BEGIN_EPS_LOOP % {'i':n_eps}
             code_str += self.LD_ACCESS_EPS
@@ -284,7 +284,7 @@ class CodeGenCompiled(CodeGen):
         else:
 
             # create code string for inline function
-            #
+            # 
             code_str += self.ld_.LD_ASSIGN_EPS
 
         code_str += self.ld_.LD_INIT_MU_Q
@@ -321,7 +321,7 @@ class CodeGenCompiled(CodeGen):
         code_str += self._get_code_inner_loops(inner_code_str)
 
         if self.compiled_eps_loop:
-            if self.cached_dG: # blitz matrix
+            if self.cached_dG:  # blitz matrix
                 code_str += self.ld_.LD_ASSIGN_MU_Q_IDX
             else:
                 code_str += self.ld_.LD_ASSIGN_MU_Q_PTR
@@ -347,7 +347,7 @@ class CodeGenCompiled(CodeGen):
     def get_cython_code(self):
 
         cython_header = 'import numpy as np\ncimport numpy as np\nctypedef np.double_t DTYPE_t\ncimport cython\n\n@cython.boundscheck(False)\n@cython.wraparound(False)\n@cython.cdivision(True)\ndef mu_q(%s):\n\tcdef double mu_q\n'
-        #@todo - for Cython cdef variables and generalize function def() 
+        # @todo - for Cython cdef variables and generalize function def()
         arg_values = {}
         for name, theta_arr in zip(self.rand_var_names, self.theta_arrs):
             arg_values[ '%s_flat' % name ] = theta_arr
@@ -379,7 +379,7 @@ class CodeGenCompiled(CodeGen):
                 regenerate_code = False
 
         if regenerate_code:
-            infile = open('spirrid_cython.pyx', 'w')
+            infile = open(cython_file_name, 'w')
             infile.write(cython_code)
             infile.close()
             print 'pyx file updated'
@@ -404,8 +404,8 @@ class CodeGenCompiled(CodeGen):
                 mu_q_arr = np.zeros_like(eps, dtype=np.float64)
                 for idx, e in enumerate(eps):
                     # C loop over random dimensions
-                    #
-                    arg_values['e_arr'] = e # prepare the parameter
+                    # 
+                    arg_values['e_arr'] = e  # prepare the parameter
                     mu_q_val = mu_q(**arg_values)
                     # add the value to the return array
                     mu_q_arr[idx] = mu_q_val
@@ -426,23 +426,23 @@ class CodeGenCompiled(CodeGen):
             print compiler_args
 
             # prepare the array of the control variable discretization
-            #
+            # 
             eps_arr = e
             mu_q_arr = np.zeros_like(eps_arr)
 
-            # prepare the parameters for the compiled function in 
+            # prepare the parameters for the compiled function in
             # a separate dictionary
             arg_values = {}
 
             if self.compiled_eps_loop:
 
                 # for compiled eps_loop the whole input and output array must be passed to c
-                #
+                # 
                 arg_values['e_arr'] = eps_arr
                 arg_values['mu_q_arr'] = mu_q_arr
 
             # prepare the lengths of the arrays to set the iteration bounds
-            #
+            # 
 
             for name, theta_arr in zip(self.rand_var_names, self.theta_arrs):
                 arg_values[ '%s_flat' % name ] = theta_arr
@@ -457,7 +457,7 @@ class CodeGenCompiled(CodeGen):
             if self.compiled_eps_loop:
 
                 # C loop over eps, all inner loops must be compiled as well
-                #
+                # 
                 weave.inline(self.code, self.arg_names, local_dict=arg_values,
                              extra_compile_args=compiler_args,
                              extra_link_args=linker_args,
@@ -467,12 +467,12 @@ class CodeGenCompiled(CodeGen):
             else:
 
                 # Python loop over eps
-                #
+                # 
                 for idx, e in enumerate(eps_arr):
 
                     # C loop over random dimensions
-                    #
-                    arg_values['e'] = e # prepare the parameter
+                    # 
+                    arg_values['e'] = e  # prepare the parameter
                     mu_q = weave.inline(self.code, self.arg_names,
                                          local_dict=arg_values,
                                          extra_compile_args=compiler_args,
@@ -490,30 +490,30 @@ class CodeGenCompiled(CodeGen):
 
         return mu_q_method
 
-    #===========================================================================
+    # ===========================================================================
     # Extra compiler arguments
-    #===========================================================================
+    # ===========================================================================
     use_extra = Bool(False, codegen_option=True)
 
     extra_args = Property(depends_on='use_extra, +codegen_option, recalc')
     @cached_property
     def _get_extra_args(self):
         if self.use_extra == True:
-            compiler_args = ["-DNDEBUG -g -fwrapv -O3 -march=native", "-ffast-math"] #, "-fno-openmp", "-ftree-vectorizer-verbose=3"]
-            linker_args = [] # ["-fno-openmp"]
+            compiler_args = ["-DNDEBUG -g -fwrapv -O3 -march=native", "-ffast-math"]  # , "-fno-openmp", "-ftree-vectorizer-verbose=3"]
+            linker_args = []  # ["-fno-openmp"]
             return compiler_args, linker_args
         elif self.use_extra == False:
             return [], []
 
-    #===========================================================================
+    # ===========================================================================
     # Auxiliary methods
-    #===========================================================================
+    # ===========================================================================
     def _set_compiler(self):
         '''Catch eventual mismatch between scipy.weave and compiler 
         '''
         if platform.system() == 'Linux':
-            #os.environ['CC'] = 'gcc-4.1'
-            #os.environ['CXX'] = 'g++-4.1'
+            # os.environ['CC'] = 'gcc-4.1'
+            # os.environ['CXX'] = 'g++-4.1'
             os.environ['OPT'] = '-DNDEBUG -g -fwrapv -O3'
         elif platform.system() == 'Windows':
             # not implemented
@@ -541,9 +541,9 @@ class CodeGenCompiled(CodeGen):
         s += 'cached_dG = %s)' % `self.cached_dG`
         return s
 
-#===============================================================================
+# ===============================================================================
 # CodeGen for regular sampling (n-embedded loops)
-#===============================================================================
+# ===============================================================================
 class CodeGenCompiledRegular(CodeGenCompiled):
 
     def _get_code_inner_loops(self, inner_code_str):
@@ -560,7 +560,7 @@ class CodeGenCompiledRegular(CodeGenCompiled):
                 continue
 
             # create the loop over the random variable
-            #
+            # 
             if self.compiled_eps_loop:
                 code_str += self.ld_.LD_BEGIN_THETA_DEEP_LOOP % {'t':('\t' * (idx + 1)), 's':name, 'i':n_int}
                 code_str += self.LD_ACCESS_THETA % ('\t' * (idx + 1), name, name, name)
@@ -572,7 +572,7 @@ class CodeGenCompiledRegular(CodeGenCompiled):
         code_str += inner_code_str
 
         # close the random loops
-        #
+        # 
         for name in self.rand_var_names:
             code_str += self.ld_.LD_END_THETA_DEEP_LOOP
 
@@ -602,23 +602,23 @@ class CodeGenCompiledTGrid(CodeGenCompiledRegular):
 
     def _get_code_dG_access(self):
         if self.compiled_eps_loop:
-            if self.cached_dG: # q_g - blitz matrix used to store the grid
+            if self.cached_dG:  # q_g - blitz matrix used to store the grid
                 code_str = self.ld_.LD_DECLARE_DG_IDX % {'t':('\t') * (self.n_rand_vars + 1)} + \
                            ','.join([ self.ld_.LD_ACCESS_DG_IDX % name
                                       for name in self.rand_var_names ]) + \
                            self.ld_.LD_END_BRACE
-            else: # qg
+            else:  # qg
                 code_str = self.ld_.LD_DECLARE_DG_PTR % {'t':('\t') * (self.n_rand_vars + 1)} + \
                            ' * '.join([ self.ld_.LD_ACCESS_DG_PTR % (name, name)
                                       for name in self.rand_var_names ]) + \
                             ';\n'
         else:
-            if self.cached_dG: # q_g - blitz matrix used to store the grid
+            if self.cached_dG:  # q_g - blitz matrix used to store the grid
                 code_str = self.ld_.LD_DECLARE_DG_IDX % {'t':('\t') * self.n_rand_vars} + \
                            ','.join([ self.ld_.LD_ACCESS_DG_IDX % name
                                       for name in self.rand_var_names ]) + \
                             self.ld_.LD_END_BRACE
-            else: # qg
+            else:  # qg
                 code_str = self.ld_.LD_DECLARE_DG_PTR % {'t':('\t') * self.n_rand_vars} + \
                            ' * '.join([ self.ld_.LD_ACCESS_DG_PTR % (name, name)
                                       for name in self.rand_var_names ]) + \
@@ -640,9 +640,9 @@ class CodeGenCompiledPGrid(CodeGenCompiledRegular):
             else:
                 return  self.ld_.LD_ASSIGN_DG % (1.0 / n_sim)
 
-#===============================================================================
+# ===============================================================================
 # CodeGen for irregular sampling (n-embedded loops)
-#===============================================================================
+# ===============================================================================
 class CodeGenCompiledIrregular(CodeGenCompiled):
 
     def _get_code_dG_declare(self):
@@ -676,7 +676,7 @@ class CodeGenCompiledIrregular(CodeGenCompiled):
             if type(distr) is float:
                 continue
 
-            # pointer access possible for single dimensional arrays 
+            # pointer access possible for single dimensional arrays
             # use the pointer arithmetics for accessing the pdfs
             if self.compiled_eps_loop:
                 if self.cached_dG:
@@ -692,7 +692,7 @@ class CodeGenCompiledIrregular(CodeGenCompiled):
         code_str += inner_code_str
 
         # close the random loops
-        #
+        # 
         code_str += self.ld_.LD_END_THETA_FLAT_LOOP
 
         return code_str
@@ -708,9 +708,9 @@ def _get_flat_arrays_from_list(idx_list, array_list):
     rv_getter = operator.itemgetter(*idx_list)
     arrs = rv_getter(array_list)
 
-    # if only one variable is random - the getter returns 
+    # if only one variable is random - the getter returns
     # directly the array and not the list of arrays.
-    # For type consistency this must be handled here.        
+    # For type consistency this must be handled here.
     if len(idx_list) == 1:
         return [arrs]
     else:
