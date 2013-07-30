@@ -14,17 +14,17 @@
 #
 #-------------------------------------------------------------------------------
 
-from etsproxy.traits.api import HasTraits, Property, Float, cached_property, \
-    Str, Int
-from pdistrib import PDistrib as PD
+from etsproxy.traits.api import HasStrictTraits, Property, Float, cached_property, \
+    Str, Int, Tuple, Dict
 
+from pdistrib import PDistrib as PD
 
 #===============================================================================
 # Probability distribution specification
 #===============================================================================
-class RV(HasTraits):
+class RV(HasStrictTraits):
 
-    def __init__(self, type, loc = 0.0, scale = 0.0, shape = 1.0,
+    def __init__(self, type, loc=0.0, scale=0.0, shape=1.0,
                   *args, **kw):
         '''Convenience initialization'''
         super(RV, self).__init__(*args, **kw)
@@ -39,33 +39,46 @@ class RV(HasTraits):
         return '%s( loc = %g, scale = %g, shape = %g)[n_int = %s]' % \
             (self.type, self.loc, self.scale, self.shape, str(self.n_int))
 
-    # number of integration points
     n_int = Int(None)
+    '''Number of integration points
+    '''
 
-    # location parameter
     loc = Float
+    '''Location parameter.
+    '''
 
-    # scale parameter
     scale = Float
+    '''Scale parameter.
+    '''
 
-    # shape parameter
     shape = Float
+    '''Shape parameter.
+    '''
 
-    # type specifier
     type = Str
+    '''Type specifier.
+    '''
 
-    # hidden property instance of the scipy stats distribution
-    _distr = Property(depends_on = 'mu,std,loc,type')
+    args = Tuple
+    '''Generic arguments.
+    '''
+
+    kw = Dict
+    '''Generic keyword arguments.
+    '''
+
+    _distr = Property(depends_on='mu,std,loc,type')
+    '''Construct a distribution.
+    hidden property instance of the scipy stats distribution
+    '''
     @cached_property
     def _get__distr(self):
-        '''Construct a distribution.
-        '''
         if self.n_int == None:
             n_segments = 10
         else:
             n_segments = self.n_int
-        pd = PD(distr_choice = self.type, n_segments = n_segments)
-        pd.distr_type.set(scale = self.scale, shape = self.shape, loc = self.loc)
+        pd = PD(distr_choice=self.type, n_segments=n_segments)
+        pd.distr_type.set(scale=self.scale, shape=self.shape, loc=self.loc)
         return pd
 
     # access methods to pdf, ppf, rvs
