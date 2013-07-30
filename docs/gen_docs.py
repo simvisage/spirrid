@@ -313,8 +313,8 @@ Examples
 if __name__ == '__main__':
 
     gd = GenDoc(demo_modules=[
-                                fiber_tt_2p,
-                                # fiber_tt_5p,
+                                #fiber_tt_2p,
+                                fiber_tt_5p,
                                 # fiber_po_8p
                                 ])
 
