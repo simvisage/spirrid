@@ -47,15 +47,15 @@ class GenExampleDoc(HasTraits):
 Comparison of sampling structure
 ================================
 
-The different types of sampling for sample size 100. Both variables are randomized with 
-normal distribution. 
-The exact solution is depicted with the black line. The gray lines indicate the sampling. 
+The different types of sampling for sample size 100. Both variables are randomized with
+normal distribution.
+The exact solution is depicted with the black line. The gray lines indicate the sampling.
 The response diagram correspond to the sampling types (left to right):
 
 Regular grid of random variables
 Grid of constant probabilities8
 Monte Carlo sampling
-Latin Hypercube Sampling 
+Latin Hypercube Sampling
     ''')
 
     demo_module = fiber_tt_2p
@@ -150,7 +150,7 @@ Parametric study for %s
 
         for st in dobj.sampling_lst:
             rst_text += '''
-            
+
 .. image:: %s_%s.png
     :width: 24%%
 
@@ -158,10 +158,10 @@ Parametric study for %s
 
         for st in dobj.sampling_lst:
             rst_text += '''
-                
+
 .. image:: %s_sampling_%s.png
     :width: 24%%
-    
+
             ''' % (self.qname, st)
 
         rst_text += '\nFollowing spirrid configuration has been used to produce the sampling figures:\n\n'
@@ -174,7 +174,7 @@ Execution time evaluated for an increasing number of sampling points n_sim:
 '''
         for basename in dobj.fnames_sampling_efficiency:
             rst_text += '''
-        
+
 .. image:: %s
     :width: 100%%
 
@@ -190,7 +190,7 @@ Execution time evaluated for an numpy, weave and cython code:
 '''
         for basename in dobj.fnames_language_efficiency:
             rst_text += '''
-            
+
 .. image:: %s
     :width: 100%%
 
@@ -273,7 +273,7 @@ Examples
 
 .. toctree::
    :maxdepth: 2
-   
+
 '''
         for path, dirs, files in os.walk(self.ex_cache_dir):
             for f in fnmatch.filter(files, '*.rst'):
@@ -316,8 +316,7 @@ if __name__ == '__main__':
                                 fiber_tt_2p,
                                 # fiber_tt_5p,
                                 # fiber_po_8p
-                                ]
-                )
+                                ])
 
     gd.generate_examples(kind='sampling_structure')
     gd.generate_html()
