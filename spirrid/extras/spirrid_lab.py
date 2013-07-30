@@ -23,7 +23,7 @@ from spirrid import SPIRRID
 from scipy import stats, polyval
 import numpy as np
 import os.path
-import pylab as p # import matplotlib with matlab interface
+import pylab as p  # import matplotlib with matlab interface
 import types
 import shutil
 from os.path import expanduser
@@ -89,7 +89,7 @@ class SPIRRIDLAB(HasTraits):
         if self.qname == '':
             if isinstance(self.q, types.FunctionType):
                 qname = self.q.__name__
-            else: # if isinstance(self.q, types.ClassType):
+            else:  # if isinstance(self.q, types.ClassType):
                 qname = self.q.__class__.__name__
         else:
             qname = self.qname
@@ -178,6 +178,8 @@ class SPIRRIDLAB(HasTraits):
             fname = os.path.join(self.fig_output_dir, qname + '_' + s.sampling_type + '.png')
             p.savefig(fname, dpi=self.dpi)
 
+    sampling_lst = List(['TGrid', 'PGrid', 'MCS', 'LHS'])
+
     sampling_structure_btn = Button(label='compare sampling structure')
     @on_trait_change('sampling_structure_btn')
     def sampling_structure(self, **kw):
@@ -195,10 +197,8 @@ class SPIRRIDLAB(HasTraits):
             rc('ytick', labelsize=fsize - 8)
             rc('xtick.major', pad=8)
 
-        s_lst = ['TGrid', 'PGrid', 'MCS', 'LHS']
-
-        for i, s in enumerate(s_lst):
-            self._plot_sampling(i, len(s_lst), sampling_type=s, **kw)
+        for i, s in enumerate(self.sampling_lst):
+            self._plot_sampling(i, len(self.sampling_lst), sampling_type=s, **kw)
 
         if self.show_output:
             p.show()
@@ -261,7 +261,7 @@ class SPIRRIDLAB(HasTraits):
         Plot the results.
         '''
         def run_estimation(n_int, sampling_type):
-            # instantiate spirrid with samplingetization methods 
+            # instantiate spirrid with samplingetization methods
             print 'running', sampling_type, n_int
             self.s.set(n_int=n_int, sampling_type=sampling_type)
             self.s.recalc = True
@@ -279,7 +279,7 @@ class SPIRRIDLAB(HasTraits):
         run_estimation_vct([5], ['PGrid'])
 
         sampling_types = self.sampling_types_
-        sampling_colors = np.array(['grey', 'black', 'grey', 'black'], dtype=str) # 'blue', 'green', 'red', 'magenta'
+        sampling_colors = np.array(['grey', 'black', 'grey', 'black'], dtype=str)  # 'blue', 'green', 'red', 'magenta'
         sampling_linestyle = np.array(['--', '--', '-', '-'], dtype=str)
 
         # run the estimation on all combinations of n_int and sampling_types
@@ -350,7 +350,7 @@ class SPIRRIDLAB(HasTraits):
             for i, (sampling, color, linestyle) in enumerate(zip(sampling_types, sampling_colors, sampling_linestyle)):
                 p.loglog(n_sim_range[:, i], error_table[:, i, 0], color=color, label=sampling, linestyle=linestyle)
                 if self.regression:
-                    #Linear regression using stats.linregress
+                    # Linear regression using stats.linregress
                     (a_s, b_s, r, tt, stderr) = stats.linregress(np.log(n_sim_range[:, i]), np.log(error_table[:, i, 0]))
                     print('Linear regression using stats.linregress')
                     print('%s regression: a=%.2f b=%.2f, std error= %.3f => %f' % (sampling, a_s, b_s, stderr, 1. / a_s))
@@ -361,7 +361,7 @@ class SPIRRIDLAB(HasTraits):
                     if str(a_s) != 'nan':
                         p.text(x[x.shape[0] / 2.], y[y.shape[0] / 2.], '%.3f' % (1. / a_s), color='red')
 
-            #p.ylim( 0, 10 )
+            # p.ylim( 0, 10 )
             p.legend()
             p.xlabel('$n_\mathrm{sim}$', fontsize=18)
             p.ylabel('$\mathrm{e}_{\max}$ [-]', fontsize=18)
@@ -476,7 +476,7 @@ class SPIRRIDLAB(HasTraits):
                 ]
         return run_lst
 
-    # number of recalculations to get new time. 
+    # number of recalculations to get new time.
     n_recalc = Int(2)
 
     def codegen_efficiency(self):
@@ -501,19 +501,19 @@ class SPIRRIDLAB(HasTraits):
             print 'run', idx, run_options
 
             for i in range(self.n_recalc):
-                s.recalc = True # automatically proagated within spirrid
+                s.recalc = True  # automatically proagated within spirrid
                 print 'execution time', self.exec_time_dict['total time']
 
             p.plot(s.evar_lst[0], s.mu_q_arr, plot_options)
 
             # @todo: this is not portable!!
-            #legend.append(legend_string % s.exec_time)
-            #legend_lst.append(legend_string[:-12])
+            # legend.append(legend_string % s.exec_time)
+            # legend_lst.append(legend_string[:-12])
             time_lst.append(self.exec_time)
 
         p.xlabel('strain [-]')
         p.ylabel('stress')
-        #p.legend(legend, loc = 2)
+        # p.legend(legend, loc = 2)
         p.title(qname)
 
         if self.save_output:
@@ -585,8 +585,8 @@ class SPIRRIDLAB(HasTraits):
     def codegen_language_efficiency(self):
         # define a tables with the run configurations to start in a batch
 
-        #pyxbld_dir = os.path.join(HOME_DIR, '.pyxbld')
-        #if os.path.exists(pyxbld_dir):
+        # pyxbld_dir = os.path.join(HOME_DIR, '.pyxbld')
+        # if os.path.exists(pyxbld_dir):
         #    shutil.rmtree(pyxbld_dir)
 
         if os.path.exists(PYTHON_COMPILED_DIR):
@@ -603,7 +603,7 @@ class SPIRRIDLAB(HasTraits):
             for item, n_int in meth_lst:
                 print 'sampling method:', item
                 s = self.s
-                self.exec_time_dict['total time'] # eliminate first load time delay (first column)
+                self.exec_time_dict['total time']  # eliminate first load time delay (first column)
                 s.n_int = n_int
                 s.sampling_type = item
                 exec_times_lang = []
@@ -611,7 +611,7 @@ class SPIRRIDLAB(HasTraits):
                 for idx, run in enumerate(self.run_lst_language_config):
                     code, run_options, plot_options, legend_string = run
 
-                    #os.system('rm -fr ~/.python27_compiled')
+                    # os.system('rm -fr ~/.python27_compiled')
 
                     s.codegen_type = code
                     s.codegen.set(**run_options)
@@ -621,18 +621,18 @@ class SPIRRIDLAB(HasTraits):
 
                     exec_times_run = []
                     for i in range(self.n_recalc):
-                        s.recalc = True # automatically propagated
+                        s.recalc = True  # automatically propagated
                         exec_times = [self.exec_time_dict['data setup'],
                                      self.exec_time_dict['method setup'],
                                      self.exec_time_dict['exec time']]
                         exec_times_run.append(exec_times)
                         print 'execution time', self.exec_time_dict['total time']
 
-                    #legend_lst.append(legend_string[:-12])
+                    # legend_lst.append(legend_string[:-12])
                     legend_lst = [dict(weave='weave', cython='cython', numpy='numpy')[x[0]] for x in self.run_lst_language_config]
                     if s.codegen_type == 'weave':
                         # load weave.inline time from tmp file and fix values in time_arr
-                        #@todo - does not work on windows
+                        # @todo - does not work on windows
                         import tempfile
                         tdir = tempfile.gettempdir()
                         f = open(os.path.join(tdir, 'w_time'), 'r')
@@ -679,15 +679,15 @@ class SPIRRIDLAB(HasTraits):
         p.figure()
         exec_time_lst = []
 
-        for id, rv_comb in enumerate(rv_comb_lst[163:219]): # [1:-1]
+        for id, rv_comb in enumerate(rv_comb_lst[163:219]):  # [1:-1]
             s.theta_vars = theta_vars_det
             print 'Combination', rv_comb
 
             for rv in rv_comb:
                 s.theta_vars[rv] = theta_vars_rand[rv]
 
-            #legend = []
-            #p.figure()
+            # legend = []
+            # p.figure()
             time_lst = []
             for idx, run in enumerate(self.run_lst):
                 code, run_options, plot_options, legend_string = run
@@ -695,12 +695,12 @@ class SPIRRIDLAB(HasTraits):
                 s.codegen_type = code
                 s.codegen.set(**run_options)
 
-                #p.plot(s.evar_lst[0], s.mu_q_arr, plot_options)
+                # p.plot(s.evar_lst[0], s.mu_q_arr, plot_options)
 
-                #print 'integral of the pdf theta', s.eval_i_dG_grid()
+                # print 'integral of the pdf theta', s.eval_i_dG_grid()
                 print 'execution time', self.exec_time
                 time_lst.append(self.exec_time)
-                #legend.append(legend_string % s.exec_time)
+                # legend.append(legend_string % s.exec_time)
             exec_time_lst.append(time_lst)
         p.plot(np.array((1, 2, 3, 4)), np.array(exec_time_lst).T)
         p.xlabel('method')
@@ -717,7 +717,7 @@ class SPIRRIDLAB(HasTraits):
 
     def _bar_plot(self, legend_lst, time_lst):
         rc('font', size=15)
-        #rc('font', family = 'serif', style = 'normal', variant = 'normal', stretch = 'normal', size = 15)
+        # rc('font', family = 'serif', style = 'normal', variant = 'normal', stretch = 'normal', size = 15)
         fig = p.figure(figsize=(10, 5))
 
         n_tests = len(time_lst)
@@ -735,7 +735,7 @@ class SPIRRIDLAB(HasTraits):
 
         ax1 = fig.add_subplot(111)
         p.subplots_adjust(left=0.45, right=0.88)
-        #fig.canvas.set_window_title('window title')
+        # fig.canvas.set_window_title('window title')
         pos = np.arange(n_tests) + 0.5
         rects = ax1.barh(pos, rel_times, align='center',
                           height=0.5, color='w', edgecolor='k')
@@ -754,7 +754,7 @@ class SPIRRIDLAB(HasTraits):
 
             yloc = rect.get_y() + rect.get_height() / 2.0
             ax1.text(xloc, yloc, '%4.2f' % t, horizontalalignment=align,
-                     verticalalignment='center', color=clr)#, weight = 'bold')
+                     verticalalignment='center', color=clr)  # , weight = 'bold')
 
         ax2 = ax1.twinx()
         ax1.plot([1, 1], [0, n_tests], 'k--')
@@ -771,7 +771,7 @@ class SPIRRIDLAB(HasTraits):
         fig = p.figure(figsize=(15, 3))
         rc('font', size=fsize)
         rc('legend', fontsize=fsize - 2)
-        #legend_lst = ['weave', 'cython', 'numpy']
+        # legend_lst = ['weave', 'cython', 'numpy']
 
         # times are stored in 3d array - dimensions are:
         n_sampling, n_lang, n_run, n_times = time_arr.shape
@@ -828,7 +828,7 @@ class SPIRRIDLAB(HasTraits):
                 for k in range(n_lang):
                     x_val = times_sum[meth_i, k, i] + 0.01 * np.max(times_sum[meth_i])
                     ax1.text(x_val, pos[k], '$%4.2f\,$s' % x_val, horizontalalignment='left',
-                         verticalalignment='center', color='black')#, weight = 'bold')
+                         verticalalignment='center', color='black')  # , weight = 'bold')
                     if meth_i == 0:
                          ax1.text(0.02 * np.max(times_sum[0]), pos[k], '$%i.$' % (i + 1), horizontalalignment='left',
                          verticalalignment='center', color='black',
@@ -859,7 +859,7 @@ class SPIRRIDLAB(HasTraits):
     def _bar_plot_2(self, title_lst, legend_lst, time_lst):
         legend_lst = ['weave', 'cython', 'numpy']
         rc('font', size=15)
-        #rc('font', family = 'serif', style = 'normal', variant = 'normal', stretch = 'normal', size = 15)
+        # rc('font', family = 'serif', style = 'normal', variant = 'normal', stretch = 'normal', size = 15)
         fig = p.figure(figsize=(15, 3))
         idx = int(len(time_lst) / 2.)
         n_tests = len(time_lst[:idx])
@@ -877,7 +877,7 @@ class SPIRRIDLAB(HasTraits):
 
         ax1 = fig.add_subplot(121)
         p.subplots_adjust(left=0.35, right=0.88, wspace=0.3, bottom=0.2)
-        #fig.canvas.set_window_title('window title')
+        # fig.canvas.set_window_title('window title')
         pos = np.arange(n_tests) + 0.5
         rects = ax1.barh(pos, rel_times, align='center',
                           height=0.5, color='w', edgecolor='k')
@@ -897,7 +897,7 @@ class SPIRRIDLAB(HasTraits):
 
             yloc = rect.get_y() + rect.get_height() / 2.0
             ax1.text(xloc, yloc, '%4.2f' % t, horizontalalignment=align,
-                    verticalalignment='center', color=clr)#, weight = 'bold')
+                    verticalalignment='center', color=clr)  # , weight = 'bold')
 
         ax2 = ax1.twinx()
         ax1.plot([1, 1], [0, n_tests], 'k--')
@@ -920,7 +920,7 @@ class SPIRRIDLAB(HasTraits):
             x_max_plt = int(rel_xmax) - m + 15
 
         ax3 = fig.add_subplot(122)
-        #fig.canvas.set_window_title('window title')
+        # fig.canvas.set_window_title('window title')
         pos = np.arange(n_tests) + 0.5
         rects = ax3.barh(pos, rel_times, align='center',
                           height=0.5, color='w', edgecolor='k')
@@ -939,7 +939,7 @@ class SPIRRIDLAB(HasTraits):
 
             yloc = rect.get_y() + rect.get_height() / 2.0
             ax3.text(xloc, yloc, '%4.2f' % t, horizontalalignment=align,
-                     verticalalignment='center', color=clr)#, weight = 'bold')
+                     verticalalignment='center', color=clr)  # , weight = 'bold')
 
         ax4 = ax3.twinx()
         ax3.plot([1, 1], [0, n_tests], 'k--')

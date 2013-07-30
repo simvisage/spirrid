@@ -63,18 +63,18 @@ Latin Hypercube Sampling
     #===========================================================================
     # Derived traits
     #===========================================================================
-    demo_object = Property(depends_on = 'demo_module')
+    demo_object = Property(depends_on='demo_module')
     @cached_property
     def _get_demo_object(self):
         dm = self.demo_module
         return dm.create_demo_object()
 
-    qname = Property(depends_on = 'demo_module')
+    qname = Property(depends_on='demo_module')
     @cached_property
     def _get_qname(self):
         return self.demo_object.get_qname()
 
-    ex_build_dir = Property(depends_on = 'demo_module')
+    ex_build_dir = Property(depends_on='demo_module')
     @cached_property
     def _get_ex_build_dir(self):
         # check if the directory exists
@@ -83,7 +83,7 @@ Latin Hypercube Sampling
             os.makedirs(out_dir)
         return out_dir
 
-    ex_cache_dir = Property(depends_on = 'demo_module')
+    ex_cache_dir = Property(depends_on='demo_module')
     @cached_property
     def _get_ex_cache_dir(self):
         # check if the directory exists
@@ -101,30 +101,30 @@ Latin Hypercube Sampling
             os.makedirs(out_dir)
         return out_dir
 
-    rst_file_name = Property(depends_on = 'demo_module')
+    rst_file_name = Property(depends_on='demo_module')
     @cached_property
     def _get_rst_file_name(self):
         return os.path.join(self.ex_cache_dir, 'index.rst')
 
     def generate_examples_sampling_structure(self):
         dobj = self.demo_object
-        dobj.set(fig_output_dir = self.ex_cache_dir, show_output = False,
-                 dpi = 70,
-                 save_output = True, plot_mode = 'figures')
+        dobj.set(fig_output_dir=self.ex_cache_dir, show_output=False,
+                 dpi=70,
+                 save_output=True, plot_mode='figures')
         dobj.sampling_structure()
 
     def generate_examples_sampling_efficiency(self):
         dobj = self.demo_object
-        dobj.set(fig_output_dir = self.ex_cache_dir, show_output = False,
-                 dpi = 70,
-                 save_output = True, plot_mode = 'figures')
+        dobj.set(fig_output_dir=self.ex_cache_dir, show_output=False,
+                 dpi=70,
+                 save_output=True, plot_mode='figures')
         dobj.sampling_efficiency()
 
     def generate_examples_language_efficiency(self):
         dobj = self.demo_object
-        dobj.set(fig_output_dir = self.ex_cache_dir, show_output = False,
-                 dpi = 70,
-                 save_output = True, plot_mode = 'figures')
+        dobj.set(fig_output_dir=self.ex_cache_dir, show_output=False,
+                 dpi=70,
+                 save_output=True, plot_mode='figures')
         dobj.codegen_language_efficiency()
 
     def generate_examples(self):
@@ -148,7 +148,7 @@ Parametric study for %s
 
         rst_text += self.header
 
-        for st in dobj.sampling_types:
+        for st in dobj.sampling_lst:
             rst_text += '''
             
 .. image:: %s_%s.png
@@ -156,7 +156,7 @@ Parametric study for %s
 
             ''' % (self.qname, st)
 
-        for st in dobj.sampling_types:
+        for st in dobj.sampling_lst:
             rst_text += '''
                 
 .. image:: %s_sampling_%s.png
@@ -209,7 +209,7 @@ class GenDoc(HasTraits):
     '''
     Configuration of the document generation using sphinx.
     '''
-    demo_modules = [fiber_tt_2p] #, fiber_tt_5p, fiber_po_8p]
+    demo_modules = [fiber_tt_2p]  # , fiber_tt_5p, fiber_po_8p]
 
     build_dir = Property()
     @cached_property
@@ -226,7 +226,7 @@ class GenDoc(HasTraits):
         # check if the directory exists
         out_dir = os.path.join(EX_BUILD_DIR)
         return out_dir
-    
+
     ex_cache_dir = Property()
     @cached_property
     def _get_ex_cache_dir(self):
@@ -235,8 +235,8 @@ class GenDoc(HasTraits):
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         return out_dir
-    
-    html_dir = Property(depends_on = 'build_mode')
+
+    html_dir = Property(depends_on='build_mode')
     def _get_html_dir(self):
         return HTML_DIR
 
@@ -251,21 +251,21 @@ class GenDoc(HasTraits):
     genexdoc = Property(List)
     @cached_property
     def _get_genexdoc(self):
-        return [ GenExampleDoc(demo_module = demo) 
+        return [ GenExampleDoc(demo_module=demo)
                 for demo in self.demo_modules ]
 
-    def generate_examples(self, kind = 'all'):
+    def generate_examples(self, kind='all'):
         method_name = self.method_dispatcher[kind]
         for ged in self.genexdoc:
             getattr(ged, method_name)()
 
     def generate_examples_index(self):
 
-        # remove the old index.rst 
-        rst_file_name = os.path.join(self.ex_cache_dir, 'index.rst')       
-        if os.path.exists(rst_file_name):        
+        # remove the old index.rst
+        rst_file_name = os.path.join(self.ex_cache_dir, 'index.rst')
+        if os.path.exists(rst_file_name):
             os.remove(rst_file_name)
-            
+
         rst_text = '''
 ========
 Examples
@@ -312,13 +312,13 @@ Examples
 
 if __name__ == '__main__':
 
-    gd = GenDoc(demo_modules = [
-                                fiber_tt_2p
-                                #fiber_tt_5p,
-                                #fiber_po_8p
+    gd = GenDoc(demo_modules=[
+                                fiber_tt_2p,
+                                # fiber_tt_5p,
+                                # fiber_po_8p
                                 ]
                 )
 
-    gd.generate_examples(kind = 'sampling_structure')
+    gd.generate_examples(kind='sampling_structure')
     gd.generate_html()
-    gd.push_html()
+    # gd.push_html()
