@@ -391,8 +391,6 @@ class CodeGenCompiled(CodeGen):
                           setup_args={"script_args":["--force"]})
         import spirrid_cython
 
-#         os.system('python setup.py build_ext --inplace --force')
-
         if regenerate_code:
             reload(spirrid_cython)
 

@@ -179,7 +179,7 @@ def create_demo_object(fig_output_dir='fig'):
         g_th = RV('norm', th_mean, th_stdev)
         g_A = RV('norm', A_mean, A_stdev)
 
-        mu_ex_file = 'fiber_tt_5p_n_int_40_norm_exact.txt'
+        mu_ex_file = os.path.join(file_dir, 'fiber_tt_5p_n_int_40_norm_exact.txt')
         delimiter = ' '
 
     # discretize the control variable (x-axis)
