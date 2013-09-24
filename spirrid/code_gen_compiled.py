@@ -1,17 +1,17 @@
 # -------------------------------------------------------------------------------
-# 
+#
 # Copyright (c) 2012
 # IMB, RWTH Aachen University,
 # ISM, Brno University of Technology
 # All rights reserved.
-# 
+#
 # This software is provided without warranty under the terms of the BSD
 # license included in the Spirrid top directory "licence.txt" and may be
 # redistributed only under the conditions described in the aforementioned
 # license.
-# 
+#
 # Thanks for using Simvisage open source!
-# 
+#
 # -------------------------------------------------------------------------------
 
 from code_gen import CodeGen
@@ -189,7 +189,7 @@ class CodeGenCompiled(CodeGen):
     # ===========================================================================
     # Configuration of the code
     # ===========================================================================
-    # 
+    #
     # compiled_eps_loop:
     # If set True, the loop over the control variable epsilon is compiled
     # otherwise, python loop is used.
@@ -215,12 +215,12 @@ class CodeGenCompiled(CodeGen):
     def _get_LD_END_EPS_LOOP(self):
         return self.compiled_eps_loop_feature[1]
 
-    # 
+    #
     # cached_dG:
     # If set to True, the cross product between the pdf values of all random variables
     # will be precalculated and stored in an n-dimensional grid
     # otherwise the product is performed for every epsilon in the inner loop anew
-    # 
+    #
     cached_dG = Bool(False, codegen_option=True)
 
     # ===========================================================================
@@ -276,7 +276,7 @@ class CodeGenCompiled(CodeGen):
         if self.compiled_eps_loop:
 
             # create code string for inline function
-            # 
+            #
             n_eps = len(self.spirrid.evar_lst[0])
             code_str += self.LD_BEGIN_EPS_LOOP % {'i':n_eps}
             code_str += self.LD_ACCESS_EPS
@@ -284,7 +284,7 @@ class CodeGenCompiled(CodeGen):
         else:
 
             # create code string for inline function
-            # 
+            #
             code_str += self.ld_.LD_ASSIGN_EPS
 
         code_str += self.ld_.LD_INIT_MU_Q
@@ -346,7 +346,7 @@ class CodeGenCompiled(CodeGen):
 
     def get_cython_code(self):
 
-        cython_header = 'import numpy as np\ncimport numpy as np\nctypedef np.double_t DTYPE_t\ncimport cython\n\n@cython.boundscheck(False)\n@cython.wraparound(False)\n@cython.cdivision(True)\ndef mu_q(%s):\n\tcdef double mu_q\n'
+        cython_header = 'print "## spirrid_cython library reloaded!"\nimport numpy as np\ncimport numpy as np\nctypedef np.double_t DTYPE_t\ncimport cython\n\n@cython.boundscheck(False)\n@cython.wraparound(False)\n@cython.cdivision(True)\ndef mu_q(%s):\n\tcdef double mu_q\n'
         # @todo - for Cython cdef variables and generalize function def()
         arg_values = {}
         for name, theta_arr in zip(self.rand_var_names, self.theta_arrs):
@@ -384,12 +384,18 @@ class CodeGenCompiled(CodeGen):
             infile.close()
             print 'pyx file updated'
 
-        import pyximport
         t = sysclock()
-        pyximport.install(reload_support=True)
+
+        import pyximport
+        pyximport.install(reload_support=True,
+                          setup_args={"script_args":["--force"]})
         import spirrid_cython
+
+#         os.system('python setup.py build_ext --inplace --force')
+
         if regenerate_code:
             reload(spirrid_cython)
+
         print '>>> pyximport', sysclock() - t
         mu_q = spirrid_cython.mu_q
 
@@ -400,11 +406,11 @@ class CodeGenCompiled(CodeGen):
                 mu_q_arr = mu_q(**args)
             else:
                 # Python loop over eps
-                # 
+                #
                 mu_q_arr = np.zeros_like(eps, dtype=np.float64)
                 for idx, e in enumerate(eps):
                     # C loop over random dimensions
-                    # 
+                    #
                     arg_values['e_arr'] = e  # prepare the parameter
                     mu_q_val = mu_q(**arg_values)
                     # add the value to the return array
@@ -426,7 +432,7 @@ class CodeGenCompiled(CodeGen):
             print compiler_args
 
             # prepare the array of the control variable discretization
-            # 
+            #
             eps_arr = e
             mu_q_arr = np.zeros_like(eps_arr)
 
@@ -437,12 +443,12 @@ class CodeGenCompiled(CodeGen):
             if self.compiled_eps_loop:
 
                 # for compiled eps_loop the whole input and output array must be passed to c
-                # 
+                #
                 arg_values['e_arr'] = eps_arr
                 arg_values['mu_q_arr'] = mu_q_arr
 
             # prepare the lengths of the arrays to set the iteration bounds
-            # 
+            #
 
             for name, theta_arr in zip(self.rand_var_names, self.theta_arrs):
                 arg_values[ '%s_flat' % name ] = theta_arr
@@ -457,7 +463,7 @@ class CodeGenCompiled(CodeGen):
             if self.compiled_eps_loop:
 
                 # C loop over eps, all inner loops must be compiled as well
-                # 
+                #
                 weave.inline(self.code, self.arg_names, local_dict=arg_values,
                              extra_compile_args=compiler_args,
                              extra_link_args=linker_args,
@@ -467,11 +473,11 @@ class CodeGenCompiled(CodeGen):
             else:
 
                 # Python loop over eps
-                # 
+                #
                 for idx, e in enumerate(eps_arr):
 
                     # C loop over random dimensions
-                    # 
+                    #
                     arg_values['e'] = e  # prepare the parameter
                     mu_q = weave.inline(self.code, self.arg_names,
                                          local_dict=arg_values,
@@ -560,7 +566,7 @@ class CodeGenCompiledRegular(CodeGenCompiled):
                 continue
 
             # create the loop over the random variable
-            # 
+            #
             if self.compiled_eps_loop:
                 code_str += self.ld_.LD_BEGIN_THETA_DEEP_LOOP % {'t':('\t' * (idx + 1)), 's':name, 'i':n_int}
                 code_str += self.LD_ACCESS_THETA % ('\t' * (idx + 1), name, name, name)
@@ -572,7 +578,7 @@ class CodeGenCompiledRegular(CodeGenCompiled):
         code_str += inner_code_str
 
         # close the random loops
-        # 
+        #
         for name in self.rand_var_names:
             code_str += self.ld_.LD_END_THETA_DEEP_LOOP
 
@@ -692,7 +698,7 @@ class CodeGenCompiledIrregular(CodeGenCompiled):
         code_str += inner_code_str
 
         # close the random loops
-        # 
+        #
         code_str += self.ld_.LD_END_THETA_FLAT_LOOP
 
         return code_str

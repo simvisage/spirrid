@@ -82,7 +82,8 @@ def create_demo_object(fig_output_dir='fig'):
     # Randomization
     #===========================================================================
     s = SPIRRID(q=fiber_tt_2p(),
-                codegen_type='weave',
+                sampling_type='TGrid',
+                codegen_type='cython',
                 e_arr=e_arr,
                 n_int=10,
                 theta_vars=dict(la=RV('norm', m_la, std_la),
