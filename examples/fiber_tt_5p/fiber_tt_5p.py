@@ -63,27 +63,27 @@ and 1 for :math:`\eta > 0`.
         # NOTE: as each variable is an array oriented in different direction
         # the algebraic expressions (-+*/) perform broadcasting,. i.e. performing
         # the operation for all combinations of values. Thus, the resulgin eps
-        # is contains the value of local strain for any combination of 
-        # global strain, xi, theta and lambda 
+        # is contains the value of local strain for any combination of
+        # global strain, xi, theta and lambda
         #
 
         eps_ = (eps - theta * (1 + lambd)) / ((1 + theta) * (1 + lambd))
 
         # cut off all the negative strains due to delayed activation
-        # 
+        #
         eps_ *= Heaviside(eps_)
 
-        # broadcast eps also in the xi - dimension 
+        # broadcast eps also in the xi - dimension
         # (by multiplying with array containing ones with the same shape as xi )
         #
         eps_grid = eps_ * Heaviside(xi - eps_)
 
         # cut off all the realizations with strain greater than the critical one.
-        # 
+        #
         # eps_grid[ eps_grid >= xi ] = 0
 
         # transform it to the force
-        # 
+        #
         q_grid = E_mod * A * eps_grid
 
         return q_grid
@@ -110,7 +110,7 @@ and 1 for :math:`\eta > 0`.
 
 def create_demo_object(fig_output_dir='fig'):
 
-    D = 26 * 1.0e-6 # m
+    D = 26 * 1.0e-6  # m
     A = (D / 2.0) ** 2 * math.pi
 
     # set the mean and standard deviation of the two random variables
@@ -159,7 +159,7 @@ def create_demo_object(fig_output_dir='fig'):
         g_th = RV('uniform', th_mean, th_stdev)
         g_A = RV('uniform', A_mean, A_stdev)
 
-        mu_ex_file = 'fiber_tt_5p_40_unif.txt'
+        mu_ex_file = 'fiber_tt_5p_n_int_40_norm_exact.txt'  # 'fiber_tt_5p_40_unif.txt'
         delimiter = ' '
 
     elif do == 'norm':
@@ -229,26 +229,26 @@ if __name__ == '__main__':
     # RUN SPIRRID_LAB TESTS
     #===========================================================================
     #===========================================================================
-    # Compare efficiency of sampling types 
+    # Compare efficiency of sampling types
     #===========================================================================
 #    powers = np.linspace(1, math.log(20, 10), 15)
 #    n_int_range = np.array(np.power(10, powers), dtype = int)
 
-    #slab.sampling_efficiency(n_int_range = n_int_range)
+    # slab.sampling_efficiency(n_int_range = n_int_range)
 
     #===========================================================================
     # Compare the structure of sampling
     #===========================================================================
 
-    #slab.sampling_structure( ylim = 1.1, xlim = 0.04 )
+    # slab.sampling_structure( ylim = 1.1, xlim = 0.04 )
 
     #===========================================================================
     # Compare the code efficiency
     #===========================================================================
 
-    #s.set(e_arr = np.linspace(0, 0.04, 20), n_int = 40)
-    #s.sampling_type = 'PGrid'
-    #slab.codegen_efficiency()
+    # s.set(e_arr = np.linspace(0, 0.04, 20), n_int = 40)
+    # s.sampling_type = 'PGrid'
+    # slab.codegen_efficiency()
 
     #===========================================================================
     # Compare the language efficiency

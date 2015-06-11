@@ -91,3 +91,6 @@ class RV(HasStrictTraits):
     def rvs(self, x):
         return self._distr.rvs(x)
 
+    def cdf(self, x):
+        return self._distr.cdf(x)
+
