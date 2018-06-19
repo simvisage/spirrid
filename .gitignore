@@ -3,4 +3,5 @@
 .pydevproject
 *.o
 *.so
+*.svn
 
