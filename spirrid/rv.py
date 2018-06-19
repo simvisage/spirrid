@@ -1,17 +1,17 @@
 # -------------------------------------------------------------------------------
-# 
+#
 # Copyright (c) 2012
 # IMB, RWTH Aachen University,
 # ISM, Brno University of Technology
 # All rights reserved.
-# 
+#
 # This software is provided without warranty under the terms of the BSD
 # license included in the Spirrid top directory "licence.txt" and may be
 # redistributed only under the conditions described in the aforementioned
 # license.
-# 
+#
 # Thanks for using Simvisage open source!
-# 
+#
 # -------------------------------------------------------------------------------
 
 from etsproxy.traits.api import HasStrictTraits, Property, Float, cached_property, \
@@ -22,10 +22,12 @@ from pdistrib import PDistrib as PD
 # ===============================================================================
 # Probability distribution specification
 # ===============================================================================
+
+
 class RV(HasStrictTraits):
 
     def __init__(self, type, loc=0.0, scale=0.0, shape=1.0,
-                  *args, **kw):
+                 *args, **kw):
         '''Convenience initialization'''
         super(RV, self).__init__(*args, **kw)
         self.type = type
@@ -67,7 +69,7 @@ class RV(HasStrictTraits):
     '''Generic keyword arguments.
     '''
 
-    _distr = Property(depends_on='mu,std,loc,type')
+    _distr = Property(depends_on='scale,shape,loc,type')
     '''Construct a distribution.
     hidden property instance of the scipy stats distribution
     '''
@@ -93,4 +95,3 @@ class RV(HasStrictTraits):
 
     def cdf(self, x):
         return self._distr.cdf(x)
-

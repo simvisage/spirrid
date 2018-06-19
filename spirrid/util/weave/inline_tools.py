@@ -1,19 +1,24 @@
 # should re-write compiled functions to take a local and global dict
 # as input.
-from numpy.core.multiarray import _get_ndarray_c_version
 import os
 import platform
-import scipy.weave.catalog as catalog
-import scipy.weave.common_info as common_info
-import scipy.weave.ext_tools as ext_tools
 import sys
 
-ndarray_api_version = '/* NDARRAY API VERSION %x */' % (_get_ndarray_c_version(),)
+from numpy.core.multiarray import _get_ndarray_c_version
+
+import weave.catalog as catalog
+import weave.common_info as common_info
+import weave.ext_tools as ext_tools
+
+
+ndarray_api_version = '/* NDARRAY API VERSION %x */' % (
+    _get_ndarray_c_version(),)
 
 # not an easy way for the user_path_list to come in here.
 # the PYTHONCOMPILED environment variable offers the most hope.
 
 function_catalog = catalog.catalog()
+
 
 class inline_ext_function(ext_tools.ext_function):
     # Some specialization is needed for inline extension functions
@@ -50,16 +55,16 @@ class inline_ext_function(ext_tools.ext_function):
             init_values = ''
 
         parse_tuple = 'if(!PyArg_ParseTuple(args,"OO:compiled_func",'\
-                                           '&py__locals,'\
-                                           '&py__globals))\n'\
+            '&py__locals,'\
+            '&py__globals))\n'\
                       '    return NULL;\n'
 
-        return   declare_return + declare_py_objects + \
-                 init_values + parse_tuple
+        return declare_return + declare_py_objects + \
+            init_values + parse_tuple
 
     def arg_declaration_code(self):
         """Return the declaration code as a string."""
-        arg_strings = [arg.declaration_code(inline = 1)
+        arg_strings = [arg.declaration_code(inline=1)
                        for arg in self.arg_specs]
         return "".join(arg_strings)
 
@@ -93,18 +98,18 @@ class inline_ext_function(ext_tools.ext_function):
             '        raw_locals = py_to_raw_dict(py__locals,"_locals");\n'  \
             '        raw_globals = py_to_raw_dict(py__globals,"_globals");\n' \
             '        /* argument conversion code */     \n' \
-                     + decl_code + \
+            + decl_code + \
             '        /* inline code */                   \n' \
-                     + function_code + \
+            + function_code + \
             '        /*I would like to fill in changed locals and globals here...*/   \n'   \
             '    }\n'
         catch_code = "catch(...)                        \n"   \
-                      "{                                 \n" + \
-                      "    return_val =  py::object();   \n"   \
-                      "    exception_occured = 1;        \n"   \
-                      "}                                 \n"
+            "{                                 \n" + \
+            "    return_val =  py::object();   \n"   \
+            "    exception_occured = 1;        \n"   \
+            "}                                 \n"
         return_code = "    /* cleanup code */                   \n" + \
-                           cleanup_code + \
+            cleanup_code + \
                       "    if(!(PyObject*)return_val && !exception_occured)\n"   \
                       "    {\n                                  \n"   \
                       "        return_val = Py_None;            \n"   \
@@ -113,10 +118,10 @@ class inline_ext_function(ext_tools.ext_function):
                       "}                                \n"
 
         all_code = self.function_declaration_code() + \
-                       indent(self.parse_tuple_code(), 4) + \
-                       try_code + \
-                       indent(catch_code, 4) + \
-                       return_code
+            indent(self.parse_tuple_code(), 4) + \
+            try_code + \
+            indent(catch_code, 4) + \
+            return_code
 
         return all_code
 
@@ -125,22 +130,26 @@ class inline_ext_function(ext_tools.ext_function):
         function_decls = '{"%s",(PyCFunction)%s , METH_VARARGS},\n' % args
         return function_decls
 
+
 class inline_ext_module(ext_tools.ext_module):
-    def __init__(self, name, compiler = ''):
+    def __init__(self, name, compiler=''):
         ext_tools.ext_module.__init__(self, name, compiler)
         self._build_information.append(common_info.inline_info())
 
+
 function_cache = {}
-def inline(code, arg_names = [], local_dict = None, global_dict = None,
-           force = 0,
-           compiler = '',
-           verbose = 0,
-           support_code = None,
-           headers = [],
-           customize = None,
-           type_converters = None,
-           auto_downcast = 1,
-           newarr_converter = 0,
+
+
+def inline(code, arg_names=[], local_dict=None, global_dict=None,
+           force=0,
+           compiler='',
+           verbose=0,
+           support_code=None,
+           headers=[],
+           customize=None,
+           type_converters=None,
+           auto_downcast=1,
+           newarr_converter=0,
            **kw):
     """
     Inline C/C++ code within Python scripts.
@@ -303,7 +312,7 @@ def inline(code, arg_names = [], local_dict = None, global_dict = None,
     # Add sys.prefix/lib to the library search path
     plat = platform.platform()
     if sys.platform == "sunos5" or \
-        ("redhat-3" in plat or "redhat-4" in plat):
+            ("redhat-3" in plat or "redhat-4" in plat):
         sys_lib = os.path.join(sys.prefix, 'lib')
         if kw.has_key('library_dirs'):
             kw['library_dirs'].append(sys_lib)
@@ -323,13 +332,13 @@ def inline(code, arg_names = [], local_dict = None, global_dict = None,
         module_dir = global_dict.get('__file__', None)
         func = compile_function(code, arg_names, local_dict,
                                 global_dict, module_dir,
-                                compiler = compiler,
-                                verbose = verbose,
-                                support_code = support_code,
-                                headers = headers,
-                                customize = customize,
-                                type_converters = type_converters,
-                                auto_downcast = auto_downcast,
+                                compiler=compiler,
+                                verbose=verbose,
+                                support_code=support_code,
+                                headers=headers,
+                                customize=customize,
+                                type_converters=type_converters,
+                                auto_downcast=auto_downcast,
                                 **kw)
 
         function_catalog.add_function(code, func, module_dir)
@@ -362,13 +371,13 @@ def inline(code, arg_names = [], local_dict = None, global_dict = None,
             module_dir = global_dict.get('__file__', None)
             func = compile_function(code, arg_names, local_dict,
                                     global_dict, module_dir,
-                                    compiler = compiler,
-                                    verbose = verbose,
-                                    support_code = support_code,
-                                    headers = headers,
-                                    customize = customize,
-                                    type_converters = type_converters,
-                                    auto_downcast = auto_downcast,
+                                    compiler=compiler,
+                                    verbose=verbose,
+                                    support_code=support_code,
+                                    headers=headers,
+                                    customize=customize,
+                                    type_converters=type_converters,
+                                    auto_downcast=auto_downcast,
                                     **kw)
 
             function_catalog.add_function(code, func, module_dir)
@@ -382,6 +391,7 @@ def inline(code, arg_names = [], local_dict = None, global_dict = None,
     f.write(str(compiling_time))
     f.close()
     return results
+
 
 def attempt_function_call(code, local_dict, global_dict):
     # we try 3 levels here -- a local cache first, then the
@@ -414,7 +424,7 @@ def attempt_function_call(code, local_dict, global_dict):
             function_catalog.fast_cache(code, func)
             function_cache[code] = func
             return results
-        except TypeError, msg: # should specify argument types here.
+        except TypeError, msg:  # should specify argument types here.
             # This should really have its own error type, instead of
             # checking the beginning of the message, but I don't know
             # how to define that yet.
@@ -438,14 +448,15 @@ def attempt_function_call(code, local_dict, global_dict):
             function_catalog.fast_cache(code, func)
             function_cache[code] = func
             return results
-        except: # should specify argument types here.
+        except:  # should specify argument types here.
             pass
     # if we get here, the function wasn't found
     raise ValueError('function with correct signature not found')
 
-def inline_function_code(code, arg_names, local_dict = None,
-                         global_dict = None, auto_downcast = 1,
-                         type_converters = None, compiler = ''):
+
+def inline_function_code(code, arg_names, local_dict=None,
+                         global_dict=None, auto_downcast=1,
+                         type_converters=None, compiler=''):
     call_frame = sys._getframe().f_back
     if local_dict is None:
         local_dict = call_frame.f_locals
@@ -453,21 +464,22 @@ def inline_function_code(code, arg_names, local_dict = None,
         global_dict = call_frame.f_globals
     ext_func = inline_ext_function('compiled_func', code, arg_names,
                                    local_dict, global_dict, auto_downcast,
-                                   type_converters = type_converters)
+                                   type_converters=type_converters)
     from scipy.weave import build_tools
     compiler = build_tools.choose_compiler(compiler)
     ext_func.set_compiler(compiler)
     return ext_func.function_code()
 
+
 def compile_function(code, arg_names, local_dict, global_dict,
                      module_dir,
-                     compiler = '',
-                     verbose = 1,
-                     support_code = None,
-                     headers = [],
-                     customize = None,
-                     type_converters = None,
-                     auto_downcast = 1,
+                     compiler='',
+                     verbose=1,
+                     support_code=None,
+                     headers=[],
+                     customize=None,
+                     type_converters=None,
+                     auto_downcast=1,
                      **kw):
     # figure out where to store and what to name the extension module
     # that will contain the function.
@@ -481,7 +493,7 @@ def compile_function(code, arg_names, local_dict, global_dict,
     # type factories setting
     ext_func = inline_ext_function('compiled_func', code, arg_names,
                                    local_dict, global_dict, auto_downcast,
-                                   type_converters = type_converters)
+                                   type_converters=type_converters)
     mod.add_function(ext_func)
 
     # if customize (a custom_info object), then set the module customization.
@@ -503,8 +515,8 @@ def compile_function(code, arg_names, local_dict, global_dict,
 
     # compile code in correct location, with the given compiler and verbosity
     # setting.  All input keywords are passed through to distutils
-    mod.compile(location = storage_dir, compiler = compiler,
-                verbose = verbose, **kw)
+    mod.compile(location=storage_dir, compiler=compiler,
+                verbose=verbose, **kw)
 
     # import the module and return the function.  Make sure
     # the directory where it lives is in the python path.
