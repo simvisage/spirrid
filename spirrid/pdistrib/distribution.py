@@ -106,7 +106,7 @@ class Distribution(HasTraits):
         self.new_values = array([self.shape, self.loc, self.scale, self.mean,
                                  self.variance, self.skewness, self.kurtosis])
         # test which parameters or moments are significant
-        indexing = arange(8)[abs(self.old_values - self.new_values)
+        indexing = arange(7)[abs(self.old_values - self.new_values)
                              != 0]
         if len(indexing) > 0 and indexing[0] < 3:
             self.get_moments('mvsk')
