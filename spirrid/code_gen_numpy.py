@@ -14,7 +14,7 @@
 #
 #-------------------------------------------------------------------------------
 
-from code_gen import CodeGen
+from .code_gen import CodeGen
 import numpy as np
 
 #===============================================================================
@@ -31,14 +31,14 @@ class CodeGenNumpy(CodeGen):
         '''
         s = self.spirrid
         n = len(s.evar_lst)
-        targs = dict(zip(s.tvar_names, s.sampling.theta))
+        targs = dict(list(zip(s.tvar_names, s.sampling.theta)))
 
         if self.implicit_var_eval:
 
             def mu_q_method(*e):
                 '''Template for the evaluation of the mean response.
                 '''
-                eargs = dict(zip(s.evar_names, e))
+                eargs = dict(list(zip(s.evar_names, e)))
                 args = dict(eargs, **targs)
 
                 Q_dG = s.q(**args)
@@ -57,7 +57,7 @@ class CodeGenNumpy(CodeGen):
             def mu_q_method(*e):
                 '''Template for the evaluation of the mean response.
                 '''
-                eargs = dict(zip(s.evar_names, e))
+                eargs = dict(list(zip(s.evar_names, e)))
                 args = dict(eargs, **targs)
 
                 Q_dG = s.q(**args)
@@ -74,5 +74,5 @@ class CodeGenNumpy(CodeGen):
         return np.vectorize(mu_q_method, otypes=otypes)
 
     def __str__(self):
-        return 'numpy\nvar_eval: %s\n' % `self.implicit_var_eval`
+        return 'numpy\nvar_eval: %s\n' % repr(self.implicit_var_eval)
 

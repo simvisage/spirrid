@@ -15,10 +15,10 @@
 #-------------------------------------------------------------------------------
 
 from etsproxy.traits.api import Float, Str, implements
-from i_rf import IRF
+from .i_rf import IRF
 from matplotlib import pyplot as plt
 from numpy import sign, linspace
-from rf import RF
+from .rf import RF
 
 
 def Heaviside(x):
@@ -104,10 +104,10 @@ if __name__ == '__main__':
     f = Filament()
 
     f.configure_traits()
-    print 'keys', f.param_keys
-    print 'values', f.param_list
+    print('keys', f.param_keys)
+    print('values', f.param_list)
 
-    print 'uniform', f.traits(distr = lambda x: x != None and 'uniform' in x)
+    print('uniform', f.traits(distr = lambda x: x != None and 'uniform' in x))
 
     X = linspace(0, 0.05, 100)
     Y = []

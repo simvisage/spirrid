@@ -28,7 +28,7 @@ file_dir = os.path.dirname(os.path.abspath(__file__))
 # Response function
 #===========================================================================
 class fiber_tt_5p(RF):
-    ur'''
+    r'''
 Response function of a single fiber 
 ===================================
 

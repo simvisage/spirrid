@@ -46,27 +46,27 @@ def main():
 
     start = sysclock()
     res = f(a, b)
-    print sysclock() - start, 'full array'
+    print(sysclock() - start, 'full array')
     del res
 
     start = sysclock()
     res = f_H(a, b)
-    print sysclock() - start, 'heaviside'
+    print(sysclock() - start, 'heaviside')
     del res
 
     start = sysclock()
     res = f(a, b) * H(0.5 - a)
-    print sysclock() - start, 'heaviside, alt 2'
+    print(sysclock() - start, 'heaviside, alt 2')
     del res
 
     start = sysclock()
     res = f(a_m, b_m)
-    print sysclock() - start, 'masked array, numpy function'
+    print(sysclock() - start, 'masked array, numpy function')
     del res
 
     start = sysclock()
     res = f_m(a_m, b_m)
-    print sysclock() - start, 'masked array, mask function'
+    print(sysclock() - start, 'masked array, mask function')
     del res
 
 if __name__ == '__main__':

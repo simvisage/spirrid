@@ -25,7 +25,7 @@ import numpy as np
 # Response function
 #===========================================================================
 class fiber_tt_2p(RF):
-    ur'''
+    r'''
 Response Function with two-parameters.
 ======================================
     

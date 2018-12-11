@@ -22,7 +22,7 @@ from etsproxy.traits.api import Float, Str, implements, Range
 from math import pi, e
 
 class ConstantFrictionFiniteFiber(RF):
-    ur'''
+    r'''
 Fiber with constant friction
 ============================
 

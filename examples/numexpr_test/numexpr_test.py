@@ -110,10 +110,10 @@ def main():
                 theta_vars = dict(lambd = g_la, xi = g_xi, E_mod = g_E, theta = g_th, A = g_A),
                 )
 
-    print 'Evaluation using NumPy'
-    print 'numpy time', s_np.exec_time
-    print 'Evaluation using numexpr'
-    print 'numexpr time', s_ne.exec_time
+    print('Evaluation using NumPy')
+    print('numpy time', s_np.exec_time)
+    print('Evaluation using numexpr')
+    print('numexpr time', s_ne.exec_time)
 
     p.plot(e_arr, s_np.mu_q_arr, label = 'numpy')
     p.plot(e_arr, s_ne.mu_q_arr, label = 'numexpr')

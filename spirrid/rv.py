@@ -17,7 +17,7 @@
 from etsproxy.traits.api import HasStrictTraits, Property, Float, cached_property, \
     Str, Int, Tuple, Dict
 
-from pdistrib import PDistrib as PD
+from .pdistrib import PDistrib as PD
 
 # ===============================================================================
 # Probability distribution specification

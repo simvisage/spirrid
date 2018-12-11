@@ -74,7 +74,7 @@ def main():
 
     start_time = sysclock()
     mu_q_arr = mu_q_eq13_loops(eps_arr)
-    print 'loop-based: elapsed time', sysclock() - start_time
+    print('loop-based: elapsed time', sysclock() - start_time)
 
 
     dG_la = g_la(theta_la) * d_la
@@ -93,7 +93,7 @@ def main():
     # eps_arr from line reused here
     start_time = sysclock()
     mu_q_arr = mu_q_eq13_vct(eps_arr)
-    print 'Regular grid of random variables: elapsed time', sysclock() - start_time
+    print('Regular grid of random variables: elapsed time', sysclock() - start_time)
 
     p.subplot(121)
     p.plot(eps_arr, mu_q_arr, color='blue', label='Tgrid')
@@ -142,7 +142,7 @@ def main():
     start_time = sysclock()
     # CALCULATION:
     mu_q_arr = mu_q_fn(eps_arr)
-    print 'Grid of constant probabilities: elapsed time', sysclock() - start_time
+    print('Grid of constant probabilities: elapsed time', sysclock() - start_time)
 
     p.subplot(121)
     p.plot(eps_arr, mu_q_arr, color='cyan', label='Pgrid')
@@ -164,7 +164,7 @@ def main():
     start_time = sysclock()
     # CALCULATION:
     mu_q_arr = mu_q_fn(eps_arr)
-    print 'Monte-Carlo: elapsed time', sysclock() - start_time
+    print('Monte-Carlo: elapsed time', sysclock() - start_time)
 
     p.subplot(121)
     p.plot(eps_arr, mu_q_arr, color='red', label='Monte-Carlo')
@@ -191,7 +191,7 @@ def main():
     start_time = sysclock()
     # CALCULATION:
     mu_q_arr = mu_q_fn(eps_arr)
-    print 'Grid of constant probabilities: elapsed time', sysclock() - start_time
+    print('Grid of constant probabilities: elapsed time', sysclock() - start_time)
 
     p.subplot(121)
     p.plot(eps_arr, mu_q_arr, color='green', label='LHS')

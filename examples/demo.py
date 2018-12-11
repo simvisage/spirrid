@@ -25,13 +25,13 @@ from etsproxy.traits.ui.api import View, Item
 
 from spirrid.extras.spirrid_lab import SPIRRIDLAB
 
-from fiber_tt_2p import fiber_tt_2p
-from fiber_tt_5p import fiber_tt_5p
-from fiber_po_8p import fiber_po_8p
-from fiber_cb_8p import fiber_cb_8p
-from masked_arrays import mask_arr
-from numexpr_test import numexpr_test
-import script
+from .fiber_tt_2p import fiber_tt_2p
+from .fiber_tt_5p import fiber_tt_5p
+from .fiber_po_8p import fiber_po_8p
+from .fiber_cb_8p import fiber_cb_8p
+from .masked_arrays import mask_arr
+from .numexpr_test import numexpr_test
+from . import script
 
 
 class Demo(HasTraits):

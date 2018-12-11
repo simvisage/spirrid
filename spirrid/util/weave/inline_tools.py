@@ -314,11 +314,11 @@ def inline(code, arg_names=[], local_dict=None, global_dict=None,
     if sys.platform == "sunos5" or \
             ("redhat-3" in plat or "redhat-4" in plat):
         sys_lib = os.path.join(sys.prefix, 'lib')
-        if kw.has_key('library_dirs'):
+        if 'library_dirs' in kw:
             kw['library_dirs'].append(sys_lib)
         else:
             kw['library_dirs'] = [sys_lib]
-        if kw.has_key('runtime_library_dirs'):
+        if 'runtime_library_dirs' in kw:
             kw['runtime_library_dirs'].append(sys_lib)
         else:
             kw['runtime_library_dirs'] = [sys_lib]
@@ -346,15 +346,15 @@ def inline(code, arg_names=[], local_dict=None, global_dict=None,
     else:
         # 1. try local cache
         try:
-            results = apply(function_cache[code], (local_dict, global_dict))
+            results = function_cache[code](*(local_dict, global_dict))
             return results
-        except TypeError, msg:
+        except TypeError as msg:
             msg = str(msg).strip()
             if msg[:16] == "Conversion Error":
                 pass
             else:
                 raise TypeError(msg)
-        except NameError, msg:
+        except NameError as msg:
             msg = str(msg).strip()
             if msg[:16] == "Conversion Error":
                 pass
@@ -384,7 +384,7 @@ def inline(code, arg_names=[], local_dict=None, global_dict=None,
             results = attempt_function_call(code, local_dict, global_dict)
     compiling_time = time.time() - start
 
-    print '>>> inline function time:', compiling_time
+    print('>>> inline function time:', compiling_time)
     import tempfile
     tdir = tempfile.gettempdir()
     f = open(tdir + '/w_time', 'w')
@@ -400,15 +400,15 @@ def attempt_function_call(code, local_dict, global_dict):
     global function_catalog
     # 1. try local cache
     try:
-        results = apply(function_cache[code], (local_dict, global_dict))
+        results = function_cache[code](*(local_dict, global_dict))
         return results
-    except TypeError, msg:
+    except TypeError as msg:
         msg = str(msg).strip()
         if msg[:16] == "Conversion Error":
             pass
         else:
             raise TypeError(msg)
-    except NameError, msg:
+    except NameError as msg:
         msg = str(msg).strip()
         if msg[:16] == "Conversion Error":
             pass
@@ -420,11 +420,11 @@ def attempt_function_call(code, local_dict, global_dict):
     function_list = function_catalog.get_functions_fast(code)
     for func in function_list:
         try:
-            results = apply(func, (local_dict, global_dict))
+            results = func(*(local_dict, global_dict))
             function_catalog.fast_cache(code, func)
             function_cache[code] = func
             return results
-        except TypeError, msg:  # should specify argument types here.
+        except TypeError as msg:  # should specify argument types here.
             # This should really have its own error type, instead of
             # checking the beginning of the message, but I don't know
             # how to define that yet.
@@ -433,7 +433,7 @@ def attempt_function_call(code, local_dict, global_dict):
                 pass
             else:
                 raise TypeError(msg)
-        except NameError, msg:
+        except NameError as msg:
             msg = str(msg).strip()
             if msg[:16] == "Conversion Error":
                 pass
@@ -444,7 +444,7 @@ def attempt_function_call(code, local_dict, global_dict):
     function_list = function_catalog.get_functions(code, module_dir)
     for func in function_list:
         try:
-            results = apply(func, (local_dict, global_dict))
+            results = func(*(local_dict, global_dict))
             function_catalog.fast_cache(code, func)
             function_cache[code] = func
             return results
@@ -511,7 +511,7 @@ def compile_function(code, arg_names, local_dict, global_dict,
     # it's nice to let the users know when anything gets compiled, as the
     # slowdown is very noticeable.
     if verbose > 0:
-        print '<weave: compiling>'
+        print('<weave: compiling>')
 
     # compile code in correct location, with the given compiler and verbosity
     # setting.  All input keywords are passed through to distutils
@@ -522,7 +522,7 @@ def compile_function(code, arg_names, local_dict, global_dict,
     # the directory where it lives is in the python path.
     try:
         sys.path.insert(0, storage_dir)
-        exec 'import ' + module_name
+        exec('import ' + module_name)
         func = eval(module_name + '.compiled_func')
     finally:
         del sys.path[0]

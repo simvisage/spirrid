@@ -61,4 +61,4 @@ if __name__ == '__main__':
     s = SPIRRID(q = lambda eps, theta: theta * eps,
                 eps_vars = {'eps' : [0.1, 0.2, 0.3] },
                 theta_vars = {'theta' : RV('norm', 1.0, 1.0)})
-    print 'mean values', s.mu_q_arr
+    print('mean values', s.mu_q_arr)

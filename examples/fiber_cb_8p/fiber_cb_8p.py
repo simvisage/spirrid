@@ -218,7 +218,7 @@ if __name__ == '__main__':
     if platform.system() == 'Linux':
         os.system('convert ' + images + ' ' + destination)
     else:
-        raise NotImplementedError, 'film production available only on linux'
+        raise NotImplementedError('film production available only on linux')
     
     m.show()
 

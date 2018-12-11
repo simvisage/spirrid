@@ -131,7 +131,7 @@ class Distribution(HasTraits):
             if len(self.distribution.shapes) == 1:
                 return hstack((methods[0], methods[2:5]))
             else:
-                print 'more than 1 shape parameters'
+                print('more than 1 shape parameters')
 
     def shape_scale_mean_var_residuum(self, params):
         shape = params[0]

@@ -34,15 +34,15 @@ from numpy import linspace
 from pylab import plt
 from scipy.stats import norm, uniform, weibull_min, gamma
 
-from distribution import Distribution
+from .distribution import Distribution
 from etsproxy.pyface.api import ImageResource
 from etsproxy.traits.api import HasTraits, Float, Int, Event, Array, Interface, \
     Tuple, Property, cached_property, Instance, Enum, on_trait_change
 from etsproxy.traits.ui.api import \
     Item, View, Group, HSplit, VGroup, Tabbed
-from piecewise_uniform_distr import piecewise_uniform
-from sin2x_distr import sin2x
-from sinus_distribution import sin_distr
+from .piecewise_uniform_distr import piecewise_uniform
+from .sin2x_distr import sin2x
+from .sinus_distribution import sin_distr
 from spirrid.util.traits.editors.mpl_figure_editor import MPLFigureEditor
 
 

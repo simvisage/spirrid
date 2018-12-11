@@ -71,9 +71,8 @@ class RF(HasTraits):
                 ctrl_traits.append(self.trait(argspec))
                 ctrl_values.append(getattr(self, argspec))
             else:
-                raise RuntimeError, \
-                    'parameter %s not declared as a trait in the response function %s' % \
-                    (argspec, self.__class__)
+                raise RuntimeError('parameter %s not declared as a trait in the response function %s' % \
+                    (argspec, self.__class__))
         return (ctrl_keys, ctrl_traits, ctrl_values,
                 param_keys, param_traits, param_values)
 

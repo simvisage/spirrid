@@ -14,17 +14,21 @@
 #
 # -------------------------------------------------------------------------------
 
-from code_gen import CodeGen
-from etsproxy.traits.api import HasStrictTraits, Property, cached_property, \
-    List, Str, Int, Trait, Bool, Interface, implements
-import numpy as np  # import numpy package
+import imp
 import operator
 import os
 import platform
+import time
+
+from traits.api import HasStrictTraits, Property, cached_property, \
+    List, Str, Int, Trait, Bool, Interface, provides
+import numpy as np  # import numpy package
 import scipy.stats.distributions as distr  # import distributions
 import util.weave as weave
 
-import time
+from .code_gen import CodeGen
+
+
 if platform.system() == 'Linux':
     sysclock = time.time
 elif platform.system() == 'Windows':
@@ -34,9 +38,9 @@ elif platform.system() == 'Windows':
 class ICodeGenLangDict(Interface):
     pass
 
-class CodeGenLangDictC(HasStrictTraits):
 
-    implements(ICodeGenLangDict)
+@provides(ICodeGenLangDict)
+class CodeGenLangDictC(HasStrictTraits):
 
     LD_BEGIN_EPS_LOOP_ACTIVE = 'for( int i_eps = 0; i_eps < %(i)i; i_eps++){\n'
     LD_END_EPS_LOOP_ACTIVE = '};\n'
@@ -72,9 +76,8 @@ class CodeGenLangDictC(HasStrictTraits):
     LD_END_BRACE = ');\n'
 
 
+@provides(ICodeGenLangDict)
 class CodeGenLangDictCython(HasStrictTraits):
-
-    implements(ICodeGenLangDict)
 
     LD_BEGIN_EPS_LOOP_ACTIVE = '\tcdef np.ndarray mu_q_arr = np.zeros_like( e_arr )\n\tfor i_eps from 0 <= i_eps < %(i)i:\n\t\teps = e_arr[i_eps]\n'
     LD_END_EPS_LOOP_ACTIVE = '\n'
@@ -112,6 +115,8 @@ class CodeGenLangDictCython(HasStrictTraits):
 # ===============================================================================
 # Generator of the C-code
 # ===============================================================================
+
+
 class CodeGenCompiled(CodeGen):
     '''
         C-code is generated using the inline feature of scipy.
@@ -120,35 +125,41 @@ class CodeGenCompiled(CodeGen):
     # Inspection of the randomization - needed by CodeGenCompiled
     # ===========================================================================
     evar_names = Property(depends_on='q, recalc')
+
     @cached_property
     def _get_evar_names(self):
         return self.spirrid.evar_names
 
     var_names = Property(depends_on='q, recalc')
+
     @cached_property
     def _get_var_names(self):
         return self.spirrid.tvar_names
 
     # count the random variables
     n_rand_vars = Property(depends_on='theta_vars, recalc')
+
     @cached_property
     def _get_n_rand_vars(self):
         return self.spirrid.n_rand_vars
 
     # get the indexes of the random variables within the parameter list
     rand_var_idx_list = Property(depends_on='theta_vars, recalc')
+
     @cached_property
     def _get_rand_var_idx_list(self):
         return self.spirrid.rand_var_idx_list
 
     # get the names of the random variables
     rand_var_names = Property(depends_on='theta_vars, recalc')
+
     @cached_property
     def _get_rand_var_names(self):
-        return self.var_names[ self.rand_var_idx_list ]
+        return self.var_names[self.rand_var_idx_list]
 
     # get the randomization arrays
     theta_arrs = Property(List, depends_on='theta_vars, recalc')
+
     @cached_property
     def _get_theta_arrs(self):
         '''Get flattened list of theta arrays.
@@ -158,6 +169,7 @@ class CodeGenCompiled(CodeGen):
 
     # get the randomization arrays
     dG_arrs = Property(List, depends_on='theta_vars, recalc')
+
     @cached_property
     def _get_dG_arrs(self):
         '''Get flattened list of weight factor arrays.
@@ -165,7 +177,9 @@ class CodeGenCompiled(CodeGen):
         dG = self.spirrid.sampling.dG_ogrid
         return _get_flat_arrays_from_list(self.rand_var_idx_list, dG)
 
-    arg_names = Property(depends_on='rf_change, rand_change, +codegen_option, recalc')
+    arg_names = Property(
+        depends_on='rf_change, rand_change, +codegen_option, recalc')
+
     @cached_property
     def _get_arg_names(self):
 
@@ -173,11 +187,11 @@ class CodeGenCompiled(CodeGen):
         # create argument string for inline function
         if self.compiled_eps_loop:
             # @todo: e_arr must be evar_names
-            arg_names += [ 'mu_q_arr', 'e_arr' ]
+            arg_names += ['mu_q_arr', 'e_arr']
         else:
             arg_names.append('e')
 
-        arg_names += ['%s_flat' % name for name in self.rand_var_names ]
+        arg_names += ['%s_flat' % name for name in self.rand_var_names]
 
         arg_names += self._get_arg_names_dG()
 
@@ -199,7 +213,9 @@ class CodeGenCompiled(CodeGen):
     # compiled_eps_loop - dependent code
     # ===========================================================================
 
-    compiled_eps_loop_feature = Property(depends_on='compiled_eps_loop, recalc')
+    compiled_eps_loop_feature = Property(
+        depends_on='compiled_eps_loop, recalc')
+
     @cached_property
     def _get_compiled_eps_loop_feature(self):
         if self.compiled_eps_loop == True:
@@ -208,10 +224,12 @@ class CodeGenCompiled(CodeGen):
             return self.ld_.LD_ASSIGN_EPS, ''
 
     LD_BEGIN_EPS_LOOP = Property
+
     def _get_LD_BEGIN_EPS_LOOP(self):
         return self.compiled_eps_loop_feature[0]
 
     LD_END_EPS_LOOP = Property
+
     def _get_LD_END_EPS_LOOP(self):
         return self.compiled_eps_loop_feature[1]
 
@@ -227,6 +245,7 @@ class CodeGenCompiled(CodeGen):
     # cached_dG - dependent code
     # ===========================================================================
     cached_dG_feature = Property(depends_on='cached_dG, recalc')
+
     @cached_property
     def _get_cached_dG_feature(self):
         if self.compiled_eps_loop:
@@ -241,18 +260,22 @@ class CodeGenCompiled(CodeGen):
                 return self.ld_.LD_ACCESS_EPS_PTR, self.ld_.LD_ACCESS_THETA_PTR, self.ld_.LD_ASSIGN_MU_Q_PTR
 
     LD_ACCESS_EPS = Property
+
     def _get_LD_ACCESS_EPS(self):
         return self.cached_dG_feature[0]
 
     LD_ACCESS_THETA = Property
+
     def _get_LD_ACCESS_THETA(self):
         return '%s' + self.cached_dG_feature[1]
 
     LD_ASSIGN_MU_Q = Property
+
     def _get_LD_ASSIGN_MU_Q(self):
         return self.cached_dG_feature[2]
 
     LD_N_TAB = Property
+
     def _get_LD_N_TAB(self):
         if self.spirrid.sampling_type == 'LHS' or self.spirrid.sampling_type == 'MCS':
             if self.compiled_eps_loop:
@@ -268,7 +291,9 @@ class CodeGenCompiled(CodeGen):
     # ------------------------------------------------------------------------------------
     # Configurable generation of C-code for the mean curve evaluation
     # ------------------------------------------------------------------------------------
-    code = Property(depends_on='rf_change, rand_change, +codegen_option, eps_change, recalc')
+    code = Property(
+        depends_on='rf_change, rand_change, +codegen_option, eps_change, recalc')
+
     @cached_property
     def _get_code(self):
 
@@ -278,7 +303,7 @@ class CodeGenCompiled(CodeGen):
             # create code string for inline function
             #
             n_eps = len(self.spirrid.evar_lst[0])
-            code_str += self.LD_BEGIN_EPS_LOOP % {'i':n_eps}
+            code_str += self.LD_BEGIN_EPS_LOOP % {'i': n_eps}
             code_str += self.LD_ACCESS_EPS
 
         else:
@@ -313,10 +338,10 @@ class CodeGenCompiled(CodeGen):
         if self.n_rand_vars > 0:
             inner_code_str += self._get_code_dG_access()
             inner_code_str += q_code + '\n' + \
-                        (self.LD_N_TAB) * '\t' + self.ld_.LD_EVAL_MU_Q
+                (self.LD_N_TAB) * '\t' + self.ld_.LD_EVAL_MU_Q
         else:
             inner_code_str += q_code + \
-                       self.ld_.LD_ADD_MU_Q
+                self.ld_.LD_ADD_MU_Q
 
         code_str += self._get_code_inner_loops(inner_code_str)
 
@@ -332,6 +357,7 @@ class CodeGenCompiled(CodeGen):
 
     compiler_verbose = Int(1)
     compiler = Property(Str)
+
     def _get_compiler(self):
         if platform.system() == 'Linux':
             return 'gcc'
@@ -350,7 +376,7 @@ class CodeGenCompiled(CodeGen):
         # @todo - for Cython cdef variables and generalize function def()
         arg_values = {}
         for name, theta_arr in zip(self.rand_var_names, self.theta_arrs):
-            arg_values[ '%s_flat' % name ] = theta_arr
+            arg_values['%s_flat' % name] = theta_arr
         arg_values.update(self._get_arg_values_dG())
 
         DECLARE_ARRAY = 'np.ndarray[DTYPE_t, ndim=1] '
@@ -364,14 +390,16 @@ class CodeGenCompiled(CodeGen):
         cython_header += '    cdef int i_'
         cython_header += ', i_'.join(self.var_names) + '\n'
         if self.cached_dG:
-            cython_header = cython_header.replace(r'1] dG_grid', r'%i] dG_grid' % self.n_rand_vars)
+            cython_header = cython_header.replace(
+                r'1] dG_grid', r'%i] dG_grid' % self.n_rand_vars)
         if self.compiled_eps_loop == False:
-            cython_header = cython_header.replace(r'np.ndarray[DTYPE_t, ndim=1] e_arr', r'double e_arr')
+            cython_header = cython_header.replace(
+                r'np.ndarray[DTYPE_t, ndim=1] e_arr', r'double e_arr')
             cython_header = cython_header.replace(r'eps,', r'eps = e_arr,')
         cython_code = (cython_header + self.code).replace('\t', '    ')
         cython_file_name = 'spirrid_cython.pyx'
 
-        print 'checking for previous cython code'
+        print('checking for previous cython code')
         regenerate_code = True
         if os.path.exists(cython_file_name):
             f_in = open(cython_file_name, 'r').read()
@@ -382,24 +410,24 @@ class CodeGenCompiled(CodeGen):
             infile = open(cython_file_name, 'w')
             infile.write(cython_code)
             infile.close()
-            print 'pyx file updated'
+            print('pyx file updated')
 
         t = sysclock()
 
         import pyximport
         pyximport.install(reload_support=True,
-                          setup_args={"script_args":["--force"]})
+                          setup_args={"script_args": ["--force"]})
         import spirrid_cython
 
         if regenerate_code:
-            reload(spirrid_cython)
+            imp.reload(spirrid_cython)
 
-        print '>>> pyximport', sysclock() - t
+        print('>>> pyximport', sysclock() - t)
         mu_q = spirrid_cython.mu_q
 
         def mu_q_method(eps):
             if self.compiled_eps_loop:
-                args = {'e_arr' : eps}
+                args = {'e_arr': eps}
                 args.update(arg_values)
                 mu_q_arr = mu_q(**args)
             else:
@@ -413,7 +441,7 @@ class CodeGenCompiled(CodeGen):
                     mu_q_val = mu_q(**arg_values)
                     # add the value to the return array
                     mu_q_arr[idx] = mu_q_val
-            return  mu_q_arr, None
+            return mu_q_arr, None
         return mu_q_method
 
     def get_c_code(self):
@@ -426,8 +454,8 @@ class CodeGenCompiled(CodeGen):
             self._set_compiler()
 
             compiler_args, linker_args = self.extra_args
-            print 'compiler arguments'
-            print compiler_args
+            print('compiler arguments')
+            print(compiler_args)
 
             # prepare the array of the control variable discretization
             #
@@ -449,7 +477,7 @@ class CodeGenCompiled(CodeGen):
             #
 
             for name, theta_arr in zip(self.rand_var_names, self.theta_arrs):
-                arg_values[ '%s_flat' % name ] = theta_arr
+                arg_values['%s_flat' % name] = theta_arr
 
             arg_values.update(self._get_arg_values_dG())
 
@@ -478,19 +506,19 @@ class CodeGenCompiled(CodeGen):
                     #
                     arg_values['e'] = e  # prepare the parameter
                     mu_q = weave.inline(self.code, self.arg_names,
-                                         local_dict=arg_values,
-                                         extra_compile_args=compiler_args,
-                                         extra_link_args=linker_args,
-                                         type_converters=conv,
-                                         compiler=self.compiler,
-                                         verbose=self.compiler_verbose)
+                                        local_dict=arg_values,
+                                        extra_compile_args=compiler_args,
+                                        extra_link_args=linker_args,
+                                        type_converters=conv,
+                                        compiler=self.compiler,
+                                        verbose=self.compiler_verbose)
 
                     # add the value to the return array
                     mu_q_arr[idx] = mu_q
 
             var_q_arr = np.zeros_like(mu_q_arr)
 
-            return  mu_q_arr, var_q_arr
+            return mu_q_arr, var_q_arr
 
         return mu_q_method
 
@@ -500,10 +528,13 @@ class CodeGenCompiled(CodeGen):
     use_extra = Bool(False, codegen_option=True)
 
     extra_args = Property(depends_on='use_extra, +codegen_option, recalc')
+
     @cached_property
     def _get_extra_args(self):
         if self.use_extra == True:
-            compiler_args = ["-DNDEBUG -g -fwrapv -O3 -march=native", "-ffast-math"]  # , "-fno-openmp", "-ftree-vectorizer-verbose=3"]
+            # , "-fno-openmp", "-ftree-vectorizer-verbose=3"]
+            compiler_args = [
+                "-DNDEBUG -g -fwrapv -O3 -march=native", "-ffast-math"]
             linker_args = []  # ["-fno-openmp"]
             return compiler_args, linker_args
         elif self.use_extra == False:
@@ -540,14 +571,16 @@ class CodeGenCompiled(CodeGen):
 
     def __str__(self):
         s = 'C( '
-        s += 'var_eval = %s, ' % `self.implicit_var_eval`
-        s += 'compiled_eps_loop = %s, ' % `self.compiled_eps_loop`
-        s += 'cached_dG = %s)' % `self.cached_dG`
+        s += 'var_eval = %s, ' % repr(self.implicit_var_eval)
+        s += 'compiled_eps_loop = %s, ' % repr(self.compiled_eps_loop)
+        s += 'cached_dG = %s)' % repr(self.cached_dG)
         return s
 
 # ===============================================================================
 # CodeGen for regular sampling (n-embedded loops)
 # ===============================================================================
+
+
 class CodeGenCompiledRegular(CodeGenCompiled):
 
     def _get_code_inner_loops(self, inner_code_str):
@@ -566,11 +599,15 @@ class CodeGenCompiledRegular(CodeGenCompiled):
             # create the loop over the random variable
             #
             if self.compiled_eps_loop:
-                code_str += self.ld_.LD_BEGIN_THETA_DEEP_LOOP % {'t':('\t' * (idx + 1)), 's':name, 'i':n_int}
-                code_str += self.LD_ACCESS_THETA % ('\t' * (idx + 1), name, name, name)
+                code_str += self.ld_.LD_BEGIN_THETA_DEEP_LOOP % {
+                    't': ('\t' * (idx + 1)), 's': name, 'i': n_int}
+                code_str += self.LD_ACCESS_THETA % (
+                    '\t' * (idx + 1), name, name, name)
             else:
-                code_str += self.ld_.LD_BEGIN_THETA_DEEP_LOOP % {'t':('\t' * idx), 's':name, 'i':n_int}
-                code_str += self.LD_ACCESS_THETA % ('\t' * idx, name, name, name)
+                code_str += self.ld_.LD_BEGIN_THETA_DEEP_LOOP % {
+                    't': ('\t' * idx), 's': name, 'i': n_int}
+                code_str += self.LD_ACCESS_THETA % (
+                    '\t' * idx, name, name, name)
             idx += 1
 
         code_str += inner_code_str
@@ -582,52 +619,54 @@ class CodeGenCompiledRegular(CodeGenCompiled):
 
         return code_str
 
+
 class CodeGenCompiledTGrid(CodeGenCompiledRegular):
 
     def _get_arg_names_dG(self):
         arg_names = []
         if self.cached_dG:
-            arg_names += [ 'dG_grid' ]
+            arg_names += ['dG_grid']
         else:
-            arg_names += [ '%s_dG' % name for name in self.rand_var_names ]
+            arg_names += ['%s_dG' % name for name in self.rand_var_names]
         return arg_names
 
     def _get_arg_values_dG(self):
         arg_values = {}
         if self.n_rand_vars > 0:
             if self.cached_dG:
-                arg_values[ 'dG_grid' ] = self.spirrid.sampling.dG
+                arg_values['dG_grid'] = self.spirrid.sampling.dG
             else:
                 for name, dG_arr in zip(self.rand_var_names, self.dG_arrs):
                     arg_values['%s_dG' % name] = dG_arr
         else:
-                arg_values[ 'dG_grid' ] = self.spirrid.sampling.dG
+            arg_values['dG_grid'] = self.spirrid.sampling.dG
         return arg_values
 
     def _get_code_dG_access(self):
         if self.compiled_eps_loop:
             if self.cached_dG:  # q_g - blitz matrix used to store the grid
-                code_str = self.ld_.LD_DECLARE_DG_IDX % {'t':('\t') * (self.n_rand_vars + 1)} + \
-                           ','.join([ self.ld_.LD_ACCESS_DG_IDX % name
-                                      for name in self.rand_var_names ]) + \
-                           self.ld_.LD_END_BRACE
+                code_str = self.ld_.LD_DECLARE_DG_IDX % {'t': ('\t') * (self.n_rand_vars + 1)} + \
+                    ','.join([self.ld_.LD_ACCESS_DG_IDX % name
+                              for name in self.rand_var_names]) + \
+                    self.ld_.LD_END_BRACE
             else:  # qg
-                code_str = self.ld_.LD_DECLARE_DG_PTR % {'t':('\t') * (self.n_rand_vars + 1)} + \
-                           ' * '.join([ self.ld_.LD_ACCESS_DG_PTR % (name, name)
-                                      for name in self.rand_var_names ]) + \
-                            ';\n'
+                code_str = self.ld_.LD_DECLARE_DG_PTR % {'t': ('\t') * (self.n_rand_vars + 1)} + \
+                    ' * '.join([self.ld_.LD_ACCESS_DG_PTR % (name, name)
+                                for name in self.rand_var_names]) + \
+                    ';\n'
         else:
             if self.cached_dG:  # q_g - blitz matrix used to store the grid
-                code_str = self.ld_.LD_DECLARE_DG_IDX % {'t':('\t') * self.n_rand_vars} + \
-                           ','.join([ self.ld_.LD_ACCESS_DG_IDX % name
-                                      for name in self.rand_var_names ]) + \
-                            self.ld_.LD_END_BRACE
+                code_str = self.ld_.LD_DECLARE_DG_IDX % {'t': ('\t') * self.n_rand_vars} + \
+                    ','.join([self.ld_.LD_ACCESS_DG_IDX % name
+                              for name in self.rand_var_names]) + \
+                    self.ld_.LD_END_BRACE
             else:  # qg
-                code_str = self.ld_.LD_DECLARE_DG_PTR % {'t':('\t') * self.n_rand_vars} + \
-                           ' * '.join([ self.ld_.LD_ACCESS_DG_PTR % (name, name)
-                                      for name in self.rand_var_names ]) + \
-                            ';\n'
+                code_str = self.ld_.LD_DECLARE_DG_PTR % {'t': ('\t') * self.n_rand_vars} + \
+                    ' * '.join([self.ld_.LD_ACCESS_DG_PTR % (name, name)
+                                for name in self.rand_var_names]) + \
+                    ';\n'
         return code_str
+
 
 class CodeGenCompiledPGrid(CodeGenCompiledRegular):
 
@@ -635,18 +674,20 @@ class CodeGenCompiledPGrid(CodeGenCompiledRegular):
         n_sim = self.spirrid.sampling.n_sim
         if self.compiled_eps_loop:
             if self.cached_dG:
-                return  '\t' + self.ld_.LD_ASSIGN_DG % (1.0 / n_sim)
+                return '\t' + self.ld_.LD_ASSIGN_DG % (1.0 / n_sim)
             else:
-                return  '\t' + self.ld_.LD_ASSIGN_DG % (1.0 / n_sim)
+                return '\t' + self.ld_.LD_ASSIGN_DG % (1.0 / n_sim)
         else:
             if self.cached_dG:
                 return self.ld_.LD_ASSIGN_DG % (1.0 / n_sim)
             else:
-                return  self.ld_.LD_ASSIGN_DG % (1.0 / n_sim)
+                return self.ld_.LD_ASSIGN_DG % (1.0 / n_sim)
 
 # ===============================================================================
 # CodeGen for irregular sampling (n-embedded loops)
 # ===============================================================================
+
+
 class CodeGenCompiledIrregular(CodeGenCompiled):
 
     def _get_code_dG_declare(self):
@@ -684,14 +725,18 @@ class CodeGenCompiledIrregular(CodeGenCompiled):
             # use the pointer arithmetics for accessing the pdfs
             if self.compiled_eps_loop:
                 if self.cached_dG:
-                    code_str += '\t' + self.ld_.LD_ACCESS_THETA_FLAT_IDX % (name, name)
+                    code_str += '\t' + \
+                        self.ld_.LD_ACCESS_THETA_FLAT_IDX % (name, name)
                 else:
-                    code_str += '\t' + self.ld_.LD_ACCESS_THETA_FLAT_PTR % (name, name)
+                    code_str += '\t' + \
+                        self.ld_.LD_ACCESS_THETA_FLAT_PTR % (name, name)
             else:
                 if self.cached_dG:
-                    code_str += self.ld_.LD_ACCESS_THETA_FLAT_IDX % (name, name)
+                    code_str += self.ld_.LD_ACCESS_THETA_FLAT_IDX % (
+                        name, name)
                 else:
-                    code_str += self.ld_.LD_ACCESS_THETA_FLAT_PTR % (name, name)
+                    code_str += self.ld_.LD_ACCESS_THETA_FLAT_PTR % (
+                        name, name)
 
         code_str += inner_code_str
 
@@ -701,9 +746,10 @@ class CodeGenCompiledIrregular(CodeGenCompiled):
 
         return code_str
 
+
 def _get_flat_arrays_from_list(idx_list, array_list):
     '''Get a selection from a list of possible orthognoal arrays.
-    
+
     The returned arrays are flattened. 
     '''
     if len(idx_list) == 0:
@@ -718,5 +764,4 @@ def _get_flat_arrays_from_list(idx_list, array_list):
     if len(idx_list) == 1:
         return [arrs]
     else:
-        return map(lambda x: x.flatten(), arrs)
-
+        return [x.flatten() for x in arrs]

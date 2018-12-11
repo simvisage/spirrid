@@ -1,2 +1,2 @@
 
-from pdistrib import PDistrib
+from .pdistrib import PDistrib

@@ -14,9 +14,9 @@
 #
 #-------------------------------------------------------------------------------
 
-from code_gen_compiled import CodeGenCompiledTGrid, CodeGenCompiledPGrid, \
+from .code_gen_compiled import CodeGenCompiledTGrid, CodeGenCompiledPGrid, \
     CodeGenCompiledIrregular
-from code_gen_numpy import CodeGenNumpy
+from .code_gen_numpy import CodeGenNumpy
 from etsproxy.traits.api import HasStrictTraits, Dict
 
 #===============================================================================

@@ -16,11 +16,12 @@
 
 from etsproxy.traits.api import HasStrictTraits, Array, Property, Float, \
     cached_property, Callable, Str, Int, WeakRef, Dict, Event
-from rv import RV
+from .rv import RV
 import numpy as np
 import types
-from function_randomization import \
+from .function_randomization import \
     FunctionRandomization, make_ogrid, make_ogrid_full
+from functools import reduce
 
 # ===============================================================================
 # Randomization classes
@@ -81,7 +82,7 @@ class RegularGrid(RandomSampling):
             elif isinstance(tvar, RV):
                 theta_list.append(self.get_theta_for_distrib(tvar))
             else:
-                raise TypeError, 'bad random variable specification: %s' % tvar
+                raise TypeError('bad random variable specification: %s' % tvar)
 
         return theta_list
 
@@ -197,7 +198,7 @@ class MonteCarlo(IrregularSampling):
 
         theta_list = []
         for tvar in self.randomization.tvar_lst:
-            if isinstance(tvar, types.FloatType):
+            if isinstance(tvar, float):
                 theta_list.append(tvar)
             else:
                 theta_arr = tvar.rvs(self.n_sim)

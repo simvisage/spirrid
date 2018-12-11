@@ -7,7 +7,7 @@ from weave import converters
 from weave.ext_tools import ext_module, ext_function
 from weave.version import version as __version__
 
-from inline_tools import inline
+from .inline_tools import inline
 import weave.ext_tools as ext_tools
 
 

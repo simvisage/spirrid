@@ -114,8 +114,8 @@ class MFnLineArray(HasTraits):
                                 style = 'toolbar')
     @on_trait_change('dump_button')
     def print_data(self, event = None):
-        print 'x = ', repr(self.xdata)
-        print 'y = ', repr(self.ydata)
+        print('x = ', repr(self.xdata))
+        print('y = ', repr(self.ydata))
 
     integ_value = Property(Float(), depends_on = 'ydata')
     @cached_property

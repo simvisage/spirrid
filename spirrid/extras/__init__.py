@@ -1,1 +1,1 @@
-from spirrid_lab import SPIRRIDLAB
+from .spirrid_lab import SPIRRIDLAB

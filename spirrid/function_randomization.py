@@ -16,7 +16,7 @@
 
 from etsproxy.traits.api import HasStrictTraits, Array, Property, Float, \
     cached_property, Callable, Str, Int, WeakRef, Dict, Event
-from rv import RV
+from .rv import RV
 import inspect
 import numpy as np
 import string
@@ -30,7 +30,7 @@ def make_ogrid(args):
     scalar values are left untouched.
     '''
     # count the number of arrays in the list
-    dt = map(type, args)
+    dt = list(map(type, args))
     n_arr = dt.count(np.ndarray)
 
     oargs = []
@@ -42,7 +42,7 @@ def make_ogrid(args):
             i += 1
             oarg = np.copy(arg).reshape(tuple(shape))
             oargs.append(oarg)
-        elif isinstance(arg, types.FloatType):
+        elif isinstance(arg, float):
             oargs.append(arg)
     return oargs
 
@@ -53,7 +53,7 @@ def make_ogrid_full(args):
     oargs = []
     n_args = len(args)
     for i, arg in enumerate(args):
-        if isinstance(arg, types.FloatType):
+        if isinstance(arg, float):
             arg = np.array([arg], dtype='d')
 
         shape = np.ones((n_args,), dtype='int')
@@ -124,7 +124,7 @@ class FunctionRandomization(HasStrictTraits):
     evar_names = Property(depends_on='eps_vars')
     @cached_property
     def _get_evar_names(self):
-        evar_keys = self.eps_vars.keys()
+        evar_keys = list(self.eps_vars.keys())
         return [nm for nm in self.var_names if nm in evar_keys ]
 
     evar_str = Property()
@@ -151,7 +151,7 @@ class FunctionRandomization(HasStrictTraits):
     @cached_property
     def _get__theta_vars(self):
         _theta_vars = {}
-        for key, value in self.theta_vars.items():
+        for key, value in list(self.theta_vars.items()):
 
             # type checking
             is_admissible = False
@@ -159,7 +159,7 @@ class FunctionRandomization(HasStrictTraits):
                 if isinstance(value, admissible_type):
                     is_admissible = True
             if not is_admissible:
-                raise TypeError, 'bad type of theta variable %s' % key
+                raise TypeError('bad type of theta variable %s' % key)
 
             # type conversion
             if isinstance(value, int):
@@ -177,7 +177,7 @@ class FunctionRandomization(HasStrictTraits):
     tvar_names = Property
     def _get_tvar_names(self):
         '''get the tvar names in the order given by the callable'''
-        tvar_keys = self._theta_vars.keys()
+        tvar_keys = list(self._theta_vars.keys())
         return np.array([nm for nm in self.var_names if nm in tvar_keys ], dtype=str)
 
     tvar_str = Property()
@@ -192,18 +192,18 @@ class FunctionRandomization(HasStrictTraits):
     # count the random variables
     n_rand_vars = Property
     def _get_n_rand_vars(self):
-        dt = map(type, self.tvar_lst)
+        dt = list(map(type, self.tvar_lst))
         return dt.count(RV)
 
     # get the indexes of the random variables within the parameter list
     rand_var_idx_list = Property(depends_on='theta_vars, recalc')
     @cached_property
     def _get_rand_var_idx_list(self):
-        dt = np.array(map(type, self.tvar_lst))
+        dt = np.array(list(map(type, self.tvar_lst)))
         return np.where(dt == RV)[0]
 
 if __name__ == '__main__':
     fr = FunctionRandomization(q=lambda eps, theta : eps * theta,
                                eps_vars=dict(eps=[1.0]),
                                theta_vars=dict(theta=1.0))
-    print 'n_rand_vars', fr.n_rand_vars
+    print('n_rand_vars', fr.n_rand_vars)

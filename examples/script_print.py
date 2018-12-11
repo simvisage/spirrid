@@ -13,7 +13,7 @@
 # Thanks for using Simvisage open source!
 #
 #-------------------------------------------------------------------------------
-from fiber_tt_2p.fiber_tt_2p import fiber_tt_2p
+from .fiber_tt_2p.fiber_tt_2p import fiber_tt_2p
 import numpy as np
 import math
 from spirrid import SPIRRID, Heaviside, RV, RF, IRF
@@ -43,7 +43,7 @@ def demo():
     #print s.__str__()
 
     # print code of the weave (or cython) implementation
-    print s.codegen.code
+    print(s.codegen.code)
 
 if __name__ == '__main__':
 

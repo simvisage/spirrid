@@ -42,8 +42,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'SPIRRID'
-copyright = u'2012, Rostislav Chudoba'
+project = 'SPIRRID'
+copyright = '2012, Rostislav Chudoba'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -180,8 +180,8 @@ latex_paper_size = 'a4'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'SPIRRID.tex', u'SPIRRID Documentation',
-   u'Rostislav Chudoba, Vaclav Sadilek, Rostislav Rypl, Miroslav Vorechovsky', 'manual'),
+  ('index', 'SPIRRID.tex', 'SPIRRID Documentation',
+   'Rostislav Chudoba, Vaclav Sadilek, Rostislav Rypl, Miroslav Vorechovsky', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -225,6 +225,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'spirrid', u'SPIRRID Documentation',
-     [u'Rostislav Chudoba'], 1)
+    ('index', 'spirrid', 'SPIRRID Documentation',
+     ['Rostislav Chudoba'], 1)
 ]

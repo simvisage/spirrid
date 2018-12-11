@@ -15,7 +15,7 @@
 from etsproxy.traits.api import HasTraits, Array, Property, DelegatesTo, Dict, \
     Instance, Int, Str, List, on_trait_change, Button, Enum, Bool, Directory, Trait, Any
 from etsproxy.traits.ui.api import View, Item
-from error_eval import ErrorEval
+from .error_eval import ErrorEval
 from itertools import combinations, chain
 from matplotlib import rc
 from socket import gethostname
@@ -262,7 +262,7 @@ class SPIRRIDLAB(HasTraits):
         '''
         def run_estimation(n_int, sampling_type):
             # instantiate spirrid with samplingetization methods
-            print 'running', sampling_type, n_int
+            print('running', sampling_type, n_int)
             self.s.set(n_int=n_int, sampling_type=sampling_type)
             self.s.recalc = True
             n_sim = self.s.sampling.n_sim
@@ -353,7 +353,7 @@ class SPIRRIDLAB(HasTraits):
                     # Linear regression using stats.linregress
                     (a_s, b_s, r, tt, stderr) = stats.linregress(np.log(n_sim_range[:, i]), np.log(error_table[:, i, 0]))
                     print('Linear regression using stats.linregress')
-                    print('%s regression: a=%.2f b=%.2f, std error= %.3f => %f' % (sampling, a_s, b_s, stderr, 1. / a_s))
+                    print(('%s regression: a=%.2f b=%.2f, std error= %.3f => %f' % (sampling, a_s, b_s, stderr, 1. / a_s)))
                     err_reg = polyval([a_s, b_s], np.log(n_sim_range[:, i]))
                     x = n_sim_range[:, i]
                     y = np.exp(err_reg)
@@ -498,11 +498,11 @@ class SPIRRIDLAB(HasTraits):
             s.codegen_type = code
             s.codegen.set(**run_options)
             s.recalc = True
-            print 'run', idx, run_options
+            print('run', idx, run_options)
 
             for i in range(self.n_recalc):
                 s.recalc = True  # automatically proagated within spirrid
-                print 'execution time', self.exec_time_dict['total time']
+                print('execution time', self.exec_time_dict['total time'])
 
             p.plot(s.evar_lst[0], s.mu_q_arr, plot_options)
 
@@ -517,7 +517,7 @@ class SPIRRIDLAB(HasTraits):
         p.title(qname)
 
         if self.save_output:
-            print 'saving codegen_efficiency'
+            print('saving codegen_efficiency')
             basename = qname + '_' + 'codegen_efficiency' + '.png'
             basenames.append(basename)
             fname = os.path.join(self.fig_output_dir, basename)
@@ -593,15 +593,15 @@ class SPIRRIDLAB(HasTraits):
             shutil.rmtree(PYTHON_COMPILED_DIR)
 
         for extra, fname in zip([self.extra_compiler_args], self.fnames_language_efficiency):
-            print 'extra compilation args:', extra
+            print('extra compilation args:', extra)
             legend_lst = []
             error_lst = []
             n_sim_lst = []
             exec_times_sampling = []
 
-            meth_lst = zip(self.le_sampling_lst, self.le_n_int_lst)
+            meth_lst = list(zip(self.le_sampling_lst, self.le_n_int_lst))
             for item, n_int in meth_lst:
-                print 'sampling method:', item
+                print('sampling method:', item)
                 s = self.s
                 self.exec_time_dict['total time']  # eliminate first load time delay (first column)
                 s.n_int = n_int
@@ -617,7 +617,7 @@ class SPIRRIDLAB(HasTraits):
                     s.codegen.set(**run_options)
                     if s.codegen_type == 'weave':
                         s.codegen.set(**dict(use_extra=extra))
-                    print 'run', idx, run_options
+                    print('run', idx, run_options)
 
                     exec_times_run = []
                     for i in range(self.n_recalc):
@@ -626,7 +626,7 @@ class SPIRRIDLAB(HasTraits):
                                      self.exec_time_dict['method setup'],
                                      self.exec_time_dict['exec time']]
                         exec_times_run.append(exec_times)
-                        print 'execution time', self.exec_time_dict['total time']
+                        print('execution time', self.exec_time_dict['total time'])
 
                     # legend_lst.append(legend_string[:-12])
                     legend_lst = [dict(weave='weave', cython='cython', numpy='numpy')[x[0]] for x in self.run_lst_language_config]
@@ -644,7 +644,7 @@ class SPIRRIDLAB(HasTraits):
                     else:
                         exec_times_lang.append(exec_times_run)
 
-                print 'legend_lst', legend_lst
+                print('legend_lst', legend_lst)
                 n_sim_lst.append(s.sampling.n_sim)
                 exec_times_sampling.append(exec_times_lang)
                 #===========================================================================
@@ -674,14 +674,14 @@ class SPIRRIDLAB(HasTraits):
         s.set(sampling_type='TGrid')
 
         # list of all combinations of response function parameters
-        rv_comb_lst = list(powerset(s.theta_vars.keys()))
+        rv_comb_lst = list(powerset(list(s.theta_vars.keys())))
 
         p.figure()
         exec_time_lst = []
 
         for id, rv_comb in enumerate(rv_comb_lst[163:219]):  # [1:-1]
             s.theta_vars = theta_vars_det
-            print 'Combination', rv_comb
+            print('Combination', rv_comb)
 
             for rv in rv_comb:
                 s.theta_vars[rv] = theta_vars_rand[rv]
@@ -691,14 +691,14 @@ class SPIRRIDLAB(HasTraits):
             time_lst = []
             for idx, run in enumerate(self.run_lst):
                 code, run_options, plot_options, legend_string = run
-                print 'run', idx, run_options
+                print('run', idx, run_options)
                 s.codegen_type = code
                 s.codegen.set(**run_options)
 
                 # p.plot(s.evar_lst[0], s.mu_q_arr, plot_options)
 
                 # print 'integral of the pdf theta', s.eval_i_dG_grid()
-                print 'execution time', self.exec_time
+                print('execution time', self.exec_time)
                 time_lst.append(self.exec_time)
                 # legend.append(legend_string % s.exec_time)
             exec_time_lst.append(time_lst)
@@ -707,7 +707,7 @@ class SPIRRIDLAB(HasTraits):
         p.ylabel('time')
 
         if self.save_output:
-            print 'saving codegen_efficiency'
+            print('saving codegen_efficiency')
             fname = os.path.join(self.fig_output_dir, qname + '_' + 'combination_efficiency' + '.png')
             p.savefig(fname, dpi=self.dpi)
 
@@ -760,8 +760,8 @@ class SPIRRIDLAB(HasTraits):
         ax1.plot([1, 1], [0, n_tests], 'k--')
         ax2.set_yticks([0] + list(pos) + [n_tests])
         ax2.set_yticklabels([''] + ['%4.2f s' % s for s in list(times)] + [''])
-        ax2.set_xticks([0, 1] + range(5 , x_max_plt + 1, 5))
-        ax2.set_xticklabels(['%i' % s for s in ([0, 1] + range(5 , x_max_plt + 1, 5))])
+        ax2.set_xticks([0, 1] + list(range(5 , x_max_plt + 1, 5)))
+        ax2.set_xticklabels(['%i' % s for s in ([0, 1] + list(range(5 , x_max_plt + 1, 5)))])
 
     def _multi_bar_plot(self, title_lst, legend_lst, time_arr, error_lst, n_sim_lst):
         '''Plot the results if the code efficiency. 
@@ -775,7 +775,7 @@ class SPIRRIDLAB(HasTraits):
 
         # times are stored in 3d array - dimensions are:
         n_sampling, n_lang, n_run, n_times = time_arr.shape
-        print 'arr', time_arr.shape
+        print('arr', time_arr.shape)
         times_sum = np.sum(time_arr, axis=n_times)
 
         p.subplots_adjust(left=0.1, right=0.95, wspace=0.1,
@@ -852,7 +852,7 @@ class SPIRRIDLAB(HasTraits):
             else:
                 return r'%s%s' % (significand, exponent)
 
-        except IndexError, msg:
+        except IndexError as msg:
             return s
 
 
@@ -903,8 +903,8 @@ class SPIRRIDLAB(HasTraits):
         ax1.plot([1, 1], [0, n_tests], 'k--')
         ax2.set_yticks([0] + list(pos) + [n_tests])
         ax2.set_yticklabels([''] + ['%4.2f s' % s for s in list(times)] + [''])
-        ax2.set_xticks([0, 1] + range(5 , x_max_plt + 1, 5))
-        ax2.set_xticklabels(['%i' % s for s in ([0, 1] + range(5 , x_max_plt + 1, 5))])
+        ax2.set_xticks([0, 1] + list(range(5 , x_max_plt + 1, 5)))
+        ax2.set_xticklabels(['%i' % s for s in ([0, 1] + list(range(5 , x_max_plt + 1, 5)))])
 
         n_tests = len(time_lst[idx:])
         times = np.array(time_lst[idx:])
@@ -945,8 +945,8 @@ class SPIRRIDLAB(HasTraits):
         ax3.plot([1, 1], [0, n_tests], 'k--')
         ax4.set_yticks([0] + list(pos) + [n_tests])
         ax4.set_yticklabels([''] + ['%4.2f s' % s for s in list(times)] + [''])
-        ax4.set_xticks([0, 1] + range(5 , x_max_plt + 1, 5))
-        ax4.set_xticklabels(['%i' % s for s in ([0, 1] + range(5 , x_max_plt + 1, 5))])
+        ax4.set_xticks([0, 1] + list(range(5 , x_max_plt + 1, 5)))
+        ax4.set_xticklabels(['%i' % s for s in ([0, 1] + list(range(5 , x_max_plt + 1, 5)))])
 
     traits_view = View(Item('sampling_structure_btn', show_label=False),
                        '_',
